@@ -1,92 +1,175 @@
 
-
 export class KFRegister
 {
-    static Create(varsize:number = 3):KFRegister
+    public static Create(varsize:number = 3):KFRegister
     {
-        return null;
+        return new KFRegister(0, null, varsize);
     }
 
     ///销毁寄存器
-    static Destory(reg:KFRegister):boolean
+    public static Destory(reg:KFRegister):boolean
     {
-        return false;
+        if (	reg == null
+            ||	reg.Top() != reg)
+            return false;
+        reg._Destory();
+        //kfgcRelease(reg);
+        return true;
     }
 
        ///清空寄存器的子节点
-    static Clear(reg:KFRegister):boolean
+    public static Clear(reg:KFRegister):boolean
     {
+        if (	reg == null
+            ||	reg.Top() != reg)
         return false;
+        reg._Clear();
+        return true;
     }
 
-    static DestoryTop(reg:KFRegister)
+    public static DestoryTop(reg:KFRegister)
     {
-
+        if(reg != null)
+            KFRegister.Destory(reg.Top());
     }
 
-    static ClearTop(reg:KFRegister):KFRegister
+    public static ClearTop(reg:KFRegister):KFRegister
     {
-        return null;
+        if (reg == null)
+            return null;
+        let top = reg.Top();
+        KFRegister.Clear(top);
+        return top;
+    }
+
+    public  constructor(paramnum:number
+            , parent:KFRegister = null
+            , varsize:number = 3)
+    {
+        this._Parent = parent;
+        this._NewVarSize(paramnum,varsize);
     }
 
     ///将自己压入
-    Push(paranum:number, varsize:number = 3):KFRegister
+    public Push(paranum:number, varsize:number = 3):KFRegister
     {
-        return null;
+        if (this._Child == null)
+        {
+            this._Child = new KFRegister(paranum, this, varsize);
+        }
+        else
+        {
+            this._Child._NewVarSize(paranum, varsize);
+        }
+
+        return this._Child;
     }
 
     ///弹出父级
-    Pop():KFRegister
+    public Pop():KFRegister
     {
-        return null;
+        return this._Parent;
     }
 
     ///最顶端的寄存器
-    Top():KFRegister
+    public Top():KFRegister
     {
-        return null;
+        if (this._Parent != null)
+            return this._Parent.Top();
+        return this;
     }
 
     ///最底端的寄存器
-    Bottom(): KFRegister
+    public Bottom(): KFRegister
     {
-        return null;
+        if (this._Child != null)
+            return this._Child.Bottom();
+        return this;
     }
 
     ///invm 是否在VM内部调用，如果invm是真则直接填充当前寄存器
-    ReturnValue(value:number, invm:boolean = false)
+    public ReturnValue(value:number, invm:boolean = false)
     {
-        //判定VALUE的类型定义
+        if (!invm || this._Parent == null)
+        {
+            this._NUMS[0] = value;
+            return;
+        }
+
+        if (this._Parent != null)
+            this._Parent._NUMS[0] = value;
     }
 
     ///invm 是否在VM内部调用，如果invm是真则直接填充当前寄存器
     ///ReturnValue(num1 value, bool invm = false);
     ///invm 是否在VM内部调用，如果invm是真则直接填充当前寄存器
-    ReturnValueAny(value:any, invm:boolean = false)
+    public ReturnValueAny(value:any, invm:boolean = false)
     {
+        if (!invm || this._Parent == null)
+        {
+            this._OBJECTS[0] = value;
+            return;
+        }
 
+        if (this._Parent != null)
+            this._Parent._OBJECTS[0] = value;
     }
 
-    _PC:number;
-    _NUMS:Array<number> = new Array<number>();
-    _OBJECTS:Array<any> = new Array<any>();
+    public _PC:number;
+    public _NUMS:Array<number> = new Array<number>();
+    public _OBJECTS:Array<any> = new Array<any>();
 
     ///清空寄存器数据
-    _Clear()
+    private _Clear()
     {
+        ///删掉子集
+        if (this._Child != null)
+        {
+            this._Child._Destory();
+            //kfgcRelease(_Child);
+        }
 
+        this._Child = null;
+        this._PC = 0;
     }
 
-    _Destory()
+    private _Destory()
     {
+        if (this._Child != null)
+        {
+            this._Child._Destory();
+            //kfgcRelease(_Child);
+        }
 
+        this._PC = 0;
+        this._Parent = null;
+        this._Child = null;
+
+        return true;
     }
 
-    _NewVarSize(paramnum:number, varsize:number)
+    private _NewVarSize(paramnum:number, varsize:number)
     {
+        this._NUMS.length =  varsize;
+        this._OBJECTS.length = varsize;
 
+        if (this._Parent != null)
+        {
+            if (paramnum > 0)
+            {
+                //kfCopy(&_INTS[0], &_Parent->_INTS[0], paramnum * 4);
+                //kfCopy(&_FLOATS[0], &_Parent->_FLOATS[0], paramnum * 4);
+                //kfCopy(&_OBJECTS[0], &_Parent->_OBJECTS[0], paramnum * sizeof(kfAny));
+
+                for(let i:number = 0 ;i < paramnum ;i ++)
+                {
+                    this._NUMS[i] = this._Parent._NUMS[i];
+                    this._OBJECTS[i] = this._Parent._OBJECTS[i];
+                }
+            }
+        }
     }
 
-    _Parent:KFRegister;
-    _Child:KFRegister;
+    private _Parent:KFRegister;
+    private _Child:KFRegister;
 }
