@@ -1,4 +1,4 @@
-import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
+import {IKFBlockTargetContainer, KFBlockTarget, KFGraphTarget} from "../Context/KFBlockTarget";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFActorModel} from "./Model/KFActorModel";
 import {KFEventTable} from "../../Core/Misc/KFEventTable";
@@ -11,7 +11,7 @@ import {KFScriptComponent} from "./Components/KFScriptComponent";
 import {KFGlobalDefines} from "../KFACTSDefines";
 
 
-export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
+export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
 {
     public runtime:IKFRuntime;
     public model:KFActorModel;
@@ -69,7 +69,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public AddComponent(cls:any):any
     {
         let type:number = cls.Meta.value;///KFDName
-        let p:KFComponentBase = new cls();
+        let p:KFComponentBase = new cls(this, type);
         this.m_listComponents.push(p);
         this.m_mapComponents[type] = p;
         return p;

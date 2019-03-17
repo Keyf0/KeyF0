@@ -29,9 +29,6 @@ export class KFBlockTarget
     public keep:boolean;
     public parent:IKFBlockTargetContainer;
 
-    //m_outputs:KFEventTable;
-    //m_ctxoutputs:KFEventTable;
-
     public Construct(metadata:any
                      , runtime:IKFRuntime)
     {
@@ -43,17 +40,21 @@ export class KFBlockTarget
     public Tick(frameindex:number):void{}
     public TickInEditor(frameindex:number):void{}
 
-    //public GetScriptContext():KFScriptContext{return null;}
-    /*
     //TimeBlock
     public ActivateBLK(KFTimeBlockData:any):void{}
     public DeactiveBLK(KFTimeBlockData:any):void{}
-    public position():any{return null;}//Vector3
+    public position:any;//Vector3
     public set_position(value:any):void{}
-    public rotation():any{return null;}//Vector3
+    public rotation:any;//Vector3
     public set_rotation(value:any):void{}//Vector3
-
     public SetCustomArg(value:number,...args:number[]):void{}
+
+}
+
+export class KFGraphTarget extends KFBlockTarget
+{
+    public outputs:KFEventTable;
+    protected m_ctxoutputs:KFEventTable;
 
     //GraphBlock
     public ActivateGraph(KFGraphBlockData:any):void {}
@@ -65,17 +66,13 @@ export class KFBlockTarget
     public FireGraphOutput(blockname:KFDName,KFGraphArg:any):void{}
     public FireScriptOutput(stype:KFDName, outputname:KFDName, KFGraphArg:any):void{}
 
-    public outputs():KFEventTable{return this.m_outputs;}
-    public PushContextOutput(ctxoutput:KFEventTable):void
-    {this.m_ctxoutputs = ctxoutput;}
-
-    public PopContextOutput():void
-    {this.m_ctxoutputs = null;}
+    //public outputs():KFEventTable{return this.m_outputs;}
+    //public PushContextOutput(ctxoutput:KFEventTable):void
+    //{this.m_ctxoutputs = ctxoutput;}
+    //public PopContextOutput():void
+    //{this.m_ctxoutputs = null;}
 
     protected HandleCodesInput(KFBlockFuncInfo:any, KFGraphArg:any):void
     {}
-    //outline
-    private set_parent(p:IKFBlockTargetContainer):void {this.m_parent = p;}
-    public parent():IKFBlockTargetContainer {return this.m_parent;}
-    */
+
 }

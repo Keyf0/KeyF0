@@ -1,7 +1,11 @@
 
-
-
-export class KFComponentBase {
+export class KFComponentBase 
+{
+    target:any;
+    public constructor(target:any, type:number)
+    {
+        this.target = target;
+    }
 
     public ActivateComponent():void{}
     public DeactiveComponent():void{}
