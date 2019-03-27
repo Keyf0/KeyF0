@@ -5,12 +5,14 @@ import {KFDName} from "../KFData/Format/KFDName";
 
 export class KFScriptManagerBase implements KFScriptContext
 {
-    protected m_reg:KFRegister;
+    targetObject: any;
+    thisRegister: KFRegister;
+    runtime: any;
     protected _G_SCRIPT_INSTANCE: { [key: number]: KFScript; } = {}
 
     public constructor()
     {
-        this.m_reg = KFRegister.Create();
+        this.thisRegister = KFRegister.Create();
     }
 
     public NewScriptInstance(type:KFDName):KFScript
@@ -23,10 +25,10 @@ export class KFScriptManagerBase implements KFScriptContext
 
     public Finalize():void
     {
-        if (this.m_reg != null)
+        if (this.thisRegister != null)
         {
-            KFRegister.DestoryTop(this.m_reg);
-            this.m_reg = null;
+            KFRegister.DestoryTop(this.thisRegister);
+            this.thisRegister = null;
         }
         this.RemoveAllScripts();
     }
@@ -118,7 +120,7 @@ export class KFScriptManagerBase implements KFScriptContext
         }
 
         let scriptDatas:Array<any> = framedata.scripts;
-        let reg:KFRegister = context.GetRegister();
+        let reg:KFRegister = context.thisRegister;
 
         if (reg == null)
         {
@@ -142,35 +144,23 @@ export class KFScriptManagerBase implements KFScriptContext
         }
     }
 
-    public GetRegister(): KFRegister
-    {
-        return this.m_reg;
-    }
-
-    public GetThis(): any {return this;}
-
     public PopRegister(): KFRegister
     {
-       if(this.m_reg != null)
+       if(this.thisRegister != null)
        {
-           this.m_reg = this.m_reg.Pop();
+           this.thisRegister = this.thisRegister.Pop();
        }
-       return this.m_reg;
+       return this.thisRegister;
     }
 
     public PushRegister(paramnum: number, varsize: number): KFRegister
     {
-        if (this.m_reg != null)
+        if (this.thisRegister != null)
         {
-            let reg = this.m_reg.Push(paramnum, varsize);
-            this.m_reg = reg;
-            return this.m_reg;
+            let reg = this.thisRegister.Push(paramnum, varsize);
+            this.thisRegister = reg;
+            return this.thisRegister;
         }
-        return null;
-    }
-
-    public runtime(): any
-    {
         return null;
     }
 }

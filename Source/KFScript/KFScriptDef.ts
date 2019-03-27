@@ -3,10 +3,12 @@ import {KFDName} from "../KFData/Format/KFDName";
 
 export interface KFScriptContext
 {
-    runtime():any;
-    GetThis():any;
+    ///当前运行时
+    runtime:any;
+    ///当前对象
+    targetObject:any;
     /// 当前的寄存器
-    GetRegister():KFRegister;
+    thisRegister:KFRegister;
     /// 设置寄存器
     PushRegister(paramnum:number, varsize:number):KFRegister;
     PopRegister():KFRegister;
@@ -18,10 +20,13 @@ export interface KFScriptContext
 
 export class KFScript
 {
-     public Execute(scriptdata:any
+    ///区分脚本的ID
+    public typeid:number = 0;
+
+    public Execute(scriptdata:any
                     , context:KFScriptContext = null):void
      {
-         
+
      }
 
      /*销毁这个脚本前*/
@@ -29,6 +34,9 @@ export class KFScript
      {
          return true;
      }
+
+     public Update():void {}
+     public  Stop():void{}
 
      /*一定要定义一个脚本集*/
      public GetScriptTypes():Array<KFDName>
