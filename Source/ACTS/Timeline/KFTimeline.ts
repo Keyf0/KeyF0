@@ -12,6 +12,9 @@ export class KFTimeline
 {
     public onPlayBegin:TypeEvent<number> = new TypeEvent<number>();
     public onPlayEnd:TypeEvent<number> = new TypeEvent<number>();
+    public currstate:any;
+    public currframeindex:number;
+
 
     private m_runtime:IKFRuntime;
     private m_cfg:any;
@@ -23,8 +26,8 @@ export class KFTimeline
         return new KFTimeBlock();
     });
 
-    private m_state:any;
-    private m_frameindex:number;
+
+
     private m_length:number;
     private m_loop:boolean;
     private m_tpf:number;
@@ -69,8 +72,8 @@ export class KFTimeline
 
     private TickInternal(frameIndex:number, bJumpFrame:boolean = false)
     {
-        if (this.m_frameindex == frameIndex) return;
-        this.m_frameindex = frameIndex;
+        if (this.currframeindex == frameIndex) return;
+        this.currframeindex = frameIndex;
 
         if(this.m_blocks.length == 0)
         {
@@ -84,7 +87,7 @@ export class KFTimeline
 
         if (this.m_renderer)
         {
-            let time = this.m_frameindex * this.m_tpf;
+            let time = this.currframeindex * this.m_tpf;
             //LOG_WARNING("%d:%f", m_frameindex, time.ToFloat());
             this.m_renderer.RenderFrame(time);
         }
@@ -101,25 +104,25 @@ export class KFTimeline
 
         if (this.m_cfg)
         {
-            this.m_frameindex = -1;
-            this.m_state = this.m_states[stateid];
+            this.currframeindex = -1;
+            this.currstate = this.m_states[stateid];
 
-            if (this.m_state)
+            if (this.currstate)
             {
-                this.m_length = this.m_state.length;
-                this.m_loop = this.m_state.loop;
+                this.m_length = this.currstate.length;
+                this.m_loop = this.currstate.loop;
 
                 //LOG_TAG("state:%d, loop:%d, length:%d", stateid, m_loop, m_length);
 
                 this.DestroyBlocks();
 
-                if(this.m_state.layers.length == 0)
+                if(this.currstate.layers.length == 0)
                 {
                     //LOG_TAG_ERROR("state [%d, %s].layers is empty!", stateid, m_state->name.c_str());
                 }
                 else
                 {
-                    let layer:any = this.m_state.layers[0];
+                    let layer:any = this.currstate.layers[0];
                     if(layer.blocks.length == 0)
                     {
                         //LOG_TAG_ERROR("state [%d, %s].layers[0].blocks is empty!", stateid, m_state->name.c_str());
@@ -137,7 +140,7 @@ export class KFTimeline
                 }
 
                 let m_pool = KFTimeline.TB_pool;
-                for (let layer of this.m_state.layers)
+                for (let layer of this.currstate.layers)
                 {
                     for (let data of layer.blocks)
                     {
@@ -200,9 +203,9 @@ export class KFTimeline
     {
         this.DestroyBlocks();
 
-        this.m_state = null;
+        this.currstate = null;
         this.m_length = 1;
-        this.m_frameindex = -1;
+        this.currframeindex = -1;
         this.m_loop = false;
     }
 
@@ -218,9 +221,9 @@ export class KFTimeline
 
     public Tick()
     {
-        if (this.m_state)
+        if (this.currstate)
         {
-            let nextFrameIndex = this.m_frameindex + 1;
+            let nextFrameIndex = this.currframeindex + 1;
             if (nextFrameIndex >= this.m_length)
             {
                 if (this.m_loop)
@@ -230,7 +233,7 @@ export class KFTimeline
                 }
                 else
                 {
-                    this.onPlayEnd.emit(this.m_state.id);
+                    this.onPlayEnd.emit(this.currstate.id);
                 }
             }
             else

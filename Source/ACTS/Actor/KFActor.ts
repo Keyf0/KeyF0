@@ -200,7 +200,9 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
         {
             this.m_listComponents[i].EnterFrame();
         }
+
         this.async.LateEnterFrame();
+        this.timeline.LateEnterFrame();
     }
 
     public TickInEditor(frameindex:number):void

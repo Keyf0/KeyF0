@@ -2,6 +2,7 @@ import {KFEventTable} from "../../../Core/Misc/KFEventTable";
 
 export class KFActorModel
 {
+    path:string;
     sid:number = 0;
     type:number = 0;
     pause:boolean = false;
@@ -28,8 +29,7 @@ export class KFActorModel
         this.type = KFActorConfig.type;
     }
 
-    public Reset()
-    {
-
-    }
+    //framebox:KFFrameBox
+    public SetFrameBox(framebox:any){}
+    public Reset() {}
 }
