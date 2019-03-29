@@ -299,11 +299,14 @@ export class KFDJson
             {
                 if(valueType == KFDataType.OT_ARRAY || valueType == KFDataType.OT_MIXARRAY)
                 {
-                    retval = KFDJson._read_array_value(bytearr, valueType, skip, jsonobj, propinfo)
+                    retval = KFDJson._read_array_value(bytearr, valueType, skip, jsonobj, propinfo);
                 }
                 else if(valueType == KFDataType.OT_OBJECT)
                 {
-                    retval = KFDJson._read_object_value(bytearr, valueType, propinfo, skip, jsonobj)
+                    let kfddata = null;
+                    if(propinfo != null)
+                        kfddata = KFDTable.kfdTB.get_kfddata(propinfo["otype"]);
+                    retval = KFDJson._read_object_value(bytearr, valueType, kfddata, skip, jsonobj);
                 }
                 else if(valueType == KFDataType.OT_MIXOBJECT)
                 {
@@ -333,7 +336,54 @@ export class KFDJson
                               , jsonobj:any
                               , propinfo:any = null)
     {
+        if(jsonobj != null)
+        {
+           let valueType = KFDataType.OT_NULL;
+           let kfddata = null;
 
+           if(propinfo)
+           {
+               valueType = KFDataType.GetTypeID(propinfo["type"]);
+           }
+
+           if(jsonobj && jsonobj["__cls__"])
+           {
+               kfddata = KFDTable.kfdTB.get_kfddata(jsonobj["__cls__"]);
+               valueType = KFDataType.OT_MIXOBJECT;
+           }
+
+           bytearr.writeByte(valueType);
+
+           if(valueType == KFDataType.OT_NULL){}
+           else if(valueType <= KFDataType.OT_UINT64)
+           {
+               KFDJson._write_base_value(bytearr, valueType, jsonobj);
+           }else
+               {
+                   if(valueType == KFDataType.OT_ARRAY || valueType == KFDataType.OT_MIXARRAY)
+                   {
+                       KFDJson._write_array_value(bytearr, valueType, jsonobj, propinfo);
+                   }else if(valueType == KFDataType.OT_OBJECT)
+                   {
+                       kfddata = KFDTable.kfdTB.get_kfddata(propinfo["otype"]);
+                       KFDJson._write_object_value(bytearr, valueType, jsonobj, kfddata);
+                   }else if(valueType == KFDataType.OT_MIXOBJECT)
+                   {
+                       if(kfddata)
+                       {
+                           bytearr.writevaruint(1);
+                           bytearr.writestring(kfddata["class"]);
+                       }else
+                           bytearr.writevaruint(0);
+
+                       KFDJson._write_object_value(bytearr, valueType, jsonobj, kfddata);
+                   }
+               }
+        }
+        else
+        {
+            bytearr.writeByte(KFDataType.OT_NULL);
+        }
     }
 
 
@@ -342,9 +392,149 @@ export class KFDJson
                                      , valObject:any)
     {
         if(dataType == KFDataType.OT_UNKNOW)return;
-        switch (dataType) {
+
+        switch (dataType)
+        {
             case KFDataType.OT_INT8:
+            case KFDataType.OT_UINT8:
+                bytearr.writeByte(valObject);
                 break;
+            case KFDataType.OT_INT16:
+                bytearr.writeShort(valObject);
+                break;
+            case KFDataType.OT_UINT16:
+                bytearr.writeUnsignedShort(valObject);
+                break;
+            case KFDataType.OT_INT32:
+                bytearr.writeInt(valObject);
+                break;
+            case KFDataType.OT_UINT32:
+                bytearr.writeUnsignedInt(valObject);
+                break;
+            case KFDataType.OT_INT64:
+                bytearr.writeInt64(valObject);
+                break;
+            case KFDataType.OT_UINT64:
+                bytearr.writeUInt64(valObject);
+                break;
+            case KFDataType.OT_FLOAT:
+                bytearr.writeFloat(valObject);
+                break;
+            case KFDataType.OT_DOUBLE:
+                bytearr.writeDouble(valObject);
+                break;
+            case KFDataType.OT_STRING:
+                bytearr.writestring(valObject);
+                break;
+            case KFDataType.OT_BYTES:
+                bytearr.writeBytes(valObject);
+                break;
+            case KFDataType.OT_BOOL:
+                bytearr.writeBoolean(valObject);
+                break;
+            case KFDataType.OT_VARUINT:
+                bytearr.writevaruint(valObject);
+                break;
+
         }
     }
+
+    private static _write_array_value(bytearr:KFByteArray
+                                      , valtype:number
+                                      , val:any
+                                      , propinfo:any)
+    {
+        let arrval = val
+        let arrsize = arrval.length;
+        bytearr.writevaruint(arrsize);
+
+        let oType = 0;
+        let kfddata = null;
+
+        if(propinfo && propinfo["otype"])
+        {
+            let otypestr = propinfo["otype"]
+            oType = KFDataType.GetTypeID(otypestr);
+
+            if(oType == 0)
+            {
+                kfddata = KFDTable.kfdTB.get_kfddata(otypestr)
+                if (kfddata)
+                {
+                    if (valtype == KFDataType.OT_ARRAY)
+                        oType = KFDataType.OT_OBJECT
+                    else
+                        oType = KFDataType.OT_MIXOBJECT
+                }
+            }
+        }
+
+        if(valtype == KFDataType.OT_ARRAY)
+        {
+            if(oType != 0 && oType <= KFDataType.OT_UINT64)
+            {
+                bytearr.writeByte(oType);
+                for (let item of arrval) {
+                    KFDJson._write_base_value(bytearr, oType, item);
+                }
+            }else
+            {
+                if(oType == 0 || oType == KFDataType.OT_ARRAY || oType == KFDataType.OT_MIXARRAY)
+                {
+                    ///不支持
+                }else if(oType == KFDataType.OT_OBJECT || oType == KFDataType.OT_MIXOBJECT)
+                {
+                    bytearr.writeByte(oType);
+                    if(oType == KFDataType.OT_MIXOBJECT){}
+                    for (let item of arrval)
+                    {
+                        KFDJson._write_object_value(bytearr, oType, item, kfddata);
+                    }
+                }
+            }
+
+        }
+        else if(valtype == KFDataType.OT_MIXARRAY)
+        {
+            for (let item of arrval)
+            {
+                KFDJson.write_value(bytearr, item)
+            }
+        }
+    }
+
+    private static _write_object_value(bytearr:KFByteArray
+                                       , dataType:number
+                                       , objectval:any
+                                       , kfddata:any)
+    {
+        bytearr.writevaruint(KFDataType.OBJ_PROP_ID_BEGIN);
+        if(kfddata)
+        {
+             let extendcls = kfddata["extend"];
+             if(extendcls)
+             {
+                 let extenddata = KFDTable.kfdTB.get_kfddata(extendcls);
+                 if(extenddata != null)
+                    KFDJson._write_object_value(bytearr, dataType, objectval, extenddata);
+             }
+
+             let valarr = kfddata["propertys"];
+            for (let item of valarr)
+            {
+                let pid = item["pid"];
+                let name = item["name"];
+
+                if(objectval.hasOwnProperty(name) &&
+                    pid != KFDataType.OBJ_PROP_ID_BEGIN &&
+                    pid != KFDataType.OBJ_PROP_ID_END)
+                {
+                    bytearr.writevaruint(pid)
+                    KFDJson.write_value(bytearr, objectval[name], item)
+                }
+            }
+        }
+        bytearr.writevaruint(KFDataType.OBJ_PROP_ID_END);
+    }
+
 }

@@ -541,7 +541,7 @@ export class KFByteArray
         this._writeUint8Array(this.encodeUTF8(value));
     }
 
-    public wrtiestring(value:string)
+    public writestring(value:string)
     {
         let strbuff = this.encodeUTF8(value);
         this.writevaruint(strbuff.length);

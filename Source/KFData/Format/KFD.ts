@@ -50,7 +50,7 @@ export class KFDataType
             || type == KFDataType.OT_DOUBLE;
     }
 
-    public GetTypeID(type):number
+    public static GetTypeID(type):number
     {
         if (KFDataType.Type_to_ids == null)
         {
