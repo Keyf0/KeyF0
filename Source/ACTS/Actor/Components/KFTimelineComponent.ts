@@ -5,11 +5,12 @@ import {KFTimeline} from "../../Timeline/KFTimeline";
 import {KFTimeBlock} from "../../Timeline/KFTimeBlock";
 import {Disposable} from "../../../Core/Misc/TypeEvent";
 import {IKFTimelineRenderer} from "../../Timeline/IKFTimelineRenderer";
+import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 
 export class KFTimelineComponent extends KFComponentBase implements IKFTimelineContext
 {
-    public static Meta:KFDName
-        = new KFDName("KFTimelineComponent");
+    public static Meta:IKFMeta
+        = new IKFMeta("KFTimelineComponent");
 
     private m_cfg:any;
     private m_timeline:KFTimeline;
@@ -25,7 +26,7 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
 
     public constructor(target:any)
     {
-        super(target, KFTimelineComponent.Meta.value);
+        super(target, KFTimelineComponent.Meta.type);
     }
 
     public ReleaseComponent():void

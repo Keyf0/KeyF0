@@ -1,8 +1,7 @@
-
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 
 export interface IKFConfigs
 {
-
     Init(basedir:string):void;
     GetMetaData(asseturl:string, bFullpath:boolean):any;//KFMetaData
     GetTimelineConfig(path:string, bFullpath:boolean):any; //KFTimelineConfig
@@ -16,3 +15,5 @@ export interface IKFConfigs
 
     basedir():string;
 }
+
+export let IKFConfigs_Meta:IKFMeta = new IKFMeta();

@@ -6,12 +6,13 @@ import {Variable} from "../../Data/Variable";
 import {KFACTSScript, KFACTSScriptContext} from "../../Script/KFScriptSystem";
 import {KFScriptGroupType} from "../../../KFScript/KFScriptGroupType";
 import {KFFrameDataUtils} from "../../Data/KFFrameDataUtils";
+import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 
 
 export class KFScriptComponent extends KFComponentBase implements KFACTSScriptContext
 {
-    public static Meta:KFDName
-        = new KFDName("KFScriptComponent");
+    public static Meta:IKFMeta
+        = new IKFMeta("KFScriptComponent");
 
     private _targetScripts:{[key:number]:KFScript;} = {};
     private _scopeOnceScripts:{[key:number]:any} = {};
@@ -31,7 +32,7 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
 
     public constructor(target:any)
     {
-        super(target, KFScriptComponent.Meta.value);
+        super(target, KFScriptComponent.Meta.type);
         this.thisRegister =  KFRegister.Create();
     }
 

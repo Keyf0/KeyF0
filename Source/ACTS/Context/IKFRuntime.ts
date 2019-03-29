@@ -7,7 +7,7 @@ import {IKFConfigs} from "./IKFConfigs";
 
 export interface IKFRuntime
 {
-     root:IKFRuntime;
+     root():IKFRuntime;
      parent:IKFRuntime;
      etable:KFEventTable;
      random:KFRandom;

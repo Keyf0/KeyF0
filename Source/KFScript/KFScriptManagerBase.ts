@@ -15,6 +15,11 @@ export class KFScriptManagerBase implements KFScriptContext
         this.thisRegister = KFRegister.Create();
     }
 
+    public Init()
+    {
+        
+    }
+
     public NewScriptInstance(type:KFDName):KFScript
     {
         return null;

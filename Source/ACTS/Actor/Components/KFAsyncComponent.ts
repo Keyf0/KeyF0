@@ -1,11 +1,12 @@
 import {KFComponentBase} from "./KFComponentBase";
 import {KFDName} from "../../../KFData/Format/KFDName";
 import {IKFDelegate0} from "../../../Core/Misc/KFDelegate";
+import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 
 export class KFAsyncComponent extends KFComponentBase
 {
-    public static Meta:KFDName
-        = new KFDName("KFAsyncComponent");
+    public static Meta:IKFMeta
+    = new IKFMeta("KFAsyncComponent");
 
     private m_listNextFrameFuncs:Array<IKFDelegate0> = new Array<IKFDelegate0>();
     private m_listDontRemoveOnClear:Array<IKFDelegate0> = new Array<IKFDelegate0>();
@@ -13,7 +14,7 @@ export class KFAsyncComponent extends KFComponentBase
 
     public constructor(target:any)
     {
-        super(target, KFAsyncComponent.Meta.value);
+        super(target, KFAsyncComponent.Meta.type);
     }
 
     public ResetComponent()

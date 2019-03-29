@@ -14,6 +14,8 @@ import {KFGlobalDefines} from "../KFACTSDefines";
 export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
 {
     public runtime:IKFRuntime;
+    public iscontainer: boolean = true;
+
     public model:KFActorModel;
     public path:string;
     public etable:KFEventTable;
@@ -268,4 +270,6 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
     {
         return new KFActorModel();
     }
+
+
 }

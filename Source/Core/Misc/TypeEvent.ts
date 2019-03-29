@@ -21,6 +21,13 @@ export class TypeEvent<T>
         };
     };
 
+    public clear()
+    {
+        this.listeners.length = 0;
+        this.listenersOncer.length = 0;
+    }
+
+
     public once = (listener: Listener<T>): void => {
         this.listenersOncer.push(listener);
     };

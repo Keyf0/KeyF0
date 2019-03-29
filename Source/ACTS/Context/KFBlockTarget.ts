@@ -10,6 +10,7 @@ export interface IKFBlockTargetContainer
     GetChild(index:number):KFBlockTarget;
     FindChild(name:string):KFBlockTarget;
     runtime:any;
+    iscontainer:boolean;
 }
 
 export class KFBlockTarget

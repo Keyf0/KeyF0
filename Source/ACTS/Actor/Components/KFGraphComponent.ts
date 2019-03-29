@@ -5,11 +5,12 @@ import {IKFBlockTargetContainer} from "../../Context/KFBlockTarget";
 import {KFEventTable} from "../../../Core/Misc/KFEventTable";
 import {KFScriptContext} from "../../../KFScript/KFScriptDef";
 import {KFGraph} from "../../Graph/KFGraph";
+import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 
 export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
 {
-    public static Meta:KFDName
-        = new KFDName("KFGraphComponent");
+    public static Meta:IKFMeta
+        = new IKFMeta("KFGraphComponent");
 
     public IsEditing: boolean;
     public container: IKFBlockTargetContainer;
@@ -21,7 +22,7 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
 
     public constructor(target:any)
     {
-        super(target, KFGraphComponent.Meta.value);
+        super(target, KFGraphComponent.Meta.type);
         this.m_graph = new KFGraph(this);
     }
 
