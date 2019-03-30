@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>iSay</title>
-    <script src="../App/AppLauncher.js" type="application/javascript"/>
+    <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
     <script>
-        //var app = new AppLauncher();
+        require(["libs/App/AppLauncher"],function(module){
+            console.log("module loaded");
+            var app = new module.AppLauncher();
+        });
     </script>
 </head>
 <body>
