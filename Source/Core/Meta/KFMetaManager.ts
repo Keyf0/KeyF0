@@ -1,9 +1,10 @@
-import {KFDName} from "../../KFData/Format/KFDName";
+import {LOG_ERROR} from "../Log/KFLog";
 
 export interface InstantiateFunc
 {
     (): any;
 }
+
 
 export class IKFMeta
 {
@@ -13,9 +14,20 @@ export class IKFMeta
 
     public constructor(name:string = "",func:InstantiateFunc = null)
     {
+        this.SetDefaultFactroy(name, func);
+    }
+
+    public SetDefaultFactroy(name:string, func:InstantiateFunc = null)
+    {
         this.name = name;
+
         if(func == null)
-            this.instantiate = () =>{return null;};
+        {
+            if(this.instantiate == null)
+            this.instantiate = () => {
+                return null;
+            };
+        }
         else
             this.instantiate = func;
 
@@ -26,6 +38,32 @@ export class IKFMeta
     }
 }
 
+export class DefaultType<T>
+{
+    public meta:IKFMeta;
+    public instance:T = null;
+
+    public new_default():T
+    {
+        let ojb = this.new_instance();
+        if(this.instance != null)
+        {
+            LOG_ERROR("instance is not null!");
+        }
+        this.instance = ojb;
+        return this.instance;
+    }
+
+    public new_instance():T
+    {
+        if(this.meta == null)
+            return null;
+        let instance = this.meta.instantiate();
+        return instance;
+    }
+}
+
+
 export class KFMetaManager
 {
     private static typeidstart:number = 1;
@@ -35,7 +73,17 @@ export class KFMetaManager
     public static Register(meta:IKFMeta):boolean
     {
         if(meta.type > 0 || meta.name == "")
+        {
             return false;
+        }
+
+        let oldmeta = this.m_mapMetas[name];
+        if(oldmeta)
+        {
+            meta.type = oldmeta.type;
+            return;
+        }
+
         this.m_metas.push(meta);
         meta.type = this.m_metas.length;
         this.m_mapMetas[meta.name] = meta;

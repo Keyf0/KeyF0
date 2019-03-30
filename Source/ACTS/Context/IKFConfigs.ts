@@ -1,4 +1,4 @@
-import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {DefaultType, IKFMeta} from "../../Core/Meta/KFMetaManager";
 
 export interface IKFConfigs
 {
@@ -16,4 +16,4 @@ export interface IKFConfigs
     basedir():string;
 }
 
-export let IKFConfigs_Meta:IKFMeta = new IKFMeta();
+export let IKFConfigs_Type:DefaultType<IKFConfigs> = new DefaultType<IKFConfigs>();

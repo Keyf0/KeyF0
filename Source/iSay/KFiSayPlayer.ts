@@ -1,5 +1,5 @@
 import {IKFRuntime} from "../ACTS/Context/IKFRuntime";
-import {IKFConfigs, IKFConfigs_Meta} from "../ACTS/Context/IKFConfigs";
+import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {IKFDomain} from "../ACTS/Context/IKFDomain";
 import {KFEventTable} from "../Core/Misc/KFEventTable";
 import {KFRandom} from "../ACTS/Context/KFRandom";
@@ -60,7 +60,7 @@ export class KFiSayPlayer implements IKFRuntime
         this.realytime = 0;
         this.m_tpf = KFGlobalDefines.TPF;
 
-        this.configs = IKFConfigs_Meta.instantiate();
+        this.configs = IKFConfigs_Type.new_default();
         this.configs.Init(basedir);
         this.domain = new KFDomain(this);
         ///后面有需要再实现
