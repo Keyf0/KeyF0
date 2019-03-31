@@ -4,6 +4,7 @@ import {KFHttpFileIO} from "../KFNetwork/Http/KFHttpFileIO";
 import {HttpRequest, HttpRequest_Type} from "../KFNetwork/Http/Request/HttpRequest";
 import {WebHttpRequest} from "../KFNetwork/Http/Request/web/WebHttpRequest";
 import {KFByteArray} from "../KFData/Utils/FKByteArray";
+import {KFDJson} from "../KFData/Format/KFDJson";
 
 export class AppLauncher
 {
@@ -18,7 +19,7 @@ export class AppLauncher
 
     public run():void
     {
-        IKFFileIO_Type.instance.LoadFile("xx.txt",null,
+        IKFFileIO_Type.instance.LoadFile("appdata/main.blk",null,
             (ret:any,data:any)=>{
 
             if(ret)
