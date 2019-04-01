@@ -1,0 +1,761 @@
+[
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "typedef": 1,
+        "class": "EditorCommand",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 1,
+                "KEY": "CUSTOM",
+                "name": "type",
+                "type": "kfname"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "seqid",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "isrsp",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1062
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "RequestEditCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "EditorName",
+                "type": "kfstr"
+            }
+        ],
+        "clsid": 1096
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "RTObjectInfo",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "SID",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "name",
+                "type": "kfstr"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "ActorType",
+                "type": "int32"
+            },
+            {
+                "id": 4,
+                "default": "0",
+                "name": "ActorId",
+                "type": "int32"
+            },
+            {
+                "id": 5,
+                "default": "0",
+                "name": "Group",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1097
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "ResponseEditCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "resourcePath",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "targetName",
+                "type": "kfstr"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "FPS",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1098
+    },
+    {
+        "includes": [
+            "Data/Cmd.h",
+            "RTObjectInfoF.h"
+        ],
+        "class": "UpdateObjectListCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "objectList",
+                "otype": "RTObjectInfo",
+                "type": "arr"
+            }
+        ],
+        "clsid": 1102
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "RequestObjectDataCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "SID",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1099
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "RTObjectDataDetail",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "SID",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "actorCFG",
+                "type": "kfBytes"
+            },
+            {
+                "id": 3,
+                "name": "skillCFG",
+                "type": "kfBytes"
+            },
+            {
+                "id": 4,
+                "name": "animationCFG",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1100
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "ResponseObjectDataCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "SID",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "databytes",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1101
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "ResetCommand",
+        "extend": "EditorCommand",
+        "propertys": [],
+        "clsid": 1065
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "CreateActorCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "actorId",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "actorType",
+                "type": "int32"
+            },
+            {
+                "id": 4,
+                "default": "-1",
+                "name": "group",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1063
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "DeleteActorCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1064
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SelectActorCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1066
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "ChgActorGroupCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "default": "-1",
+                "name": "group",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1162
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SetMainActorCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1067
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "PlayOneFrameCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "motionId",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "frameId",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1068
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "TestScriptCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "scriptData",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1069
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "TestBuffCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "buffId",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1070
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SyncFrameBoxCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "motionId",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "frameId",
+                "type": "int32"
+            },
+            {
+                "id": 4,
+                "name": "box",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1071
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "EnterEditModeCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "false",
+                "name": "bEnter",
+                "type": "bool"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "instid",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1072
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SyncKFBytesCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "dataType",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "name": "buffData",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1126
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "ShowFrameBoxCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "false",
+                "name": "bShow",
+                "type": "bool"
+            }
+        ],
+        "clsid": 1073
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SyncSkillConfigCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "cfg",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1074
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SyncActionConfigCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "cfg",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1075
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SyncAnimationConfigCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "cfg",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1076
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "ReloadActorConfigsCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1077
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "QueryAnimClipTimeCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "clipResInfos",
+                "type": "kfBytes"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "actorId",
+                "type": "int32"
+            },
+            {
+                "id": 4,
+                "default": "0",
+                "name": "actorType",
+                "type": "int32"
+            },
+            {
+                "id": 5,
+                "name": "asseturl",
+                "type": "kfstr"
+            }
+        ],
+        "clsid": 1078
+    },
+    {
+        "includes": [
+            "Data/Cmd.h",
+            "EditableDataURLF.h"
+        ],
+        "class": "AsyncRemoteLoadCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "opFlag",
+                "type": "int8"
+            },
+            {
+                "id": 2,
+                "name": "eURL",
+                "otype": "EditableDataURL",
+                "type": "object"
+            },
+            {
+                "id": 3,
+                "name": "datacls",
+                "type": "kfstr"
+            },
+            {
+                "id": 4,
+                "name": "databytes",
+                "type": "kfBytes"
+            },
+            {
+                "id": 5,
+                "default": "0",
+                "name": "instId",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1300
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "OpenBlkCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "url",
+                "type": "kfstr"
+            }
+        ],
+        "clsid": 1389
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SyncMapDataCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "mapData",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1411
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "SyncMapEditorDataCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "mapEditorData",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1478
+    },
+    {
+        "includes": [
+            "Data/Cmd.h"
+        ],
+        "class": "MapEditorOperateCommand",
+        "extend": "EditorCommand",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "mapEditorOperateData",
+                "type": "kfBytes"
+            }
+        ],
+        "clsid": 1479
+    },
+    {
+        "includes": [
+            "Data/EditableDataURL.h"
+        ],
+        "class": "EditableDataURL",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "src",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "path",
+                "type": "kfstr"
+            },
+            {
+                "id": 3,
+                "name": "remotename",
+                "type": "kfstr"
+            },
+            {
+                "id": 4,
+                "name": "paramstr",
+                "type": "kfstr"
+            },
+            {
+                "id": 5,
+                "default": "UNDEINFED",
+                "name": "urlType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1301
+    },
+    {
+        "includes": [
+            "Data/KFAnimationClipResInfo.h"
+        ],
+        "class": "KFAnimationClipResInfo",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "id",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "default": "",
+                "name": "name",
+                "type": "kfstr"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "length",
+                "type": "float"
+            },
+            {
+                "id": 4,
+                "default": "1",
+                "name": "speed",
+                "type": "float"
+            }
+        ],
+        "clsid": 1127
+    }
+]
