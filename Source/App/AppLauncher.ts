@@ -5,42 +5,20 @@ import {HttpRequest, HttpRequest_Type} from "../KFNetwork/Http/Request/HttpReque
 import {WebHttpRequest} from "../KFNetwork/Http/Request/web/WebHttpRequest";
 import {KFByteArray} from "../KFData/Utils/FKByteArray";
 import {KFDJson} from "../KFData/Format/KFDJson";
+import {IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
+import {DefaultAppConfig} from "./DefaultAppConfig";
+import {kfDateformat} from "../Core/Misc/KFDate";
 
 export class AppLauncher
 {
     public constructor()
     {
+        ///默认的配置文件管理器
+        IKFConfigs_Type.meta = DefaultAppConfig.Meta;
         ///生成文件系统
         HttpRequest_Type.meta = WebHttpRequest.Meta;
         IKFFileIO_Type.meta = KFHttpFileIO.Meata;
         IKFFileIO_Type.new_default();
-    }
-
-    private load_config():void
-    {
-        IKFFileIO_Type.instance.asyncLoadFile(
-            "appdata/kfds.zip",
-            (ret:any,data:any)=>{
-
-                if(ret)
-                {
-                    JSZip.loadAsync(data).then((zipdata)=>{
-
-                        if(data == null){
-                            ///
-                            LOG_ERROR("config zip decode error");
-                        }else
-                        {
-                            LOG(zipdata.toString());
-                        }
-                    });
-                }
-                else
-                {
-                    LOG_ERROR("config load error");
-                }
-            }
-        );
     }
 
     private app_start():void
@@ -51,6 +29,10 @@ export class AppLauncher
                 if(ret)
                 {
                     LOG("==>load success {0}");
+                    let bytearr:KFByteArray = new KFByteArray(data);
+                    let metaobj = KFDJson.read_value(bytearr);
+
+                    LOG("==>read meta {0}",metaobj);
 
                 }
                 else
@@ -63,6 +45,15 @@ export class AppLauncher
 
     public run():void
     {
-        this.load_config();
+        let appconfig = IKFConfigs_Type.new_default();
+        appconfig.load_setting("appdata/kfds.zip"
+            ,(ret:boolean)=>{
+
+            if(ret)
+            {
+                this.app_start();
+            }
+
+            });
     }
 }

@@ -19,6 +19,7 @@ export class KFDJson
                 else
                     retval = bytearr.readByte();
             }
+                break;
         case KFDataType.OT_UINT8:
             {
                 if(skip)
@@ -26,61 +27,74 @@ export class KFDJson
                 else
                     retval = bytearr.readUnsignedByte();
             }
+            break;
         case KFDataType.OT_INT16:
             if(skip)
                 bytearr.Skip(2);
             else
                 retval = bytearr.readShort();
+            break;
             case KFDataType.OT_UINT16:
             if (skip)
                 bytearr.Skip(2);
             else
                 retval = bytearr.readUnsignedShort();
+                break;
             case KFDataType.OT_INT32:
                 if(skip)
                     bytearr.Skip(4);
                 else
                     retval = bytearr.readInt();
+                break;
             case KFDataType.OT_UINT32:
                 if(skip)
                     bytearr.Skip(4);
                 else
                     retval = bytearr.readUnsignedInt();
+                break;
             case KFDataType.OT_FLOAT:
                 if(skip)
                     bytearr.Skip(4);
                 else
                     retval = bytearr.readFloat();
+                break;
             case KFDataType.OT_DOUBLE:
                 if(skip)
                     bytearr.Skip(8);
                 else
                     retval = bytearr.readDouble();
+                break;
             case KFDataType.OT_STRING:
                 if(skip)
                     bytearr.skipstring();
                 else
                     retval = bytearr.readstring();
+                break;
             case KFDataType.OT_BYTES:
                 if(skip)
                     bytearr.skipstring();
                 else
                     retval = bytearr.readkfbytes();
+                break;
             case KFDataType.OT_BOOL:
                 if(skip)
                     bytearr.Skip(1);
                 else
                     retval = bytearr.readBoolean();
+                break;
             case KFDataType.OT_VARUINT:
                     retval = bytearr.readvaruint();
+                break;
             case KFDataType.OT_INT64:
                 if(skip)
                     bytearr.Skip(8);
                 else
                     retval = bytearr.readInt64();
+                break;
             case KFDataType.OT_UINT64:
                 if(skip)
                     bytearr.Skip(8);
+                break;
             default:
                     retval = bytearr.readUInt64();
         }

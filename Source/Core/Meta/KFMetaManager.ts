@@ -45,12 +45,10 @@ export class DefaultType<T>
 
     public new_default():T
     {
-        let ojb = this.new_instance();
-        if(this.instance != null)
+        if(this.instance == null)
         {
-            LOG_ERROR("instance is not null!");
+            this.instance = this.new_instance();
         }
-        this.instance = ojb;
         return this.instance;
     }
 

@@ -53,6 +53,24 @@ export class KFDTable
         return this.kfddata_maps[clsname] != null;
     }
 
+    public add_kfd(kfd):void
+    {
+        if(kfd instanceof Array)
+        {
+            for(let kfddata of kfd)
+            {
+                let clsname = kfddata["class"]
+                this.kfddata_maps[clsname] = kfddata;
+            }
+
+        }else
+        {
+            let clsname = kfd["class"]
+            if(clsname)
+                this.kfddata_maps[clsname] = kfd;
+        }
+    }
+
     public has_otype(otype):boolean
     {
         if(otype == "")return true;
