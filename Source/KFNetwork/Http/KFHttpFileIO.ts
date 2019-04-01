@@ -19,32 +19,32 @@ export class KFHttpFileIO implements IKFFileIO
 
     }
 
-    public CreateDir(path: string, async: FileOperationEnd): boolean
+    public asyncCreateDir(path: string, async: FileOperationEnd): boolean
     {
         return false;
     }
 
-    public GetFilePaths(pathlist: Array<string>, path: string, recursive: boolean, pattern: string, async: FileOperationEnd)
+    public asyncGetFilePaths(pathlist: Array<string>, path: string, recursive: boolean, pattern: string, async: FileOperationEnd)
     {
 
     }
 
-    public IsDirExist(path: string, async: FileOperationEnd): boolean
-    {
-        return false;
-    }
-
-    public IsFileExist(path: string, async: FileOperationEnd): boolean
+    public asyncIsDirExist(path: string, async: FileOperationEnd): boolean
     {
         return false;
     }
 
-    public IteratePaths(path: string, recursive: boolean, ffilter: FileFilter, async: FileOperationEnd)
+    public asyncIsFileExist(path: string, async: FileOperationEnd): boolean
+    {
+        return false;
+    }
+
+    public asyncIteratePaths(path: string, recursive: boolean, ffilter: FileFilter, async: FileOperationEnd)
     {
 
     }
 
-    public LoadFile(path: string, bytesArr: KFByteArray, async: FileOperationEnd): boolean
+    public asyncLoadFile(path: string, async: FileOperationEnd): boolean
     {
         let loader:URLLoader = new URLLoader();
         loader.dataFormat = URLLoaderDataFormat.BINARY;
@@ -54,7 +54,7 @@ export class KFHttpFileIO implements IKFFileIO
         });
 
         loader.IO_ERROR_Event.on((currloader:URLLoader)=>{
-            async(false,bytesArr);
+            async(false, null);
         });
 
         loader.load(request);
@@ -62,9 +62,17 @@ export class KFHttpFileIO implements IKFFileIO
         return false;
     }
 
-    public SaveFile(path: string, bytesArr: KFByteArray, async: FileOperationEnd): boolean
+    public asyncLoadFileList(filearr: Array<string>
+                        , onprogress: FileOperationEnd
+                        , async: FileOperationEnd)
+    {
+
+    }
+
+    public asyncSaveFile(path: string, bytesArr: KFByteArray, async: FileOperationEnd): boolean
     {
         return false;
     }
+
 
 }

@@ -13,18 +13,21 @@ export interface FileOperationEnd
 
 export interface IKFFileIO
 {
-    LoadFile(path:string, bytesArr:KFByteArray , async:FileOperationEnd):boolean;
-    SaveFile(path:string, bytesArr:KFByteArray , async:FileOperationEnd):boolean;
-    CreateDir(path:string, async:FileOperationEnd):boolean;
-    IsDirExist(path:string, async:FileOperationEnd):boolean;
-    IsFileExist(path:string, async:FileOperationEnd):boolean;
+    asyncLoadFile(path:string, async:FileOperationEnd):boolean;
+    asyncLoadFileList(filearr:Array<string>
+                 , onprogress:FileOperationEnd
+                 , async:FileOperationEnd);
+    asyncSaveFile(path:string, bytesArr:KFByteArray, async:FileOperationEnd):boolean;
+    asyncCreateDir(path:string, async:FileOperationEnd):boolean;
+    asyncIsDirExist(path:string, async:FileOperationEnd):boolean;
+    asyncIsFileExist(path:string, async:FileOperationEnd):boolean;
 
-    GetFilePaths(pathlist:Array<string>
+    asyncGetFilePaths(pathlist:Array<string>
                  , path:string
                  , recursive:boolean
                  , pattern:string
                  , async:FileOperationEnd);
-    IteratePaths(path:string
+    asyncIteratePaths(path:string
         , recursive:boolean
         , ffilter:FileFilter
         , async:FileOperationEnd);

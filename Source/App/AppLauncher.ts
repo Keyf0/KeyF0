@@ -13,26 +13,56 @@ export class AppLauncher
         ///生成文件系统
         HttpRequest_Type.meta = WebHttpRequest.Meta;
         IKFFileIO_Type.meta = KFHttpFileIO.Meata;
-
         IKFFileIO_Type.new_default();
+    }
+
+    private load_config():void
+    {
+        IKFFileIO_Type.instance.asyncLoadFile(
+            "appdata/kfds.zip",
+            (ret:any,data:any)=>{
+
+                if(ret)
+                {
+                    JSZip.loadAsync(data).then((zipdata)=>{
+
+                        if(data == null){
+                            ///
+                            LOG_ERROR("config zip decode error");
+                        }else
+                        {
+                            LOG(zipdata.toString());
+                        }
+                    });
+                }
+                else
+                {
+                    LOG_ERROR("config load error");
+                }
+            }
+        );
+    }
+
+    private app_start():void
+    {
+        IKFFileIO_Type.instance.asyncLoadFile("appdata/main.blk",
+            (ret:any,data:any)=>{
+
+                if(ret)
+                {
+                    LOG("==>load success {0}");
+
+                }
+                else
+                {
+                    LOG_ERROR("==>load error");
+                }
+
+            } );
     }
 
     public run():void
     {
-        IKFFileIO_Type.instance.LoadFile("appdata/main.blk",null,
-            (ret:any,data:any)=>{
-
-            if(ret)
-            {
-                LOG("==>load success {0}");
-
-
-            }
-            else
-            {
-                LOG_ERROR("==>load error");
-            }
-
-            } );
+        this.load_config();
     }
 }
