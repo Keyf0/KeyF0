@@ -7,9 +7,9 @@
   },
   "exclude": [
     "node_modules"
+    , "Html"
   ],
   "include": [
     "./**/*"
-  ],
-  "exclude": ["Html"]
+  ]
 }
