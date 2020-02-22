@@ -17,7 +17,7 @@ export class AppLauncher
         IKFConfigs_Type.meta = DefaultAppConfig.Meta;
         ///生成文件系统
         HttpRequest_Type.meta = WebHttpRequest.Meta;
-        IKFFileIO_Type.meta = KFHttpFileIO.Meata;
+        IKFFileIO_Type.meta = KFHttpFileIO.Meta;
         IKFFileIO_Type.new_default();
     }
 

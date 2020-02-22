@@ -7,7 +7,7 @@ import {URLRequest} from "./URLRequest";
 
 export class KFHttpFileIO implements IKFFileIO
 {
-    public static Meata:IKFMeta = new IKFMeta
+    public static Meta:IKFMeta = new IKFMeta
     (
         "KFHttpFileIO",():IKFFileIO=>{
             return new KFHttpFileIO();
