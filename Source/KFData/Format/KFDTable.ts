@@ -4,8 +4,8 @@ export class KFDTable
 {
     public static kfdTB:KFDTable = new KFDTable();
 
-    public static find_prop_info(kfddata
-                                 ,pid:number):any
+    public static find_prop_info(   kfddata
+                                 ,  pid:number):any
     {
         if(kfddata == null)return null;
         let __ids__ = kfddata["__ids__"];
@@ -27,16 +27,19 @@ export class KFDTable
     }
 
 
-    public static find_extend_kfddata(kfddata):any
+    public static find_extend_kfddata(kfddata,  tb:KFDTable = null):any
     {
-        if(kfddata == null)return null;
+        if(kfddata == null) return null;
         let __extend__ = kfddata["__extend__"];
+        
         if( __extend__ && kfddata["extend"])
         {
-            __extend__ = KFDTable.kfdTB.get_kfddata(kfddata["extend"]);
+            if(tb == null) tb = KFDTable.kfdTB;
+            __extend__ = tb.get_kfddata(kfddata["extend"]);
             if(__extend__)
                 kfddata["__extend__"] = __extend__;
         }
+
         return __extend__;
     }
 

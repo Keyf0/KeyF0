@@ -40,7 +40,7 @@ export class AppLauncher
                     LOG_ERROR("==>load error");
                 }
 
-            } );
+            },"");
     }
 
     public run():void

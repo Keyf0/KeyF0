@@ -14,6 +14,9 @@ export class KFHttpFileIO implements IKFFileIO
         }
     );
 
+    __loader:URLLoader = null;
+    __loadindex = 0;
+
     public constructor()
     {
 
@@ -44,35 +47,87 @@ export class KFHttpFileIO implements IKFFileIO
 
     }
 
-    public asyncLoadFile(path: string, async: FileOperationEnd): boolean
+    public asyncLoadFile(path: string, async: FileOperationEnd,dataft:string): boolean
     {
+        if(!dataft || dataft == "")
+        {
+            dataft = URLLoaderDataFormat.BINARY;
+        }
+
         let loader:URLLoader = new URLLoader();
-        loader.dataFormat = URLLoaderDataFormat.BINARY;
+        loader.dataFormat = dataft;
         let request:URLRequest = new URLRequest(path);
         loader.COMPLETE_Event.on((currloader:URLLoader)=>{
-            async(true, currloader.data);
+            async(true, currloader.data,path);
         });
 
         loader.IO_ERROR_Event.on((currloader:URLLoader)=>{
-            async(false, null);
+            async(false, null,path);
         });
 
         loader.load(request);
 
-        return false;
+        return true;
     }
 
     public asyncLoadFileList(filearr: Array<string>
                         , onprogress: FileOperationEnd
-                        , async: FileOperationEnd)
+                        , async: FileOperationEnd
+                        , dataft:string)
     {
 
+        if(this.__loader) return;
+
+        if(!dataft || dataft == "")
+        {
+            dataft = URLLoaderDataFormat.BINARY;
+        }
+
+        let loader:URLLoader = new URLLoader();
+        loader.dataFormat = dataft;
+        
+        this.__loader = loader;
+        this.__loadindex = 0;
+
+        let target = this;
+
+        function NextLoad()
+        {
+            loader.__recycle();
+
+            if(filearr.length > target.__loadindex)
+            {
+                let path = filearr[target.__loadindex]; 
+                let request:URLRequest = new URLRequest(path);
+                loader.load(request);
+                target.__loadindex += 1;
+            }
+            else
+            {
+                ///清空
+                target.__loader = null;
+                async(true,null,"");
+            }
+        }
+
+        loader.COMPLETE_Event.on((currloader:URLLoader)=>{
+            onprogress(true
+                ,   currloader.data
+                ,   currloader.geturl());
+                NextLoad();
+        });
+
+        loader.IO_ERROR_Event.on((currloader:URLLoader)=>{
+            onprogress(false, null,currloader.geturl());
+            NextLoad();
+        });
+        
+        NextLoad();
     }
 
     public asyncSaveFile(path: string, bytesArr: KFByteArray, async: FileOperationEnd): boolean
     {
         return false;
     }
-
 
 }

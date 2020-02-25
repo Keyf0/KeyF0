@@ -8,15 +8,15 @@ export interface FileFilter
 
 export interface FileOperationEnd
 {
-    (ret:any,data:any);
+    (ret:any,data:any,path:string);
 }
 
 export interface IKFFileIO
 {
-    asyncLoadFile(path:string, async:FileOperationEnd):boolean;
+    asyncLoadFile(path:string, async:FileOperationEnd,dataft:string):boolean;
     asyncLoadFileList(filearr:Array<string>
                  , onprogress:FileOperationEnd
-                 , async:FileOperationEnd);
+                 , async:FileOperationEnd,dataft:string);
     asyncSaveFile(path:string, bytesArr:KFByteArray, async:FileOperationEnd):boolean;
     asyncCreateDir(path:string, async:FileOperationEnd):boolean;
     asyncIsDirExist(path:string, async:FileOperationEnd):boolean;

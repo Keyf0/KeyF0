@@ -35,6 +35,10 @@ import {HttpResponseType} from "./Request/HttpResponseType";
 
         public _request: URLRequest = null;
 
+        public geturl():string {
+            return this._request ? this._request.url : "";
+        }
+        
         public load(request: URLRequest): void
         {
             this._request = request;

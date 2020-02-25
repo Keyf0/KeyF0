@@ -96,6 +96,7 @@ export class DefaultAppConfig implements IKFConfigs
                     end(false);
                 }
             }
+            ,""
         );
     }
 }
