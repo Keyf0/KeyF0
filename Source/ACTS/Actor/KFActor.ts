@@ -19,8 +19,6 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
     public model:KFActorModel;
     public path:string;
     public etable:KFEventTable;
-    public timers:KFTimers;
-    public async:KFAsyncComponent;
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
     public script:KFScriptComponent;
@@ -65,7 +63,6 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
         this.timeline = this.AddComponent(KFTimelineComponent);
         this.script = this.AddComponent(KFScriptComponent);
         this.graph = this.AddComponent(KFGraphComponent);
-        this.async = this.AddComponent(KFAsyncComponent);
     }
 
     public AddComponent(cls:any):any
@@ -122,7 +119,6 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
 
     public ActivateACT(sid:number):void
     {
-        this.timers = new KFTimers(this.runtime);
         this.etable = new KFEventTable();
         this.model.Activate(sid,this.etable);
         this.sid = sid;
@@ -133,7 +129,6 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
     {
         this.DeactiveAllComponent();
         this.model.Deactive();
-        this.timers = null;
         this.etable = null;
     }
 
@@ -192,23 +187,28 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
             this.model.freezetime = freezetimeMS;
             return;
         }
-        ///
-        this.async.PreEnterFrame();
 
-        if(this.timers) this.timers.Tick();
+        this.TickComponents(frameindex);
+    }
 
+    public TickComponents(frameindex:number):void
+    {
         let cnt = this.m_listComponents.length;
+        for (let i = 0; i < cnt; i++)
+        {
+            this.m_listComponents[i].PreEnterFrame();
+        }
+
         for (let i = 0; i < cnt; i++)
         {
             this.m_listComponents[i].EnterFrame();
         }
 
-        this.async.LateEnterFrame();
-        this.timeline.LateEnterFrame();
+        for (let i = 0; i < cnt; i++)
+        {
+            this.m_listComponents[i].LateEnterFrame();
+        }
     }
-
-    public TickInEditor(frameindex:number):void
-    {}
 
     public AddChild(child: KFBlockTarget): void
     {
@@ -224,6 +224,16 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
 
     public FindChild(name: string): KFBlockTarget
     {
+        let child = this.GetChild(name);
+        if(!child && this.parent)
+        {
+            child = this.parent.FindChild(name);
+        }
+        return child;
+    }
+
+    public GetChild(name: string): KFBlockTarget
+    {
         let i:number = this.m_children.length -1;
         while (i >= 0)
         {
@@ -235,7 +245,7 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
         return null;
     }
 
-    public GetChild(index: number): KFBlockTarget
+    public GetChildAt(index: number): KFBlockTarget
     {
         if(index >= this.m_children.length)
             return null;

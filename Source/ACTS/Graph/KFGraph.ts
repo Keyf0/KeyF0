@@ -11,12 +11,10 @@ export class KFGraph
     private m_ctx:IKFGraphContext;
     private m_cfg:any;
     private m_blocks:{[key:number]:KFGraphBlockBase} = {};
-    private m_blocks_cache:{[key:number]:KFGraphBlockBase} = {};
+    private m_tickblks:Array<KFGraphBlockBase> = [];
+    private m_inputnames:Array<KFDName> = [];
 
-    ///key:KFDName
-    private m_inputs:{[key:number]:KFGraphBlockExportPoint} = {};
-
-    public currblock:KFGraphBlockBase;
+    public currblock:KFGraphBlockBase = null;
     public IsPlaying:boolean;
 
     public constructor(ctx:IKFGraphContext)
@@ -47,6 +45,8 @@ export class KFGraph
             this.m_blocks[it].Release();
         }
         this.m_blocks = {};
+        this.m_inputnames.length = 0;
+        this.m_tickblks.length  = 0;
         this.m_cfg = cfg;
 
         for ( let data of cfg.data.blocks)
@@ -54,10 +54,20 @@ export class KFGraph
             let block:KFGraphBlockBase = null;
             switch (data.type)
             {
-                case KFGraphBlockType.Normal:block = new KFGraphBlockNormal();	break;
-                case KFGraphBlockType.OutputPoint:block = new KFGraphBlockExportPoint();	break;
-                case KFGraphBlockType.InputPoint: block = new KFGraphBlockExportPoint();	break;
-                case KFGraphBlockType.EventPoint:block = new KFGraphBlockEventPoint();	break;
+                case KFGraphBlockType.Normal:
+                    block = new KFGraphBlockNormal();
+                    break;
+                case KFGraphBlockType.OutputPoint:
+                case KFGraphBlockType.OutputPointGlobal:
+                case KFGraphBlockType.OutputPointDomain:
+                case KFGraphBlockType.InputPoint:
+                    block = new KFGraphBlockExportPoint();
+                    break;
+                case KFGraphBlockType.EventPoint:
+                case KFGraphBlockType.EventPointGlobal:
+                case KFGraphBlockType.EventPointDomain:
+                    block = new KFGraphBlockEventPoint();
+                    break;
 
                 default:;
             }
@@ -65,11 +75,11 @@ export class KFGraph
             if(block)
             {
                 block.Create(this.m_ctx, data);
-                this.m_blocks[data.id] = block;
+                this.m_blocks[data.name.value] = block;
 
                 if(data.type == KFGraphBlockType.InputPoint)
                 {
-                    this.m_inputs[data.name] = block;
+                    this.m_inputnames.push(data.name);
                 }
             }
             else
@@ -81,30 +91,12 @@ export class KFGraph
 
     public Play()
     {
-        for (let it in this.m_blocks)
-        {
-            let block:KFGraphBlockBase = this.m_blocks[it];
-
-            let outputs = block.data.outputs;
-            for (let i = 0; i < outputs.length; ++i)
-            {
-                let o = outputs[i];//KFGraphBlockOPinData
-                let dest = this.m_blocks[o.dest];
-
-                if(dest)
-                {
-                    block.BindOutput(i, dest);
-                }
-            }
-
-        }
-
         this.IsPlaying = true;
 
-        for (let it in this.m_blocks)
+        for (let it in this.m_inputnames)
         {
             let block = this.m_blocks[it];
-            if(block.data.autorun)
+            if(block)
             {
                 block.Input(KF_GRAPHARG_NULL);
             }
@@ -131,55 +123,31 @@ export class KFGraph
         }
     }
 
-    public HasBlock(id:number):boolean
+    public HasBlock(id:KFDName):boolean
     {
-        return this.m_blocks[id] != null;
+        return this.m_blocks[id.value] != null;
     }
 
-    public Tick():void
+    public GetBlock(id:KFDName):KFGraphBlockBase
     {
-        if(this.IsPlaying)
-        {
-            for (let it in this.m_blocks)
-            {
-                this.m_blocks[it].Tick();
-            }
-        }
+        return this.m_blocks[id.value];
     }
 
-    public ExecuteBlock(blockname:KFDName, arg:any):void
+    public AddTickBlock(block:KFGraphBlockBase):void
     {
-        //LOG_TAG_WARNING("%s", blockname.c_str());
-        let block = this.m_blocks_cache[blockname.value];
-        if(block == null) {
-
-            for (let it in this.m_blocks)
-            {
-                let tmpb:KFGraphBlockBase = this.m_blocks[it];
-                if (blockname.value == tmpb.data.name.value)
-                {
-                    this.m_blocks_cache[blockname.value] = tmpb;
-                    block = tmpb;
-                    break;
-                }
-            }
-        }
-
-        if(block)
-        {
-            if(arg) block.Input(arg);
-            else block.Input(KF_GRAPHARG_NULL);
-        }
+        this.m_tickblks.push(block);
     }
 
-    public GetBlock(id:number):KFGraphBlockBase
+    public RemoveTickBlock(block:KFGraphBlockBase):void
     {
-        return this.m_blocks[id];
+        let i = this.m_tickblks.indexOf(block);
+        if(i != -1)
+            this.m_tickblks.splice(i,1);
     }
 
-    public Input(blockname:KFDName,arg:any)
+    public Input(blockname:KFDName, arg:any)
     {
-        let block = this.m_inputs[blockname.value];
+        let block = this.m_blocks[blockname.value];
         if (block != null)
         {
             if(arg) block.Input(arg);
@@ -188,6 +156,16 @@ export class KFGraph
         else
         {
             //LOG_TAG_ERROR("Can't find block: %s", blockname.c_str());
+        }
+    }
+
+    public Tick(frameIndex:number):void
+    {
+        let i = this.m_tickblks.length - 1;
+        while (i >= 0)
+        {
+            this.m_tickblks[i].Tick(frameIndex);
+            i -= 1;
         }
     }
 }

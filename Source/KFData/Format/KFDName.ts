@@ -53,9 +53,10 @@ export class KFDName
         this.value = KFDName._Strs.GetNameID(namestr);
     }
 
-    public setString(namestr:string)
+    public setString(namestr:string):KFDName
     {
         this.value = KFDName._Strs.GetNameID(namestr);
+        return this;
     }
 
     public toString():string
@@ -64,5 +65,8 @@ export class KFDName
     }
 
     public value:number = 0;
+
+
     public static _Strs:KFDNameStrings = new KFDNameStrings();
+    public static _Param:KFDName = new KFDName();
 }

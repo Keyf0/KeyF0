@@ -39,7 +39,9 @@ export class KFScriptManagerBase implements KFScriptContext
     }
 
     private RemoveAllScripts():void
-    {/*
+    {
+        this._G_SCRIPT_INSTANCE = {};
+        /*
         if (_G_SCRIPT_INSTANCE.empty() == false)
         {
             kfMap<KFScript*, bool> delmap;

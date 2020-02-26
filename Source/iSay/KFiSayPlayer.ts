@@ -69,7 +69,7 @@ export class KFiSayPlayer implements IKFRuntime
         this.random = new KFRandom();
         this.random.Init(0);
 
-        this.scripts = new KFScriptSystem()
+        this.scripts = new KFScriptSystem(this);
         this.scripts.Init();
     }
 

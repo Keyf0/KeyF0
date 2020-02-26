@@ -1,7 +1,7 @@
 import {KFComponentBase} from "./KFComponentBase";
 import {KFDName} from "../../../KFData/Format/KFDName";
 import {IKFGraphContext} from "../../Graph/IKFGraphContext";
-import {IKFBlockTargetContainer} from "../../Context/KFBlockTarget";
+import {IKFBlockTargetContainer, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFEventTable} from "../../../Core/Misc/KFEventTable";
 import {KFScriptContext} from "../../../KFScript/KFScriptDef";
 import {KFGraph} from "../../Graph/KFGraph";
@@ -13,12 +13,9 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
         = new IKFMeta("KFGraphComponent");
 
     public IsEditing: boolean;
-    public container: IKFBlockTargetContainer;
-    public etable: KFEventTable;
 
     private m_cfg:any;
-    private m_graph:KFGraph;
-    private m_inputregister:any;
+    public m_graph:KFGraph;
 
     public constructor(target:any)
     {
@@ -53,7 +50,11 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
         this.m_graph.Deactive();
     }
 
-    public EnterFrame(){this.m_graph.Tick();}
+    public EnterFrame()
+    {
+        this.m_graph.Tick(this.runtime.frameindex);
+    }
+
     public SetEditing(value:boolean)
     {
         this.IsEditing = value;
@@ -69,13 +70,6 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
         this.m_graph.Stop();
     }
 
-    public SetInputRegister(value: any)
-    {
-        this.m_inputregister = value;
-    }
-
-    public GetInputRegister():any{return this.m_inputregister;}
-
     public OnGraphFrame(arg: any
                  , frame: any
                  , scriptContext: KFScriptContext)
@@ -84,19 +78,9 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
             , frame,scriptContext);
     }
 
-    public OnGraphOutput(blockname: KFDName, arg: any)
-    {
-        this.targetObject.FireGraphOutput(blockname, arg);
-    }
-
     public Input(blockname:KFDName
-                 , arg:any)
+                 , arg:any):void
     {
         this.m_graph.Input(blockname, arg);
-    }
-
-    public ExecuteBlock(blockname:KFDName, arg:any)
-    {
-        this.m_graph.ExecuteBlock(blockname, arg);
     }
 }

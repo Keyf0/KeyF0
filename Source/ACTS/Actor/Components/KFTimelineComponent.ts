@@ -27,6 +27,7 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
     public constructor(target:any)
     {
         super(target, KFTimelineComponent.Meta.type);
+        this.m_timeline = new KFTimeline(this.runtime,target,this);
     }
 
     public ReleaseComponent():void

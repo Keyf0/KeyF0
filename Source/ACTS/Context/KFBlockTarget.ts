@@ -7,7 +7,7 @@ export interface IKFBlockTargetContainer
 {
     AddChild(child:KFBlockTarget):void;
     RemoveChild(child:KFBlockTarget):void;
-    GetChild(index:number):KFBlockTarget;
+    GetChildAt(index:number):KFBlockTarget;
     FindChild(name:string):KFBlockTarget;
     runtime:any;
     iscontainer:boolean;
@@ -27,8 +27,8 @@ export class KFBlockTarget
     public metadata:any;
     public sid:number;
     public scriptContext:KFScriptContext;
-    public keep:boolean;
     public parent:IKFBlockTargetContainer;
+    public etable:KFEventTable;
 
     public Construct(metadata:any
                      , runtime:IKFRuntime)
@@ -54,26 +54,7 @@ export class KFBlockTarget
 
 export class KFGraphTarget extends KFBlockTarget
 {
-    public outputs:KFEventTable;
-    protected m_ctxoutputs:KFEventTable;
-
     //GraphBlock
     public ActivateGraph(KFGraphBlockData:any):void {}
     public DeactiveGraph(KFGraphBlockData:any):void {}
-    public Input(KFBlockFuncInfo:any, KFGraphArg:any):void{}
-    public FireCodesCurrentOutput(outputindex:number,  KFGraphArg:any):void{}
-    public FireCodesDefaultOutput(outputindex:number,  KFGraphArg:any):void{}
-    public FireCodesOutput(funcname:KFDName, outputindex:number, KFGraphArg:any):void{}
-    public FireGraphOutput(blockname:KFDName,KFGraphArg:any):void{}
-    public FireScriptOutput(stype:KFDName, outputname:KFDName, KFGraphArg:any):void{}
-
-    //public outputs():KFEventTable{return this.m_outputs;}
-    //public PushContextOutput(ctxoutput:KFEventTable):void
-    //{this.m_ctxoutputs = ctxoutput;}
-    //public PopContextOutput():void
-    //{this.m_ctxoutputs = null;}
-
-    protected HandleCodesInput(KFBlockFuncInfo:any, KFGraphArg:any):void
-    {}
-
 }

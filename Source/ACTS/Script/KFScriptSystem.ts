@@ -3,6 +3,7 @@ import {KFScript, KFScriptContext} from "../../KFScript/KFScriptDef";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {Variable} from "../Data/Variable";
+import {KFScriptFactory} from "./KFScriptFactory";
 
 export interface KFACTSScriptContext extends KFScriptContext
 {
@@ -12,7 +13,7 @@ export interface KFACTSScriptContext extends KFScriptContext
     RemoveAllKeepScript():void;
     BeginScope():void;
     EndScope():void;
-    GetVariable(vID:number, create:boolean,varstr:string):Variable;
+    GetVariable(vID:number, create:boolean, varstr:string):Variable;
 }
 
 export class KFACTSScript extends KFScript
@@ -29,5 +30,19 @@ export class KFACTSScript extends KFScript
 
 export class KFScriptSystem extends KFScriptManagerBase
 {
+    public runtime:IKFRuntime = null;
 
+    public constructor(runtime:IKFRuntime)
+    {
+        super();
+        this.runtime = runtime;
+    }
+
+    public NewScriptInstance(type:KFDName):KFScript
+    {
+        let scriptcls =  KFScriptFactory.GetScriptClass(type);
+        if(scriptcls)
+            return new scriptcls();
+        return null;
+    }
 }
