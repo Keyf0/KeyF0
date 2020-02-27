@@ -1,4 +1,5 @@
 import {LOG_ERROR} from "../Log/KFLog";
+import {KFDName} from "../../KFData/Format/KFDName";
 
 export interface InstantiateFunc
 {
@@ -66,25 +67,27 @@ export class KFMetaManager
 {
     private static typeidstart:number = 1;
     private static m_metas:Array<IKFMeta> = new Array<IKFMeta>();
-    private static m_mapMetas:{[key:string]:IKFMeta} = {};
+    private static m_mapMetas:{[key:number]:IKFMeta} = {};
 
     public static Register(meta:IKFMeta):boolean
     {
-        if(meta.type > 0 || meta.name == "")
+        let name = meta.name;
+        if(meta.type > 0 || name == "")
         {
             return false;
         }
-
-        let oldmeta = this.m_mapMetas[name];
+        let namevalue = KFDName._Strs.GetNameID(name);
+        let oldmeta = this.m_mapMetas[namevalue];
         if(oldmeta)
         {
             meta.type = oldmeta.type;
             return;
         }
 
-        this.m_metas.push(meta);
         meta.type = this.m_metas.length;
-        this.m_mapMetas[meta.name] = meta;
+        this.m_metas.push(meta);
+
+        this.m_mapMetas[namevalue] = meta;
         return true;
     }
 
@@ -94,8 +97,8 @@ export class KFMetaManager
         return this.m_metas[i];
     }
 
-    public static GetMetaName(name:string):IKFMeta
+    public static GetMetaName(name:KFDName):IKFMeta
     {
-        return this.m_mapMetas[name];
+        return this.m_mapMetas[name.value];
     }
 }

@@ -536,7 +536,7 @@ export class KFDJson
              let valarr = kfddata["propertys"];
             for (let item of valarr)
             {
-                let pid = item["pid"];
+                let pid = item["id"];
                 let name = item["name"];
 
                 if(objectval.hasOwnProperty(name) &&

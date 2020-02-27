@@ -32,7 +32,7 @@ export class AppLauncher
                     let bytearr:KFByteArray = new KFByteArray(data);
                     let metaobj = KFDJson.read_value(bytearr);
 
-                    LOG("==>read meta {0}",metaobj);
+                    LOG("==>read meta t {0}",metaobj);
 
                 }
                 else

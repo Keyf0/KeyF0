@@ -51,6 +51,50 @@ export class KFDTable
         return this.kfddata_maps[clsname];
     }
 
+    ///获取所有的继承类
+    public get_kfddatas_extend(clsname:string,includeself:boolean = false): any
+    {
+        let all = [];
+        for (const key in this.kfddata_maps)
+        {
+            let data = this.kfddata_maps[key];
+            if(includeself && data["class"] == clsname)
+            {
+
+            }
+            else if(this.is_extend(data,clsname))
+            {
+
+            }else
+                data = null;
+
+            if(data)
+            {
+                let clsname = data["class"];
+                ///显用
+                let clslabel = data["cname"] + "[" + clsname + "]";
+
+                all.push({label:clsname,label0:clslabel,value:data});
+            }
+        }
+        return all;
+    }
+
+    public is_extend(kfddata,clsname:string):boolean
+    {
+        let extend = kfddata["extend"];
+
+        while (extend)
+         {
+             if (extend == clsname)
+                 return true;
+             kfddata = this.get_kfddata(extend);
+             extend = kfddata ? kfddata["extend"] : null;
+         }
+
+        return false;
+    }
+
     public has_cls(clsname:string):boolean
     {
         return this.kfddata_maps[clsname] != null;
