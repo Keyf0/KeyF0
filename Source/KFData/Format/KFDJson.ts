@@ -1,13 +1,15 @@
 import {KFByteArray} from "../Utils/FKByteArray";
 import {KFDataType} from "./KFD";
 import {KFDTable} from "./KFDTable";
+import {KFDName} from "./KFDName";
 
 export class KFDJson
 {
     private static _read_base_value(bytearr:KFByteArray
                                     , valtype:number
                                     , skip:boolean=false
-                                    , value:any=null):any
+                                    , value:any=null
+                                    , typename:string=""):any
     {
         let retval = value;
         switch (valtype)
@@ -67,8 +69,13 @@ export class KFDJson
             case KFDataType.OT_STRING:
                 if(skip)
                     bytearr.skipstring();
-                else
+                else{
                     retval = bytearr.readstring();
+                    if(typename == "kfname")
+                    {
+                        retval = new KFDName(retval);
+                    }
+                }
                 break;
             case KFDataType.OT_BYTES:
                 if(skip)
@@ -179,6 +186,7 @@ export class KFDJson
                     }
                 }
             }
+
             retval = obj;
         }
         return retval;
@@ -206,10 +214,12 @@ export class KFDJson
                     }
                 }else
                 {
+                    let typename = "";
+                    if(propinfo) typename = propinfo.otype;
                     let objarr = [];
                     while (size > 0)
                     {
-                        objarr.push(KFDJson._read_base_value(bytearr, otype));
+                        objarr.push(KFDJson._read_base_value(bytearr, otype, false,null,typename));
                         size -= 1;
                     }
                     retval = objarr;
@@ -305,9 +315,22 @@ export class KFDJson
         if(size > 0)
         {
             let valueType = bytearr.readUnsignedByte();
+
             if(valueType <= KFDataType.OT_UINT64)
             {
-                retval = KFDJson._read_base_value(bytearr, valueType, skip, jsonobj);
+                ///支持下NULL空对象
+                if(valueType == KFDataType.OT_NULL)
+                {
+                    retval = null;
+                }
+                else {
+
+                    let typename = "";
+                    if (propinfo) {
+                        typename = propinfo.type;
+                    }
+                    retval = KFDJson._read_base_value(bytearr, valueType, skip, jsonobj, typename);
+                }
             }
             else
             {
@@ -334,7 +357,7 @@ export class KFDJson
                     if ( classname && classname != "")
                         kfddata = KFDTable.kfdTB.get_kfddata(classname);
                     retval = KFDJson._read_object_value(bytearr, valueType, kfddata, skip, jsonobj);
-                    //设置类名吧
+                    //设置类名吧MIX对象
                     if(retval && kfddata)
                     {
                         retval["__cls__"] = kfddata["class"];
@@ -359,9 +382,10 @@ export class KFDJson
            {
                valueType = KFDataType.GetTypeID(propinfo["type"]);
            }
-
-           if(jsonobj && jsonobj["__cls__"])
+           else if(jsonobj && jsonobj["__cls__"])
            {
+               ///此处有问题如果获取到属性应该用已经获取到的类型
+               ///不应该用__cls__来绑架类型
                kfddata = KFDTable.kfdTB.get_kfddata(jsonobj["__cls__"]);
                valueType = KFDataType.OT_MIXOBJECT;
            }
@@ -438,6 +462,11 @@ export class KFDJson
                 bytearr.writeDouble(valObject);
                 break;
             case KFDataType.OT_STRING:
+                ///类型判定
+                if(valObject instanceof KFDName)
+                {
+                    valObject = valObject.toString();
+                }
                 bytearr.writestring(valObject);
                 break;
             case KFDataType.OT_BYTES:

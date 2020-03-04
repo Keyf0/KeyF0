@@ -99,6 +99,7 @@ export class KFMetaManager
 
     public static GetMetaName(name:KFDName):IKFMeta
     {
+
         return this.m_mapMetas[name.value];
     }
 }

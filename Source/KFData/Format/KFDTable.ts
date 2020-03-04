@@ -80,8 +80,18 @@ export class KFDTable
         return all;
     }
 
-    public is_extend(kfddata,clsname:string):boolean
+    public is_extendname(name, clsname:string, self:boolean = false):boolean
     {
+        if(self && name == clsname)
+            return true;
+        return this.is_extend(this.get_kfddata(name),clsname);
+    }
+
+    public is_extend(kfddata,clsname:string,self:boolean = false):boolean
+    {
+        if(self && kfddata["class"] == clsname)
+            return true;
+
         let extend = kfddata["extend"];
 
         while (extend)
