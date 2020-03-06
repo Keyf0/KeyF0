@@ -2,9 +2,12 @@ import {KFActorModel} from "../Model/KFActorModel";
 
 export class KFComponentBase 
 {
+    //兼容KFSCRIPTCONTEXT的类型用any
     public targetObject:any;
-    public comtype:number;
+    //兼容KFSCRIPTCONTEXT的类型用any
     public runtime: any;
+
+    public comtype:number;
     public model:KFActorModel;
 
     public constructor(target:any, type:number)

@@ -40,9 +40,9 @@ export class KFScriptSystem extends KFScriptManagerBase
 
     public NewScriptInstance(type:KFDName):KFScript
     {
-        let scriptcls =  KFScriptFactory.GetScriptClass(type);
-        if(scriptcls)
-            return new scriptcls();
+        let scriptmeta =  KFScriptFactory.GetMetaName(type);
+        if(scriptmeta)
+            return scriptmeta.instantiate();
         return null;
     }
 }

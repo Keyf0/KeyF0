@@ -180,19 +180,18 @@ export class KFTimeBlock
 
     private Activate()
     {
-        let target = this.data.target;
-        let toption = target.option;
+        let targetdata = this.data.target;
+        let toption = targetdata.option;
 
         if (toption == KFBlockTargetOption.Create)
         {
             this.m_target = this.m_runtime.domain
-                .CreateBlockTarget(target.asseturl);
+                .CreateBlockTarget(targetdata);
 
             if (this.m_target != null)
             {
-                this.m_target.name = target.instname;
                 this.m_container.AddChild(this.m_target);
-                this.m_target.ActivateBLK(this.data);
+                this.m_target.ActivateBLK(targetdata);
             }
             else
             {
@@ -202,7 +201,7 @@ export class KFTimeBlock
         else if (toption == KFBlockTargetOption.Attach)
         {
             this.m_target = this.m_container
-                .FindChild(target.instname);
+                .FindChild(targetdata.instname);
         }
     }
 
@@ -217,9 +216,10 @@ export class KFTimeBlock
         if (this.m_target != null)
         {
             //LOG_WARNING("%s", m_data->label.c_str());
-            if (this.data.target.option == KFBlockTargetOption.Create)
+            let targetdata = this.data.target;
+            if (targetdata.option == KFBlockTargetOption.Create)
             {
-                this.m_target.DeactiveBLK(this.data);
+                this.m_target.DeactiveBLK(targetdata);
                 this.m_container.RemoveChild(this.m_target);
                 this.m_runtime.domain.DestroyBlockTarget(this.m_target);
             }

@@ -1,38 +1,39 @@
 import {KFDName} from "../../KFData/Format/KFDName";
-import {KFScript} from "../../KFScript/KFScriptDef";
-import {LOG_ERROR} from "../../Core/Log/KFLog";
+import {AMeta, InstantiateFunc, KFMetaManager} from "../../Core/Meta/KFMetaManager";
 
-export class  KFScriptFactory
+export class ScriptMeta extends AMeta
 {
-    private static m_inited:boolean = false;
-    private static m_metas:{[key: number]: new(...args: any[])=>KFScript;} = {};
-
-    public static Init():void
+    public constructor(name:string = "", func:InstantiateFunc = null)
     {
-        if(KFScriptFactory.m_inited)
-            return;
-        KFScriptFactory.m_inited = true;
-        
-
+        super(name,func);
     }
 
-    public static Clear():void
+    public SetDefaultFactroy(name:string, func:InstantiateFunc = null)
     {
-        KFScriptFactory.m_metas = {};
-    }
-
-    public static RegisterScriptClass(  name:KFDName
-                                      , meta:new(...args: any[])=>KFScript):void
-    {
-        if(KFScriptFactory.m_metas[name.value])
+        super.SetDefaultFactroy(name,func);
+        if(this.name != "")
         {
-            LOG_ERROR("{0}重复定义",name.toString());
+            KFScriptFactory.Register(this);
         }
-        KFScriptFactory.m_metas[name.value] = meta;
+    }
+}
+
+export class KFScriptFactory
+{
+    private static _Inst:KFMetaManager = new KFMetaManager(1000000,"ScriptMeta");
+
+    public static Register(meta:AMeta):boolean
+    {
+       return KFScriptFactory._Inst._Register(meta);
     }
 
-    public static GetScriptClass(name:KFDName):new(...args: any[])=>KFScript
+    public static GetMetaType(type:number):AMeta
     {
-        return KFScriptFactory.m_metas[name.value];
+        return KFScriptFactory._Inst._GetMetaType(type);
+    }
+
+    public static GetMetaName(name:KFDName):AMeta
+    {
+        return KFScriptFactory._Inst._GetMetaName(name);
     }
 }

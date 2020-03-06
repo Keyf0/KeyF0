@@ -78,12 +78,15 @@ export class KFiSayPlayer implements IKFRuntime
         //LOG_WARNING("%s", path.c_str());
         this.m_path = path;
 
+        let metaData = this.configs.GetMetaData(path,false);
+        let KFBlockTargetData = {
+                asseturl:path
+            ,   instname:"_root"
+        };
         //kfDel(m_root);
-        let mainactor = new KFActor(this);
-        this.m_root = mainactor;
-
-        mainactor.Init(path);
-        mainactor.ActivateACT(0);
+        this.m_root = <KFActor>this.domain.CreateBlockTarget(KFBlockTargetData);
+        this.m_root.Construct(metaData, this);
+        this.m_root.ActivateBLK(KFBlockTargetData);
     }
 
     public Tick()

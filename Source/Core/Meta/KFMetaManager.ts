@@ -1,4 +1,4 @@
-import {LOG_ERROR} from "../Log/KFLog";
+import {LOG, LOG_ERROR, LOG_WARNING} from "../Log/KFLog";
 import {KFDName} from "../../KFData/Format/KFDName";
 
 export interface InstantiateFunc
@@ -6,8 +6,8 @@ export interface InstantiateFunc
     (): any;
 }
 
-
-export class IKFMeta
+///一个抽角的META不用直接实例化
+export class AMeta
 {
     public type:number;
     public name:string;
@@ -25,12 +25,26 @@ export class IKFMeta
         if(func == null)
         {
             if(this.instantiate == null)
-            this.instantiate = () => {
-                return null;
-            };
+                this.instantiate = () => {
+                    return null;
+                };
         }
         else
             this.instantiate = func;
+    }
+}
+
+
+export class IKFMeta extends AMeta
+{
+    public constructor(name:string = "",func:InstantiateFunc = null)
+    {
+        super(name,func);
+    }
+
+    public SetDefaultFactroy(name:string, func:InstantiateFunc = null)
+    {
+        super.SetDefaultFactroy(name,func);
 
         if(this.name != "")
         {
@@ -41,7 +55,7 @@ export class IKFMeta
 
 export class DefaultType<T>
 {
-    public meta:IKFMeta;
+    public meta:AMeta;
     public instance:T = null;
 
     public new_default():T
@@ -65,11 +79,20 @@ export class DefaultType<T>
 
 export class KFMetaManager
 {
-    private static typeidstart:number = 1;
-    private static m_metas:Array<IKFMeta> = new Array<IKFMeta>();
-    private static m_mapMetas:{[key:number]:IKFMeta} = {};
+    private static _Inst:KFMetaManager = new KFMetaManager();
 
-    public static Register(meta:IKFMeta):boolean
+    private typeidstart:number = 1;
+    private m_name = "";
+    private m_metas:Array<AMeta> = new Array<AMeta>();
+    private m_mapMetas:{[key:number]:AMeta} = {};
+
+    public constructor(startid:number = 1,name:string="Meta")
+    {
+        this.typeidstart = startid;
+        this.m_name = name;
+    }
+
+    public _Register(meta:AMeta):boolean
     {
         let name = meta.name;
         if(meta.type > 0 || name == "")
@@ -81,7 +104,11 @@ export class KFMetaManager
         if(oldmeta)
         {
             meta.type = oldmeta.type;
+            LOG_WARNING("[{0}] {1}注册重复", this.m_name, name);
             return;
+        }
+        else{
+            LOG("[{0}] {1}注册成功",this.m_name, name);
         }
 
         meta.type = this.m_metas.length;
@@ -91,15 +118,29 @@ export class KFMetaManager
         return true;
     }
 
-    public static GetMetaType(type:number):IKFMeta
+    public  _GetMetaType(type:number):AMeta
     {
-        let i = type - KFMetaManager.typeidstart;
+        let i = type - this.typeidstart;
         return this.m_metas[i];
     }
 
-    public static GetMetaName(name:KFDName):IKFMeta
+    public _GetMetaName(name:KFDName):AMeta
     {
-
         return this.m_mapMetas[name.value];
+    }
+
+    public static Register(meta:AMeta):boolean
+    {
+        return KFMetaManager._Inst._Register(meta);
+    }
+
+    public static GetMetaType(type:number):AMeta
+    {
+        return KFMetaManager._Inst._GetMetaType(type);
+    }
+
+    public static GetMetaName(name:KFDName):AMeta
+    {
+        return KFMetaManager._Inst._GetMetaName(name);
     }
 }

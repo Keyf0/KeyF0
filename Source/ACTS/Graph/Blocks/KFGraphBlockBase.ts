@@ -12,7 +12,7 @@ export class KFGraphBlockBase
                   , data:any)
     {
         this.m_ctx = ctx;
-        this.SetData(data);
+        this.data = data;
     }
 
     public Release()
@@ -20,12 +20,6 @@ export class KFGraphBlockBase
         this.Deactive(true);
         this.m_ctx = null;
         this.data = null;
-    }
-
-    //public Reset(){}
-    public SetData(data:any)
-    {
-        this.data = data;
     }
 
     public Input(arg:any)
@@ -51,9 +45,11 @@ export class KFGraphBlockBase
         let target:KFBlockTarget = null;
         if (this.data && this.m_ctx)
         {
-            if (this.data.target.option == KFBlockTargetOption.Attach)
+            let tdata = this.data.target;
+
+            if (tdata.option == KFBlockTargetOption.Attach)
             {
-                target = this.m_ctx.targetObject.FindChild(this.data.target.instname);
+                target = this.m_ctx.targetObject.FindChild(tdata.instname.value);
             }
             else
             {

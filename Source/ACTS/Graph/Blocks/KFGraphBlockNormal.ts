@@ -45,12 +45,11 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
             let targetdata = this.data.target;
             if (targetdata.option == KFBlockTargetOption.Create)
             {
-                this.m_target = this.m_ctx.runtime.domain.CreateBlockTarget(targetdata.asseturl);
+                this.m_target = this.m_ctx.runtime.domain.CreateBlockTarget(targetdata);
                 if (this.m_target)
                 {
-                    this.m_target.name = targetdata.instname;
                     this.m_ctx.targetObject.AddChild(this.m_target);
-                    this.m_target.ActivateBLK(this.data);
+                    this.m_target.ActivateBLK(targetdata);
                 }
                 else {
                     LOG_ERROR("Cannot Create BlockTarget:{0}", targetdata.asseturl);
@@ -67,11 +66,12 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
     {
         super.Deactive(force);
 
-        if (this.data.target.option == KFBlockTargetOption.Create)
+        let targetdata = this.data.target;
+        if (targetdata.option == KFBlockTargetOption.Create)
         {
-            this.m_target.DeactiveBLK(this.data);
+            this.m_target.DeactiveBLK(this.data.target);
             this.m_ctx.targetObject.RemoveChild(this.m_target);
-            this.m_ctx.runtime.domain.DestroyBlockTarget(this.m_target);
+            this.m_ctx.runtime.domain.DestroyBlockTarget(targetdata);
         }
 
         this.m_target = null;

@@ -1,24 +1,27 @@
-import {IKFBlockTargetContainer, KFBlockTarget, KFGraphTarget} from "../Context/KFBlockTarget";
+import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFActorModel} from "./Model/KFActorModel";
 import {KFEventTable} from "../../Core/Misc/KFEventTable";
-import {KFTimers} from "../Context/KFTimers";
 import {KFComponentBase} from "./Components/KFComponentBase";
-import {KFAsyncComponent} from "./Components/KFAsyncComponent";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {KFScriptComponent} from "./Components/KFScriptComponent";
 import {KFGlobalDefines} from "../KFACTSDefines";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {IKFConfigs} from "../Context/IKFConfigs";
 
 
-export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
+export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 {
-    public runtime:IKFRuntime;
-    public iscontainer: boolean = true;
+    public static Meta:IKFMeta = new IKFMeta("KFActor"
+
+    ,():KFBlockTarget=>{
+        return new KFActor();
+    }
+);
 
     public model:KFActorModel;
     public path:string;
-    public etable:KFEventTable;
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
     public script:KFScriptComponent;
@@ -28,18 +31,11 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
     protected m_listComponents:Array<KFComponentBase> = new Array<KFComponentBase>();
     protected m_children:Array<KFBlockTarget> = new Array<KFBlockTarget>();
 
-    public constructor(runtime:IKFRuntime = null)
-    {
-        super();
-        this.bttype = KFBlockTarget.BTAll;
-        this.runtime = runtime;
-    }
+    public constructor() {super();}
 
-    public Construct(metadata:any
-        , runtime:IKFRuntime)
+    public Construct(metadata:any, runtime:IKFRuntime)
     {
         super.Construct(metadata,runtime);
-        this.runtime = runtime;
         this.Init(this.metadata.asseturl);
     }
 
@@ -121,7 +117,6 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
     {
         this.etable = new KFEventTable();
         this.model.Activate(sid,this.etable);
-        this.sid = sid;
         this.ActivateAllComponent();
     }
 
@@ -132,26 +127,15 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
         this.etable = null;
     }
 
-    public ActivateBLK(KFTimeBlockData:any):void
+    public ActivateBLK(KFBlockTargetData:any):void
     {
-        this.ActivateACT(0);
+        this.ActivateACT(this.sid);
     }
 
-    public DeactiveBLK(KFTimeBlockData:any):void
-    {
-        this.Deactive();
-    }
-
-    public ActivateGraph(KFGraphBlockData:any):void
-    {
-        this.ActivateACT(0);
-    }
-
-    public DeactiveGraph(KFGraphBlockData:any):void
+    public DeactiveBLK(KFBlockTargetData:any):void
     {
         this.Deactive();
     }
-
     //public IsActived():boolean{}
 
     public Tick(frameindex:number):void
@@ -210,6 +194,16 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
         }
     }
 
+    protected _AddChild(child: KFBlockTarget):void
+    {
+
+    }
+
+    protected _RemoveChild(child: KFBlockTarget):void
+    {
+
+    }
+
     public AddChild(child: KFBlockTarget): void
     {
         let p = child.parent;
@@ -219,10 +213,11 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
                 p.RemoveChild(child);
             this.m_children.push(child);
             child.parent = this;
+            this._AddChild(child);
         }
     }
 
-    public FindChild(name: string): KFBlockTarget
+    public FindChild(name:number): KFBlockTarget
     {
         let child = this.GetChild(name);
         if(!child && this.parent)
@@ -232,13 +227,13 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
         return child;
     }
 
-    public GetChild(name: string): KFBlockTarget
+    public GetChild(name:number): KFBlockTarget
     {
         let i:number = this.m_children.length -1;
         while (i >= 0)
         {
             let child:KFBlockTarget = this.m_children[i];
-            if(child.name == name)
+            if(child.name.value == name)
                 return child;
             i -= 1;
         }
@@ -256,17 +251,13 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
     {
         if(child.parent == this)
         {
-            let i = this.m_children.length - 1;
-            while (i >= 0)
+            let i = this.m_children.indexOf(child);
+            if(i != -1)
             {
-                if(this.m_children[i] == child)
-                {
-                    this.m_children.splice(i,1);
-                    break;
-                }
-                i -= 1;
+                this.m_children.splice(i,1);
+                child.parent = null;
+                this._RemoveChild(child);
             }
-            child.parent = null;
         }
     }
 
@@ -281,5 +272,8 @@ export class KFActor extends KFGraphTarget implements IKFBlockTargetContainer
         return new KFActorModel();
     }
 
-
+    public GetRuntime(): IKFRuntime
+    {
+        return this.runtime;
+    }
 }

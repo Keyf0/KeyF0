@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BBTest</title>
+    <script src="js/require.js"></script>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        html, body {
+            overflow: hidden;
+            width   : 100%;
+            height  : 100%;
+            margin  : 0;
+            padding : 0;
+        }
+
+        #renderCanvas {
+            width   : 100%;
+            height  : 100%;
+            touch-action: none;
+        }
+    </style>
+
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+
+    <script>
+        require(["libs/BBGamePlay/BBTest"],function(module)
+        {
+            console.log("module loaded");
+
+            var cv = document.getElementById("renderCanvas");
+            var app = new module.BBTest(cv);
+
+            app.createScene();
+            app.doRender();
+
+        });
+    </script>
+</body>
+</html>
