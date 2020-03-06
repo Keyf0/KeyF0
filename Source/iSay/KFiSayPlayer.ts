@@ -9,6 +9,7 @@ import {KFGlobalDefines} from "../ACTS/KFACTSDefines";
 import {TypeEvent} from "../Core/Misc/TypeEvent";
 import {KFDomain} from "../ACTS/Context/KFDomain";
 import {KFActor} from "../ACTS/Actor/KFActor";
+import {KFDName} from "../KFData/Format/KFDName";
 
 export class KFiSayPlayer implements IKFRuntime
 {
@@ -81,7 +82,7 @@ export class KFiSayPlayer implements IKFRuntime
         let metaData = this.configs.GetMetaData(path,false);
         let KFBlockTargetData = {
                 asseturl:path
-            ,   instname:"_root"
+            ,   instname:new KFDName("_root")
         };
         //kfDel(m_root);
         this.m_root = <KFActor>this.domain.CreateBlockTarget(KFBlockTargetData);
