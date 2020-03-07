@@ -1,0 +1,50 @@
+{
+    "import_groups": [
+        {
+            "group": "BBGamePlay",
+            "export_info": {
+                "export_code_path": "",
+                "export_typecode_path": "",
+                "export_api": ""
+            },
+            "import_code_paths": [
+                {
+                    "path": "../../BBGamePlay",
+                    "headpath": ""
+                }
+            ]
+        },
+        {
+            "group": "Web",
+            "export_info": {
+                "export_code_path": "",
+                "export_typecode_path": "",
+                "export_api": ""
+            },
+            "import_code_paths": [
+                {
+                    "path": "../../Web",
+                    "headpath": ""
+                }
+            ]
+        }
+    ],
+    "import_kfd_path": "../kfds/import",
+    "export_code_path": "exportcpp",
+    "export_kfd_path": "../kfds/js",
+    "export_kfd_table": "KFDTable.json",
+    "template_path": "../../../../KungfuGit/Source/Kungfu/KFTool/KFDataTool/Template",
+    "namespace": "KF",
+    "code_type": "ts",
+    "data_type": "bytearr",
+    "info_props": [],
+    "typeDefTypes": [],
+    "projectname": "",
+    "include_kfd_paths": [
+        {
+            "path": "../kfds/base",
+            "headpath": ""
+        }
+    ],
+    "__cls__": "KFDataToolSetting"
+}

@@ -2,6 +2,7 @@ import {IKFDomain} from "./IKFDomain";
 import {KFBlockTarget} from "./KFBlockTarget";
 import {IKFRuntime} from "./IKFRuntime";
 import {KFMetaManager} from "../../Core/Meta/KFMetaManager";
+import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
 
 export class KFDomain implements IKFDomain
 {
@@ -25,7 +26,7 @@ export class KFDomain implements IKFDomain
             {
                 let target:KFBlockTarget = meta.instantiate();
                 //kfgcRetain(target);
-                //LOG_WARNING("Instantiate a BlockTarget: %s, %s", asseturl.c_str(), metadata->type.c_str());
+                LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
                 target.Construct(metadata, this.m_runtime);
                 this.m_incrsid += 1;
 
@@ -36,12 +37,12 @@ export class KFDomain implements IKFDomain
             }
             else
             {
-                //LOG_ERROR("Cannot find meta: %s", metadata->type.c_str());
+                LOG_ERROR("Cannot find meta: {0}", metadata.type.toString());
             }
         }
         else
         {
-            //LOG_ERROR("Cannot find metadata: %s", asseturl.c_str());
+            LOG_ERROR("Cannot find metadata: %s", asseturl.c_str());
         }
 
         return null;

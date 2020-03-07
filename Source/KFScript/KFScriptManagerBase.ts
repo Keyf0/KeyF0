@@ -80,9 +80,6 @@ export class KFScriptManagerBase implements KFScriptContext
 
     public Execute(scriptData: any, context: KFScriptContext): void
     {
-        if (scriptData == null)
-            return;
-
         if (context == null)
             context = this;
 
@@ -103,10 +100,16 @@ export class KFScriptManagerBase implements KFScriptContext
             {
                 let sTypes:Array<KFDName> = script.GetScriptTypes();
                 let count:number = sTypes.length;
-                for (let i:number = 0; i < count; i++)
-                {
-                    this._G_SCRIPT_INSTANCE[sTypes[i].value] = script;
+                if(count > 0) {
+                    for (let i: number = 0; i < count; i++) {
+                        this._G_SCRIPT_INSTANCE[sTypes[i].value] = script;
+                    }
                 }
+                else
+                {
+                    this._G_SCRIPT_INSTANCE[scriptType.value] = script;
+                }
+
                 script.Execute(scriptData, context);
             }
         }

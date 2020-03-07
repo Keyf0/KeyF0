@@ -95,7 +95,8 @@ export class KFGraph
 
         for (let it in this.m_inputnames)
         {
-            let block = this.m_blocks[it];
+            let blockname:KFDName  = this.m_inputnames[it];
+            let block = this.m_blocks[blockname.value];
             if(block)
             {
                 block.Input(KF_GRAPHARG_NULL);

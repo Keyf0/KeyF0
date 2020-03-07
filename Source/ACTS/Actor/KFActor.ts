@@ -21,12 +21,10 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 );
 
     public model:KFActorModel;
-    public path:string;
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
     public script:KFScriptComponent;
 
-    protected m_cfg:any;///KFActorConfig
     protected m_mapComponents:{[key: number]: KFComponentBase;} = {};
     protected m_listComponents:Array<KFComponentBase> = new Array<KFComponentBase>();
     protected m_children:Array<KFBlockTarget> = new Array<KFBlockTarget>();
@@ -41,14 +39,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public Init(asseturl:string):void
     {
-        this.path = asseturl;
-        this.model = this.CreateModel();
-        this.m_cfg = this.LoadConfig(asseturl);
-
-        if(this.m_cfg)
-        {
-            this.name = this.m_cfg.name;
-            this.model.SetConfig(this.m_cfg);
+        if(this.model == null) {
+            this.model = this.CreateModel();
+            this.model.path = asseturl;
             this.model.actived = false;
             this.InitAllComponent();
         }
@@ -103,13 +96,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public Reset():void
     {
         this.model.Reset();
-        this.m_cfg = this.LoadConfig(this.path);
-        if(this.m_cfg)
-        {
-            this.name = this.m_cfg.name;
-            this.model.SetConfig(this.m_cfg);
-            this.model.actived = false;
-        }
+        this.model.actived = false;
         this.ResetAllComponent();
     }
 
@@ -140,12 +127,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public Tick(frameindex:number):void
     {
-        if (!this.model.actived)
-        {
-            return;
-        }
-
-        if (this.model.pause)
+        if (!this.model.actived || this.model.pause)
         {
             return;
         }

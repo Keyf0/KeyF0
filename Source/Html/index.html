@@ -8,10 +8,10 @@
     <script src="js/require.js"></script>
 
     <script>
-        require(["libs/App/AppLauncher"],function(module){
+        require(["libs/App/AppLauncher","libs/Web/Web"],function(m1,m2){
             console.log("module loaded");
-            var app = new module.AppLauncher();
-            app.run();
+            var app = new m1.AppLauncher();
+            app.run("appdata","kfds","Index.blk");
         });
     </script>
 </head>

@@ -5,7 +5,6 @@ import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
 
 export class KFGraphBlockExportPoint extends KFGraphBlockBase
 {
-
         private  m_evtdata:KFEvent = new KFEvent();
 
         public Input(arg: any)
@@ -44,6 +43,5 @@ export class KFGraphBlockExportPoint extends KFGraphBlockBase
           {
               this.OutNext(arg);
           }
-
         }
 }

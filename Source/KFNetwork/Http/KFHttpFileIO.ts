@@ -47,16 +47,28 @@ export class KFHttpFileIO implements IKFFileIO
 
     }
 
-    public asyncLoadFile(path: string, async: FileOperationEnd,dataft:string): boolean
+    public asyncLoadFile(path: string
+                         , async: FileOperationEnd
+                         , params:any): boolean
     {
-        if(!dataft || dataft == "")
+        let dataft = params;
+        let basedir = "";
+        if(params && typeof (params) != 'string')
         {
-            dataft = URLLoaderDataFormat.BINARY;
+            dataft = params.dataFormat;
+            if(params.basedir)
+            {
+                basedir = params.basedir;
+            }
         }
+
+        if(!dataft || dataft == "") {dataft = URLLoaderDataFormat.BINARY;}
 
         let loader:URLLoader = new URLLoader();
         loader.dataFormat = dataft;
-        let request:URLRequest = new URLRequest(path);
+
+        ///增加基础目录
+        let request:URLRequest = new URLRequest(basedir + path);
         loader.COMPLETE_Event.on((currloader:URLLoader)=>{
             async(true, currloader.data,path);
         });
@@ -73,15 +85,24 @@ export class KFHttpFileIO implements IKFFileIO
     public asyncLoadFileList(filearr: Array<string>
                         , onprogress: FileOperationEnd
                         , async: FileOperationEnd
-                        , dataft:string)
+                        , params:any)
     {
 
         if(this.__loader) return;
 
-        if(!dataft || dataft == "")
+        let dataft = params;
+        let basedir = "";
+
+        if(params && typeof(params) != 'string')
         {
-            dataft = URLLoaderDataFormat.BINARY;
+            dataft = params.dataFormat;
+            if(params.basedir)
+            {
+                basedir = params.basedir;
+            }
         }
+
+        if(!dataft || dataft == "") {dataft = URLLoaderDataFormat.BINARY;}
 
         let loader:URLLoader = new URLLoader();
         loader.dataFormat = dataft;
@@ -90,6 +111,7 @@ export class KFHttpFileIO implements IKFFileIO
         this.__loadindex = 0;
 
         let target = this;
+        let currloadpath = "";
 
         function NextLoad()
         {
@@ -97,8 +119,8 @@ export class KFHttpFileIO implements IKFFileIO
 
             if(filearr.length > target.__loadindex)
             {
-                let path = filearr[target.__loadindex]; 
-                let request:URLRequest = new URLRequest(path);
+                currloadpath = filearr[target.__loadindex];
+                let request:URLRequest = new URLRequest(basedir + currloadpath);
                 loader.load(request);
                 target.__loadindex += 1;
             }
@@ -113,12 +135,12 @@ export class KFHttpFileIO implements IKFFileIO
         loader.COMPLETE_Event.on((currloader:URLLoader)=>{
             onprogress(true
                 ,   currloader.data
-                ,   currloader.geturl());
+                ,   currloadpath);
                 NextLoad();
         });
 
         loader.IO_ERROR_Event.on((currloader:URLLoader)=>{
-            onprogress(false, null,currloader.geturl());
+            onprogress(false, null,currloadpath);
             NextLoad();
         });
         

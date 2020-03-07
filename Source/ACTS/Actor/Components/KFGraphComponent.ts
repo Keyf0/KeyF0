@@ -12,7 +12,7 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     public static Meta:IKFMeta
         = new IKFMeta("KFGraphComponent");
 
-    public IsEditing: boolean;
+    public IsEditing: boolean = false;
 
     private m_cfg:any;
     public m_graph:KFGraph;

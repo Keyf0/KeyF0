@@ -17,11 +17,11 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
     private _targetScripts:{[key:number]:KFScript;} = {};
     private _scopeOnceScripts:{[key:number]:any} = {};
     private _scopeKeepScripts:Array<KFScript> = new Array<KFScript>();
-    private _keepScriptID:number;
-    private _scriptruning:boolean;
-    private _isEndingscope:boolean;
+    private _keepScriptID:number = -1;
+    private _scriptruning:boolean = false;
+    private _isEndingscope:boolean = false;
     private _removeKeepScripts:{[key:number]:boolean} = {};
-    private _hasRemoveKeep:boolean;
+    private _hasRemoveKeep:boolean = false;
     private _nextFrameScripts:Array<any> = new Array<any>();
     private _beginscopeScriptes:Array<any> = new Array<any>();
     private _variables:{[key:number]:Variable} = {};
@@ -161,11 +161,8 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
 
     public Execute(scriptData: any, context: KFScriptContext): void
     {
-        if (scriptData != null)
-        {
-            this.ExecuteAt(scriptData.type, scriptData
+        this.ExecuteAt(scriptData.type, scriptData
             , null,false);
-        }
     }
 
     public ExecuteAt(scriptType: KFDName
@@ -173,9 +170,6 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
                      , context: KFScriptContext
                      , beginscope: boolean): void
     {
-        if (scriptData == null)
-            return;
-
         if(context == null)
         {
             context = this;

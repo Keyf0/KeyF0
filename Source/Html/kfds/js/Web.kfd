@@ -1,0 +1,47 @@
+[
+    {
+        "includes": [
+            "HCanvas.ts"
+        ],
+        "class": "HCanvas",
+        "extend": "HInteractive",
+        "propertys": [],
+        "clsid": 1365
+    },
+    {
+        "includes": [
+            "HDocument.ts"
+        ],
+        "class": "HDocument",
+        "extend": "HInteractive",
+        "propertys": [],
+        "clsid": 1366
+    },
+    {
+        "includes": [
+            "HElementActor.ts"
+        ],
+        "class": "HElementActor",
+        "extend": "KFActor",
+        "propertys": [],
+        "clsid": 1367
+    },
+    {
+        "includes": [
+            "HElementTarget.ts"
+        ],
+        "class": "HElementTarget",
+        "extend": "KFBlockTarget",
+        "propertys": [],
+        "clsid": 1368
+    },
+    {
+        "includes": [
+            "HInteractive.ts"
+        ],
+        "class": "HInteractive",
+        "extend": "HElementActor",
+        "propertys": [],
+        "clsid": 1369
+    }
+]

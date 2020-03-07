@@ -20,7 +20,7 @@ export class HElementCreator {
                 //let blktarget:KFBlockTarget = <KFBlockTarget><any>element;
                 //let eleid:string = "_kfwebid_" + blktarget.sid;
                 let htmlstr = Values.html;
-                parent.insertAdjacentHTML("afterend", htmlstr);
+                parent.insertAdjacentHTML("beforeend", htmlstr);
                 element.domELE = parent.lastElementChild;
             }
 

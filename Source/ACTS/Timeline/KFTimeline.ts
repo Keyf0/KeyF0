@@ -13,7 +13,7 @@ export class KFTimeline
     public onPlayBegin:TypeEvent<number> = new TypeEvent<number>();
     public onPlayEnd:TypeEvent<number> = new TypeEvent<number>();
     public currstate:any;
-    public currframeindex:number;
+    public currframeindex:number = 0;
 
 
     private m_runtime:IKFRuntime;
@@ -28,9 +28,9 @@ export class KFTimeline
 
 
 
-    private m_length:number;
-    private m_loop:boolean;
-    private m_tpf:number;
+    private m_length:number = 0;
+    private m_loop:boolean = true;
+    private m_tpf:number = 0;
 
     private m_ctx:IKFTimelineContext;
     private m_container:IKFBlockTargetContainer;
@@ -134,8 +134,8 @@ export class KFTimeline
                             //LOG_TAG_ERROR("state [%d, %s].layers[0].blocks.size() > 1", stateid, m_state->name.c_str());
                         }
 
-                        let data:any = layer.blocks[0];
-                        data.target.option = KFBlockTargetOption.Ignore;
+                        //let data:any = layer.blocks[0];
+                        //data.target.option = KFBlockTargetOption.Ignore;
                     }
                 }
 

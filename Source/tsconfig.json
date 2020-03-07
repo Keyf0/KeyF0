@@ -3,10 +3,13 @@
     "module": "amd",
     "target": "es5",
     "outDir": "Html/libs",
-    "sourceMap": true
+    "sourceMap": true,
+    "types": [
+      "babylonjs"
+    ]
   },
   "exclude": [
-    "node_modules"
+      "node_modules"
     , "Html"
   ],
   "include": [

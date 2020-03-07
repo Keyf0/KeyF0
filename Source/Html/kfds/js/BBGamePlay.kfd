@@ -1,0 +1,43 @@
+[
+    {
+        "includes": [
+            "Data/Exportkfd.ts"
+        ],
+        "class": "BBV3",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "x",
+                "type": "num1"
+            },
+            {
+                "id": 2,
+                "name": "y",
+                "type": "num1"
+            },
+            {
+                "id": 3,
+                "name": "z",
+                "type": "num1"
+            }
+        ],
+        "clsid": 1363
+    },
+    {
+        "includes": [
+            "Data/Exportkfd.ts",
+            "BBV3F.h"
+        ],
+        "class": "OneScriptData",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "position",
+                "type": "object",
+                "otype": "BBV3"
+            }
+        ],
+        "clsid": 1364
+    }
+]

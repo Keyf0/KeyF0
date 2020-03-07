@@ -1,14 +1,13 @@
 import {DefaultType, IKFMeta} from "../../Core/Meta/KFMetaManager";
 
-export interface LoadSettingEnd
+export interface LoadConfigEnd
 {
     (ret:boolean);
 }
 
 export interface IKFConfigs
 {
-    load_setting(path:string, end:LoadSettingEnd);
-    Init(basedir:string):void;
+    load_config(appdatapath:string, kfdpath:string, start:string, end:LoadConfigEnd);
 
     GetMetaData(asseturl:string, bFullpath:boolean):any;//KFMetaData
     GetTimelineConfig(path:string, bFullpath:boolean):any; //KFTimelineConfig
@@ -21,7 +20,7 @@ export interface IKFConfigs
     SetGraphConfig(path:string, KFGraphConfig:any):void;
 
     basedir():string;
-
+    start():string;
 }
 
 export let IKFConfigs_Type:DefaultType<IKFConfigs> = new DefaultType<IKFConfigs>();

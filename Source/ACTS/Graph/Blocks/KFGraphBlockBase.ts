@@ -1,6 +1,7 @@
 import {IKFGraphContext} from "../IKFGraphContext";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
+import {KFDName} from "../../../KFData/Format/KFDName";
 
 export class KFGraphBlockBase
 {
@@ -36,7 +37,14 @@ export class KFGraphBlockBase
     {
         if (this.m_ctx && this.data)
         {
-            this.m_ctx.Input(this.data.outputs[0].name, arg);
+            ///可以绑定加速，后面再优化
+            let outputs = this.data.outputs;
+            if(outputs && outputs.length > 0)
+            {
+                let nxtname:KFDName = outputs[0].name;
+                if(nxtname)
+                    this.m_ctx.m_graph.Input(nxtname, arg);
+            }
         }
     }
 
@@ -47,7 +55,7 @@ export class KFGraphBlockBase
         {
             let tdata = this.data.target;
 
-            if (tdata.option == KFBlockTargetOption.Attach)
+            if (tdata && tdata.option == KFBlockTargetOption.Attach)
             {
                 target = this.m_ctx.targetObject.FindChild(tdata.instname.value);
             }

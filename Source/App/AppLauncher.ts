@@ -7,9 +7,13 @@ import {KFByteArray} from "../KFData/Utils/FKByteArray";
 import {KFDJson} from "../KFData/Format/KFDJson";
 import {IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {DefaultAppConfig} from "./DefaultAppConfig";
+import {KFApp} from "../iSay/KFApp";
 
 export class AppLauncher
 {
+    private _app:KFApp;
+    private _tickid:number = -1;
+
     public constructor()
     {
         ///默认的配置文件管理器
@@ -18,39 +22,61 @@ export class AppLauncher
         HttpRequest_Type.meta = WebHttpRequest.Meta;
         IKFFileIO_Type.meta = KFHttpFileIO.Meta;
         IKFFileIO_Type.new_default();
+        IKFConfigs_Type.new_default();
     }
+
+    public stop_tick()
+    {
+        if(this._tickid != -1) {
+            clearInterval(this._tickid);
+            this._tickid = -1;
+        }
+    }
+
+    public start_tick()
+    {
+        if(this._tickid == -1)
+        {
+            let app = this._app;
+
+            this._tickid = setInterval(function () {
+                app.Tick(16);
+            }, 16);
+        }
+    }
+
 
     private app_start():void
     {
-        IKFFileIO_Type.instance.asyncLoadFile("appdata/main.blk",
-            (ret:any,data:any)=>{
+        if(this._app == null)
+        {
+            this._app = new KFApp();
+            this._app.Create();
+        }
 
-                if(ret)
-                {
-                    LOG("==>load success {0}");
-                    let bytearr:KFByteArray = new KFByteArray(data);
-                    let metaobj = KFDJson.read_value(bytearr);
+        this._app.Play(IKFConfigs_Type.instance.basedir()
+            ,IKFConfigs_Type.instance.start());
 
-                    LOG("==>read meta t {0}",metaobj);
-
-                }
-                else
-                {
-                    LOG_ERROR("==>load error");
-                }
-
-            },"");
+        this.start_tick();
     }
 
-    public run():void
+    public run(  appdatapath:string = ""
+               , kfdpath:string = ""
+              , start:string = "main"):void
     {
-        let appconfig = IKFConfigs_Type.new_default();
-        appconfig.load_setting("appdata/kfds.zip"
+        IKFConfigs_Type.instance.load_config(
+            appdatapath
+            ,kfdpath
+            ,start
             ,(ret:boolean)=>{
 
             if(ret)
             {
                 this.app_start();
+            }
+            else
+            {
+                LOG_ERROR("加载失败...");
             }
 
             });

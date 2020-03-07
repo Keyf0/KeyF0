@@ -62,7 +62,6 @@ export class KFiSayPlayer implements IKFRuntime
         this.m_tpf = KFGlobalDefines.TPF;
 
         this.configs = IKFConfigs_Type.new_default();
-        this.configs.Init(basedir);
         this.domain = new KFDomain(this);
         ///后面有需要再实现
         this.timers = new KFTimers(this);
@@ -86,7 +85,6 @@ export class KFiSayPlayer implements IKFRuntime
         };
         //kfDel(m_root);
         this.m_root = <KFActor>this.domain.CreateBlockTarget(KFBlockTargetData);
-        this.m_root.Construct(metaData, this);
         this.m_root.ActivateBLK(KFBlockTargetData);
     }
 

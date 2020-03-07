@@ -45,7 +45,7 @@ export class HCanvas extends HInteractive
                 htmlstr = '<Canvas></Canvas>';
             }
 
-            parent.insertAdjacentHTML("afterend", htmlstr);
+            parent.insertAdjacentHTML("beforeend", htmlstr);
             this.domELE = parent.lastElementChild;
         }
 

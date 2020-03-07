@@ -32,7 +32,7 @@ export class KFDTable
         if(kfddata == null) return null;
         let __extend__ = kfddata["__extend__"];
         
-        if( __extend__ && kfddata["extend"])
+        if( __extend__ == null && kfddata["extend"])
         {
             if(tb == null) tb = KFDTable.kfdTB;
             __extend__ = tb.get_kfddata(kfddata["extend"]);
@@ -72,7 +72,8 @@ export class KFDTable
             {
                 let clsname = data["class"];
                 ///显用
-                let clslabel = data["cname"] + "[" + clsname + "]";
+                let cname = data["cname"];
+                let clslabel = (cname ? cname : clsname) + "[" + clsname + "]";
 
                 all.push({label:clsname,label0:clslabel,value:data});
             }

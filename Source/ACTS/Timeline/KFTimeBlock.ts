@@ -52,21 +52,22 @@ export class KFTimeBlock
         let blocklength = data.end - data.begin;
 
         ///暂时保持和C++版本一致后面需要同时优化下
-        if(!keyframes["__order__"])
-        {
-            keyframes.sort((a,b)=> {return a.id - b.id});
-            keyframes["__order__"] = true;
-        }
+        ///H5编辑器保证关键帧的顺序
+        // if(!keyframes["__order__"])
+        // {
+        //    keyframes.sort((a,b)=> {return a.id - b.id});
+        //    keyframes["__order__"] = true;
+        // }
 
         let preframe = null;
-        for(let keyframe of keyframes)
-        {
-            this.m_keyframes[keyframe.id] = keyframe;
-            if(keyframe != null)
-            {
-                if(preframe != null)
-                    preframe["__next__"] = keyframe;
-                preframe = keyframe;
+        if(keyframes) {
+            for (let keyframe of keyframes) {
+                this.m_keyframes[keyframe.id] = keyframe;
+                if (keyframe != null) {
+                    if (preframe != null)
+                        preframe["__next__"] = keyframe;
+                    preframe = keyframe;
+                }
             }
         }
 
@@ -84,7 +85,8 @@ export class KFTimeBlock
         {
             frameIndex -= this.data.begin;
 
-            if (frameIndex == 0)
+            if (    frameIndex == 0
+                &&  this.m_target == null)
             {
                 this.Activate();
             }
@@ -93,7 +95,10 @@ export class KFTimeBlock
         }
         else if(frameIndex == endi + 1)
         {
-            this.Deactive();
+            if(!this.keep)
+            {
+                this.Deactive();
+            }
         }
     }
 
@@ -207,12 +212,6 @@ export class KFTimeBlock
 
     private Deactive(force:boolean = false)
     {
-        if(!force && this.keep)
-        {
-            //LOG_WARNING("%s Keep!", m_data->label.c_str());
-            return;
-        }
-
         if (this.m_target != null)
         {
             //LOG_WARNING("%s", m_data->label.c_str());

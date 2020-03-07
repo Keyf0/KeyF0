@@ -18,7 +18,7 @@ export class KFBlockTarget
     public name:KFDName;
     public metadata:any;
     public sid:number;
-    public scriptContext:KFScriptContext;
+    public script:KFScriptContext;
     public parent:IKFBlockTargetContainer;
     public etable:KFEventTable;
     public runtime:IKFRuntime;
