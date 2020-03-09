@@ -11,8 +11,4 @@ export interface IKFGraphContext
 
     IsEditing:boolean;
     m_graph:any;
-
-    OnGraphFrame(arg:any, frame:any, scriptContext:KFScriptContext);
-    Input(blockname:KFDName,arg:any):void;
-
 }

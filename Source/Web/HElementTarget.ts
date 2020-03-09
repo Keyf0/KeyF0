@@ -14,10 +14,8 @@ export interface HElement
 {
     ///元素都有两种模式一种是ATTACH到原来的DOM上一种是新创建
     attachId:string;
-    domELE:Element;
+    target:Element;
     document:IDocument;
-    CreateHtml(parent:Element):Element;
-    DestroyHtml(parent:Element):void;
 }
 
 export class HElementTarget extends KFBlockTarget implements HElement
@@ -31,15 +29,22 @@ export class HElementTarget extends KFBlockTarget implements HElement
 
     public document: IDocument;
     public attachId:string;
-    public domELE: Element;
+    public target: Element;
 
-    public CreateHtml(parent:Element):Element
+    public ActivateBLK(KFBlockTargetData: any): void
     {
-        return HElementCreator.DefaultCreateHtml(parent,this, this.document,this.metadata);
+        let parent = <HElementTarget><any>this.parent;
+        this.document = parent.document;
+        this.target = HElementCreator.DefaultCreateHtml(parent.target
+            , this
+            , this.document
+            , this.metadata);
     }
 
-    public DestroyHtml(parent:Element):void
+    public DeactiveBLK(KFBlockTargetData: any): void
     {
-        HElementCreator.DefaultDestroyHtml(parent,this);
+        let parent = <HElementTarget><any>this.parent;
+        HElementCreator.DefaultDestroyHtml(parent.target, this);
+        this.target = null;
     }
 }

@@ -4,7 +4,6 @@ import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {Variable} from "../Data/Variable";
 import {KFScriptFactory} from "./KFScriptFactory";
-import {GSPlayStateScript} from "./Global/GlobalScripts";
 
 export interface KFACTSScriptContext extends KFScriptContext
 {
@@ -47,5 +46,3 @@ export class KFScriptSystem extends KFScriptManagerBase
         return null;
     }
 }
-
-GSPlayStateScript;

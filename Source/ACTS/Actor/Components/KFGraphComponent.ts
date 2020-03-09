@@ -69,18 +69,4 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     {
         this.m_graph.Stop();
     }
-
-    public OnGraphFrame(arg: any
-                 , frame: any
-                 , scriptContext: KFScriptContext)
-    {
-        this.targetObject.script.ExecuteFrameScript(0
-            , frame,scriptContext);
-    }
-
-    public Input(blockname:KFDName
-                 , arg:any):void
-    {
-        this.m_graph.Input(blockname, arg);
-    }
 }

@@ -16,11 +16,11 @@ export class KFTimeBlock
     private m_ctx:IKFTimelineContext;
     private m_container:IKFBlockTargetContainer;
     private m_keyframes:{[key:number]:any} = {};
-    private m_scope:KFTimeBlockTweenScope = new KFTimeBlockTweenScope();
-    private m_target:KFBlockTarget;
 
+    public m_target:KFBlockTarget;
     public data:any;
     public keep:boolean;
+    public option:number = KFBlockTargetOption.Ignore;
 
     public Create(runtime:IKFRuntime
                   , container:IKFBlockTargetContainer
@@ -61,6 +61,8 @@ export class KFTimeBlock
 
         let preframe = null;
         if(keyframes) {
+            let begini = data.begin;
+
             for (let keyframe of keyframes) {
                 this.m_keyframes[keyframe.id] = keyframe;
                 if (keyframe != null) {
@@ -75,6 +77,8 @@ export class KFTimeBlock
         {
             preframe["__next__"] = null;
         }
+
+        this.option = this.data.target.option;
     }
 
     public Tick(frameIndex:number, bJumpFrame:boolean)
@@ -107,31 +111,11 @@ export class KFTimeBlock
         let keyframe = this.m_keyframes[frameIndex];
         if (keyframe)
         {
-            this.m_scope.begin = keyframe;
-            this.m_scope.end = keyframe["__next__"];
+            this.m_ctx.OnKeyFrame(this.m_target, keyframe);
 
-            if(this.m_scope.end != null)
+            if (this.option == KFBlockTargetOption.Create)
             {
-                this.m_scope.end = keyframe;
-            }
-
-            let toption = this.data.target.option;
-
-            if(toption == KFBlockTargetOption.Ignore)
-            {
-                this.m_ctx.OnFrameBox(keyframe.box);
-                this.m_ctx.OnKeyFrame(this.data, keyframe);
-            }
-            else if (toption == KFBlockTargetOption.Create)
-            {
-                if(this.m_ctx.IsEditing)
-                {
-                    this.m_target.TickInEditor(frameIndex);
-                }
-                else
-                {
-                    this.m_target.Tick(frameIndex);
-                }
+                this.m_target.Tick(frameIndex);
             }
         }
         else if (bJumpFrame)
@@ -142,22 +126,9 @@ export class KFTimeBlock
                 keyframe = this.m_keyframes[prevFrameIndex];
                 if (keyframe)
                 {
-                    let toption = this.data.target.option;
-
-                    if(toption == KFBlockTargetOption.Ignore)
+                    if (this.option == KFBlockTargetOption.Create)
                     {
-                        this.m_ctx.OnFrameBox(keyframe.box);
-                    }
-                    else if (toption == KFBlockTargetOption.Create)
-                    {
-                        if (this.m_ctx.IsEditing)
-                        {
-                            this.m_target.TickInEditor(frameIndex);
-                        }
-                        else
-                        {
-                            this.m_target.Tick(frameIndex);
-                        }
+                        this.m_target.Tick(frameIndex);
                     }
                     break;
                 }
@@ -166,29 +137,18 @@ export class KFTimeBlock
         }
         else
         {
-            let toption = this.data.target.option;
-            if (toption == KFBlockTargetOption.Create)
+            if (this.option == KFBlockTargetOption.Create)
             {
-                if (this.m_ctx.IsEditing)
-                {
-                    this.m_target.TickInEditor(frameIndex);
-                }
-                else
-                {
-                    this.m_target.Tick(frameIndex);
-                }
+                this.m_target.Tick(frameIndex);
             }
         }
-
-        this.TickOperator(frameIndex);
     }
 
     private Activate()
     {
         let targetdata = this.data.target;
-        let toption = targetdata.option;
 
-        if (toption == KFBlockTargetOption.Create)
+        if (this.option == KFBlockTargetOption.Create)
         {
             this.m_target = this.m_runtime.domain
                 .CreateBlockTarget(targetdata);
@@ -203,7 +163,7 @@ export class KFTimeBlock
                 //LOG_ERROR("Cannot Create BlockTarget: %s", m_data->target.asseturl.c_str());
             }
         }
-        else if (toption == KFBlockTargetOption.Attach)
+        else if (this.option == KFBlockTargetOption.Attach)
         {
             this.m_target = this.m_container
                 .FindChild(targetdata.instname);
@@ -227,47 +187,4 @@ export class KFTimeBlock
         this.m_target = null;
     }
 
-    private TickOperator( frameIndex:number)
-    {
-        if(this.m_target != null)return;
-
-        let sbegin = this.m_scope.begin;
-        let send = this.m_scope.end;
-
-        if(sbegin && send)
-        {
-            sbegin.BeginReadArgs();
-            send.BeginReadArgs();
-
-            for (let data of this.data.ops)
-            {
-                let opid = data.id;
-
-                switch (opid)
-                {
-                    case KFTimeBlockOpOption.Position:
-                        //KFTimeBlockOperator::TweenPosition(m_target.GetPtr(), &m_scope, frameIndex);
-                        break;
-                    case KFTimeBlockOpOption.Rotation:
-                        //KFTimeBlockOperator::TweenRotation(m_target.GetPtr(), &m_scope, frameIndex);
-                        break;
-                    case KFTimeBlockOpOption.CustomArg1:
-                        //KFTimeBlockOperator::TweenCustomArg1(m_target.GetPtr(), &m_scope, frameIndex);
-                        break;
-                    case KFTimeBlockOpOption.CustomArg2:
-                        //KFTimeBlockOperator::TweenCustomArg2(m_target.GetPtr(), &m_scope, frameIndex);
-                        break;
-                    case KFTimeBlockOpOption.CustomArg3:
-                        //KFTimeBlockOperator::TweenCustomArg3(m_target.GetPtr(), &m_scope, frameIndex);
-                        break;
-                    case KFTimeBlockOpOption.CustomArg4:
-                        //KFTimeBlockOperator::TweenCustomArg4(m_target.GetPtr(), &m_scope, frameIndex);
-                        break;
-                }
-            }
-
-            sbegin.EndReadArgs();
-            send.EndReadArgs();
-        }
-    }
 }

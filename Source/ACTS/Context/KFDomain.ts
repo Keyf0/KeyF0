@@ -42,7 +42,7 @@ export class KFDomain implements IKFDomain
         }
         else
         {
-            LOG_ERROR("Cannot find metadata: %s", asseturl.c_str());
+            LOG_ERROR("Cannot find metadata: {0}", asseturl);
         }
 
         return null;

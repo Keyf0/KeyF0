@@ -228,17 +228,19 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
         {
             let UpFrameData = this._ExecingFrame;
             this._ExecingFrame = frameData;
-            let once:boolean = frameData.once;
-            let frameid:number = KFFrameDataUtils.CreateID(frameData);
+            let skip:boolean = frameData.once;
 
-            if (false == once || this._scopeOnceScripts[frameid])
-            {
-                ///记录已经执行的标记
-                if (once)
+            if(skip) {
+                let frameid: number = KFFrameDataUtils.CreateID(frameData);
+                if( !this._scopeOnceScripts[frameid])
                 {
+                    skip = false;
+                    ///记录已经执行的标记
                     this._scopeOnceScripts[frameid] = true;
                 }
-
+            }
+            if (!skip)
+            {
                 ///执行脚本
                 let scriptDatas = frameData.scripts;
                 let count = scriptDatas.length;

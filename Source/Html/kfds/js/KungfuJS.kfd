@@ -1,0 +1,61 @@
+[
+    {
+        "includes": [
+            "Global/GlobalScripts.ts",
+            "KFExpressionF.h"
+        ],
+        "class": "GSExpressionScriptData",
+        "cname": "执行",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "expression",
+                "cname": "表达式",
+                "type": "object",
+                "otype": "KFExpression"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "GSExpressionScriptData",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "4",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1379
+    },
+    {
+        "includes": [
+            "Global/KFExpression.ts"
+        ],
+        "class": "KFExpression",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "text",
+                "cname": "代码",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "once",
+                "cname": "缓存结果",
+                "type": "bool"
+            }
+        ],
+        "clsid": 1380
+    }
+]

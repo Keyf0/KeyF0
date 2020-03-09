@@ -1,3 +1,4 @@
+import {KFByteArray} from "../Utils/FKByteArray";
 
 
 export class KFDataType
@@ -130,5 +131,4 @@ export class KFDataType
         let ret = KFDataType.Type_to_ids[type];
         return ret == null ? 0: ret;
     }
-
 }

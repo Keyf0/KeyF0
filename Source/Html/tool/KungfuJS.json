@@ -27,6 +27,20 @@
                     "headpath": ""
                 }
             ]
+        },
+        {
+            "group": "KungfuJS",
+            "export_info": {
+                "export_code_path": "",
+                "export_typecode_path": "",
+                "export_api": ""
+            },
+            "import_code_paths": [
+                {
+                    "path": "../../ACTS/Script",
+                    "headpath": ""
+                }
+            ]
         }
     ],
     "import_kfd_path": "../kfds/import",

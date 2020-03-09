@@ -1,14 +1,14 @@
-import {HInteractive} from "./HInteractive";
 import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
 import {LOG_ERROR} from "../Core/Log/KFLog";
 import {IKFMeta} from "../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
+import {HElementActor} from "./HElementActor";
 
 
-///KFD(C,CLASS=HCanvas,EXTEND=HInteractive)
+///KFD(C,CLASS=HCanvas,EXTEND=HElementActor)
 ///KFD(*)
 
-export class HCanvas extends HInteractive
+export class HCanvas extends HElementActor
 {
     public static Meta:IKFMeta = new IKFMeta("HCanvas"
 
@@ -17,20 +17,23 @@ export class HCanvas extends HInteractive
         }
     );
 
-    public CreateHtml(parent: Element): Element
+    public CreateHtml()
     {
+        let parent = <HElementActor>this.parent;
+        this.document = parent.document;
+
         let Values:{[key:string]:string;} = KFDataHelper.Meta2MapValue(this.metadata);
         if(Values.attachId)
         {
             this.attachId = Values.attachId;
-            this.domELE = this.document.nativedom.getElementById(this.attachId);
+            this.target = this.document.nativedom.getElementById(this.attachId);
 
             ///类型判定
-            let tagName = this.domELE.tagName;
+            let tagName = this.target.tagName;
             if(tagName != "Canvas")
             {
                 LOG_ERROR("绑定类型错误需要<Canvas> 结果为{0}",tagName);
-                this.domELE = null;
+                this.target = null;
             }
 
         }
@@ -40,15 +43,16 @@ export class HCanvas extends HInteractive
             //let eleid:string = "_kfwebid_" + blktarget.sid;
             let htmlstr = Values.html;
             ///或者可以手动创建，暂时用简单的
-            if(!htmlstr || htmlstr.indexOf("<Canvas>") != 0)
+            if(!htmlstr || htmlstr.indexOf("<canvas") != 0)
             {
-                htmlstr = '<Canvas></Canvas>';
+                htmlstr = '<canvas></canvas>';
             }
 
-            parent.insertAdjacentHTML("beforeend", htmlstr);
-            this.domELE = parent.lastElementChild;
+            let ptarget = parent.target;
+
+            ptarget.insertAdjacentHTML("beforeend", htmlstr);
+            this.target = ptarget.lastElementChild;
         }
 
-        return this.domELE;
     }
 }

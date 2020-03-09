@@ -2,6 +2,8 @@ import {IKFRuntime} from "./IKFRuntime";
 import {KFScriptContext} from "../../KFScript/KFScriptDef";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFDJson} from "../../KFData/Format/KFDJson";
+import {KFBytes} from "../../KFData/Format/KFBytes";
 
 export interface IKFBlockTargetContainer
 {
@@ -34,7 +36,14 @@ export class KFBlockTarget
     public Tick(frameindex:number):void{}
     public TickInEditor(frameindex:number):void{}
 
-    public ActivateBLK(KFBlockTargetData:any):void{}
+    public ActivateBLK(KFBlockTargetData:any):void{
+        ///如果有MEATDATA数据则给对象赋值
+        let kfbytes:KFBytes = this.metadata.data;
+        if(kfbytes && kfbytes.bytes)
+        {
+            KFDJson.read_value(kfbytes.bytes,false, this);
+        }
+    }
     public DeactiveBLK(KFBlockTargetData:any):void{}
     public position:any;
     public set_position(x:number, y:number, z:number):void{}

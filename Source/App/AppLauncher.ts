@@ -5,7 +5,7 @@ import {HttpRequest_Type} from "../KFNetwork/Http/Request/HttpRequest";
 import {WebHttpRequest} from "../KFNetwork/Http/Request/web/WebHttpRequest";
 import {KFByteArray} from "../KFData/Utils/FKByteArray";
 import {KFDJson} from "../KFData/Format/KFDJson";
-import {IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
+import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {DefaultAppConfig} from "./DefaultAppConfig";
 import {KFApp} from "../iSay/KFApp";
 
@@ -13,6 +13,8 @@ export class AppLauncher
 {
     private _app:KFApp;
     private _tickid:number = -1;
+
+    public config:IKFConfigs = null;
 
     public constructor()
     {
@@ -22,7 +24,7 @@ export class AppLauncher
         HttpRequest_Type.meta = WebHttpRequest.Meta;
         IKFFileIO_Type.meta = KFHttpFileIO.Meta;
         IKFFileIO_Type.new_default();
-        IKFConfigs_Type.new_default();
+        this.config = IKFConfigs_Type.new_default();
     }
 
     public stop_tick()
@@ -54,8 +56,8 @@ export class AppLauncher
             this._app.Create();
         }
 
-        this._app.Play(IKFConfigs_Type.instance.basedir()
-            ,IKFConfigs_Type.instance.start());
+        this._app.Play(this.config.basedir()
+            ,this.config.start());
 
         this.start_tick();
     }
@@ -64,7 +66,7 @@ export class AppLauncher
                , kfdpath:string = ""
               , start:string = "main"):void
     {
-        IKFConfigs_Type.instance.load_config(
+        this.config.load_config(
             appdatapath
             ,kfdpath
             ,start

@@ -13,7 +13,7 @@ export class HElementCreator {
         if(Values.attachId)
         {
             element.attachId = Values.attachId;
-            element.domELE = document.nativedom.getElementById(element.attachId);
+            element.target = document.nativedom.getElementById(element.attachId);
         }
         else
             {
@@ -21,20 +21,20 @@ export class HElementCreator {
                 //let eleid:string = "_kfwebid_" + blktarget.sid;
                 let htmlstr = Values.html;
                 parent.insertAdjacentHTML("beforeend", htmlstr);
-                element.domELE = parent.lastElementChild;
+                element.target = parent.lastElementChild;
             }
 
-        return element.domELE;
+        return element.target;
     }
 
     public static DefaultDestroyHtml(parent:Element
         , element:HElement)
     {
-        if(!element.attachId && element.domELE)
+        if(!element.attachId && element.target)
         {
-            parent.removeChild(element.domELE);
+            parent.removeChild(element.target);
         }
-        element.domELE = null;
+        element.target = null;
     }
 
 }

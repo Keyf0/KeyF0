@@ -1,20 +1,19 @@
 import {TypeEvent} from "../../Core/Misc/TypeEvent";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFTimeBlock} from "./KFTimeBlock";
-import {IKFTimelineContext} from "./IKFTimelineProc";
-import {IKFBlockTargetContainer} from "../Context/KFBlockTarget";
+import {IKFTimelineContext, IKFTimelineEventListener} from "./IKFTimelineProc";
 import {IKFTimelineRenderer} from "./IKFTimelineRenderer";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFPool} from "../../Core/Misc/KFPool";
 import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
 
-export class KFTimeline
+export class KFTimeline implements IKFTimelineContext
 {
     public onPlayBegin:TypeEvent<number> = new TypeEvent<number>();
     public onPlayEnd:TypeEvent<number> = new TypeEvent<number>();
     public currstate:any;
     public currframeindex:number = 0;
-
+    public listener:IKFTimelineEventListener;
 
     private m_runtime:IKFRuntime;
     private m_cfg:any;
@@ -27,22 +26,23 @@ export class KFTimeline
     });
 
 
-
     private m_length:number = 0;
     private m_loop:boolean = true;
     private m_tpf:number = 0;
+    private m_target:any = null;
 
-    private m_ctx:IKFTimelineContext;
-    private m_container:IKFBlockTargetContainer;
-    private m_renderer:IKFTimelineRenderer;
+    private m_listProcKeyFrames:Array<{
+        target: any;
+        keyframe: any;
+    }> = [];
 
-    public constructor(runtime:IKFRuntime
-                       , container:IKFBlockTargetContainer
-    , ctx:IKFTimelineContext)
+    private m_listProcSize:number = 0;
+
+    public constructor(     runtime:IKFRuntime
+                       ,    target:any)
     {
-        this.m_container = container;
-        this.m_ctx = ctx;
         this.m_runtime = runtime;
+        this.m_target = target;
         this.m_tpf = KFGlobalDefines.TPF / 1000.0;
     }
 
@@ -56,7 +56,7 @@ export class KFTimeline
 
         for (let data of cfg.states)
         {
-            this.m_states[data["id"]] = data;
+            this.m_states[data.id] = data;
         }
     }
 
@@ -73,28 +73,16 @@ export class KFTimeline
     private TickInternal(frameIndex:number, bJumpFrame:boolean = false)
     {
         if (this.currframeindex == frameIndex) return;
-        this.currframeindex = frameIndex;
 
-        if(this.m_blocks.length == 0)
-        {
-            //LOG_TAG_ERROR("current state [%d, %s]'s blocks is empty!", m_state->id, m_state->name.c_str());
-        }
+        this.currframeindex = frameIndex;
 
         for (let block of this.m_blocks)
         {
             block.Tick(frameIndex, bJumpFrame);
         }
 
-        if (this.m_renderer)
-        {
-            let time = this.currframeindex * this.m_tpf;
-            //LOG_WARNING("%d:%f", m_frameindex, time.ToFloat());
-            this.m_renderer.RenderFrame(time);
-        }
-        else
-        {
-            //LOG("%d", frameIndex);
-        }
+        ///帧的最后执行脚本逻辑
+        this.ProcKeyFrame();
     }
 
     private SetState(stateid:number):boolean
@@ -116,36 +104,13 @@ export class KFTimeline
 
                 this.DestroyBlocks();
 
-                if(this.currstate.layers.length == 0)
-                {
-                    //LOG_TAG_ERROR("state [%d, %s].layers is empty!", stateid, m_state->name.c_str());
-                }
-                else
-                {
-                    let layer:any = this.currstate.layers[0];
-                    if(layer.blocks.length == 0)
-                    {
-                        //LOG_TAG_ERROR("state [%d, %s].layers[0].blocks is empty!", stateid, m_state->name.c_str());
-                    }
-                    else
-                    {
-                        if(layer.blocks.length > 1)
-                        {
-                            //LOG_TAG_ERROR("state [%d, %s].layers[0].blocks.size() > 1", stateid, m_state->name.c_str());
-                        }
-
-                        //let data:any = layer.blocks[0];
-                        //data.target.option = KFBlockTargetOption.Ignore;
-                    }
-                }
-
                 let m_pool = KFTimeline.TB_pool;
                 for (let layer of this.currstate.layers)
                 {
                     for (let data of layer.blocks)
                     {
                         let block = m_pool.Fetch();
-                        block.Create(this.m_runtime, this.m_container, this.m_ctx, data);
+                        block.Create(this.m_runtime, this.m_target, this, data);
                         this.m_blocks.push(block);
                     }
                 }
@@ -157,10 +122,7 @@ export class KFTimeline
         return false;
     }
 
-    public SetRenderer(renderer:IKFTimelineRenderer)
-    {
-        this.m_renderer = renderer;
-    }
+    public SetRenderer(renderer:IKFTimelineRenderer) {}
 
     public Release():void
     {
@@ -172,30 +134,22 @@ export class KFTimeline
 
     public Play(stateid:number, startFrameIndex:number)
     {
+        this.m_listProcSize = 0;
         if(this.SetState(stateid))
         {
             this.onPlayBegin.emit(stateid);
             this.TickInternal(startFrameIndex, true);
         }
-
-        if(this.m_renderer)
-        {
-            this.m_renderer.Play(stateid, startFrameIndex);
-        }
     }
 
     public Play1(stateid:number, startTimeNormalized:number)
     {
+        this.m_listProcSize = 0;
         if (this.SetState(stateid))
         {
             this.onPlayBegin.emit(stateid);
             let startFrameIndex:number = startTimeNormalized * this.m_length;
             this.TickInternal(startFrameIndex, true);
-        }
-
-        if (this.m_renderer)
-        {
-            this.m_renderer.PlayNormalized(stateid, startTimeNormalized);
         }
     }
 
@@ -233,6 +187,15 @@ export class KFTimeline
                 }
                 else
                 {
+                    ///目标还是需要TICK的 不然只有一帧的子集也不执行了
+                    for (let block of this.m_blocks)
+                    {
+                        if (block.option != KFBlockTargetOption.Attach)
+                        {
+                            block.m_target.Tick(nextFrameIndex);
+                        }
+                    }
+
                     this.onPlayEnd.emit(this.currstate.id);
                 }
             }
@@ -240,6 +203,75 @@ export class KFTimeline
             {
                 this.TickInternal(nextFrameIndex, false);
             }
+        }
+    }
+
+
+    public OnFrameBox(box: any): void
+    {
+
+    }
+
+    public OnKeyFrame(target: any, keyframe: any): void
+    {
+        if(this.m_listProcSize >= this.m_listProcKeyFrames.length)
+        {
+            this.m_listProcKeyFrames.push({target:target,keyframe:keyframe});
+        }
+        else
+        {
+            let info = this.m_listProcKeyFrames[this.m_listProcSize];
+            info.target = target;
+            info.keyframe = keyframe;
+        }
+
+        this.m_listProcSize += 1;
+    }
+
+    public ProcKeyFrame()
+    {
+        if (this.m_listProcSize > 0)
+        {
+            let i = 0;
+            let size = this.m_listProcSize;
+
+            while ( i < size) {
+
+                let frameinfo = this.m_listProcKeyFrames[i];
+                let keyframe = frameinfo.keyframe;
+                let target = frameinfo.target;
+
+                if(target)
+                {
+                    if(target.script)
+                    {
+                        target.script.ExecuteFrameScript(keyframe.id, keyframe.data,null);
+                    }
+                    else
+                    {
+                        this.m_runtime.scripts.ExecuteFrameScript(
+                            keyframe.id
+                            , keyframe.data
+                            , target);
+                    }
+                }
+                else
+                {
+                    this.m_target.script
+                        .ExecuteFrameScript(keyframe.id, keyframe.data);
+                }
+
+                if (keyframe.evt > 0)
+                {
+                    if (this.listener)
+                        this.listener
+                            .OnTimelineEvent(keyframe.id, keyframe.evt);
+                }
+
+                i += 1;
+            }
+
+            this.m_listProcSize = 0;
         }
     }
 }

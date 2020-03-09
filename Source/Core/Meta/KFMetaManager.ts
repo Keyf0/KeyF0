@@ -3,7 +3,7 @@ import {KFDName} from "../../KFData/Format/KFDName";
 
 export interface InstantiateFunc
 {
-    (): any;
+    (...rest:any[]): any;
 }
 
 ///一个抽角的META不用直接实例化

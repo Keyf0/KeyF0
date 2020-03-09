@@ -27,15 +27,20 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
 
         if(this.m_target)
         {
-            let sctx = this.m_target.script;
-            if(sctx)
+            let script = this.m_target.script;
+            let framedata = this.data.frame;
+
+            if(script)
             {
-                this.m_ctx.OnGraphFrame(arg,this.data.frame,sctx);
+                script.ExecuteFrameScript(0, framedata,null);
             }
-        }
-        else
-        {
-            this.m_ctx.OnGraphFrame(arg,this.data.frame,null);
+            else
+            {
+                this.m_ctx.runtime.scripts.ExecuteFrameScript(
+                    0
+                    , framedata
+                    , this.m_target);
+            }
         }
 
         this.OutNext(arg);
@@ -60,7 +65,6 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         } else {
             this.m_target = this.GetAttachTarget();
         }
-
     }
 
     public Deactive(force: boolean = false)

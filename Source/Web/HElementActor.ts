@@ -19,30 +19,31 @@ export class HElementActor extends KFActor implements HElement
 
     public attachId:string;
     public document: IDocument;
-    public domELE: Element;
+    public target: Element;
 
-    public CreateHtml(parent:Element):Element
+    public CreateHtml(): void
     {
-        return HElementCreator.DefaultCreateHtml(parent,this,this.document,this.metadata);
+        let parent = <HElementActor>this.parent;
+        this.document = parent.document;
+        this.target = HElementCreator.DefaultCreateHtml(
+              parent.target
+            , this
+            , this.document,this.metadata);
     }
 
-    public DestroyHtml(parent:Element):void
+    public ActivateBLK(KFBlockTargetData: any): void
     {
-        HElementCreator.DefaultDestroyHtml(parent,this);
+        ///前做初始化
+        this.CreateHtml();
+        super.ActivateBLK(KFBlockTargetData);
     }
 
-    protected _AddChild(child: KFBlockTarget): void
+    public Deactive(): void
     {
-        //给对像设置DOM
-        let ELE:HElement = <HElement><any>child;
-        ELE.document = this.document;
-        ELE.CreateHtml(this.domELE);
-        //insertAdjacentHTML
-    }
-
-    protected _RemoveChild(child: KFBlockTarget): void
-    {
-        let ELE:HElement = <HElement><any>child;
-        ELE.DestroyHtml(this.domELE);
+        super.Deactive();
+        if(this.parent) {
+            let parent = <HElementActor>this.parent;
+            HElementCreator.DefaultDestroyHtml(parent.target, this);
+        }
     }
 }

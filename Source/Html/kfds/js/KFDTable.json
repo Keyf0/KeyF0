@@ -1479,6 +1479,58 @@
         {
             "class": "HInteractive",
             "id": 1369
+        },
+        {
+            "class": "GSFireGraphEventScriptData",
+            "id": 1363
+        },
+        {
+            "class": "GSPlayStateScriptData",
+            "id": 1364
+        },
+        {
+            "class": "BBEngine",
+            "id": 1370
+        },
+        {
+            "class": "BABYLON.Node",
+            "id": 1371
+        },
+        {
+            "class": "BABYLON.FreeCamera",
+            "id": 1372
+        },
+        {
+            "class": "BABYLON.HemisphericLight",
+            "id": 1373
+        },
+        {
+            "class": "BABYLON.Sphere",
+            "id": 1374
+        },
+        {
+            "class": "BABYLON.Ground",
+            "id": 1375
+        },
+        {
+            "class": "BBNode",
+            "id": 1376
+        },
+        {
+            "class": "BBScene",
+            "id": 1377
+        },
+        {
+            "class": "BABYLON.Vector3",
+            "id": 1378
+        },
+        {
+            "class": "GSExpressionScriptData",
+            "id": 1379
+        },
+        {
+            "class": "KFExpression",
+            "id": 1380
         }
     ]
 }

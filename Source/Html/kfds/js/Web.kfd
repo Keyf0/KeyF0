@@ -4,7 +4,7 @@
             "HCanvas.ts"
         ],
         "class": "HCanvas",
-        "extend": "HInteractive",
+        "extend": "HElementActor",
         "propertys": [],
         "clsid": 1365
     },
@@ -13,8 +13,24 @@
             "HDocument.ts"
         ],
         "class": "HDocument",
-        "extend": "HInteractive",
-        "propertys": [],
+        "extend": "HElementActor",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "x",
+                "type": "num1"
+            },
+            {
+                "id": 2,
+                "name": "y",
+                "type": "num1"
+            },
+            {
+                "id": 3,
+                "name": "z",
+                "type": "num1"
+            }
+        ],
         "clsid": 1366
     },
     {
@@ -34,14 +50,5 @@
         "extend": "KFBlockTarget",
         "propertys": [],
         "clsid": 1368
-    },
-    {
-        "includes": [
-            "HInteractive.ts"
-        ],
-        "class": "HInteractive",
-        "extend": "HElementActor",
-        "propertys": [],
-        "clsid": 1369
     }
 ]

@@ -1,4 +1,5 @@
 import {KFDataType} from "./KFD";
+import {KFDName} from "./KFDName";
 
 export class KFDTable
 {
@@ -26,7 +27,6 @@ export class KFDTable
         return __ids__[pid];
     }
 
-
     public static find_extend_kfddata(kfddata,  tb:KFDTable = null):any
     {
         if(kfddata == null) return null;
@@ -43,6 +43,106 @@ export class KFDTable
         return __extend__;
     }
 
+    public static getPropertyLable(prop):string
+    {
+        if(prop.cname && prop.cname != "") return prop.cname;
+        return prop.name;
+    }
+
+    public static getKFDLable(kfd):string
+    {
+        if(kfd.cname && kfd.cname != "") return kfd.cname;
+        return kfd.class;
+    }
+
+    public static getEnumValStr(defval, enumkfd):string
+    {
+        ///形如class::xx,class.xx
+        let defpropname = defval.replace(enumkfd["class"],"")
+            .replace(/\:/g,"")
+            .replace(/\./g,"");
+
+        let propertys = enumkfd.propertys;
+        for(let i = 0 ; i < propertys.length; i ++)
+        {
+            let prop = propertys[i];
+            if(prop.name == defpropname)
+                return prop.default;
+        }
+        return null;
+    }
+
+    public getDefaultStr(prop, defval):string
+    {
+        let enumcls = prop.enum;
+        if(enumcls && defval.indexOf(enumcls) != -1)
+        {
+            let enumkfd = this.get_kfddata(enumcls);
+            if(enumkfd)
+            {
+                let defvarstr =  KFDTable.getEnumValStr(defval, enumkfd);
+                if(defvarstr)
+                    return defvarstr;
+            }
+        }
+        return defval;
+    }
+
+    public getInitValue(prop, vtype):any
+    {
+        let currenttb = this;
+
+        if(vtype <= KFDataType.OT_DOUBLE
+        || vtype == KFDataType.OT_UINT64
+        || vtype == KFDataType.OT_INT64
+        || vtype == KFDataType.OT_VARUINT)
+        {
+            let defval = 0;
+            if(prop.default)
+            {
+                defval =  parseInt(currenttb.getDefaultStr(prop, prop.default));
+            }
+            return isNaN(defval) ? 0 : defval;
+        }
+        else if(vtype == KFDataType.OT_STRING)
+        {
+            let defval = prop.default ? currenttb.getDefaultStr(prop, prop.default) : "";
+            if(prop && prop.type == "kfname")
+            {
+                return new KFDName(defval);
+            }
+            return defval;
+        }
+        else if(vtype == KFDataType.OT_BOOL)
+        {
+            return prop.default ? prop.default == "true" : false;
+        }
+        else if(vtype == KFDataType.OT_ARRAY || vtype == KFDataType.OT_MIXARRAY)
+        {return [];}
+        else if(vtype == KFDataType.OT_OBJECT)
+        {
+            return this.initObjectValue({},this.get_kfddata(prop.otype));
+        }
+        return null;
+    }
+
+    public initObjectValue(data, kfd):any
+    {
+        let extend = kfd.extend;
+        if(extend)
+        {
+            this.initObjectValue(data,this.get_kfddata(extend));
+        }
+
+        let propertys:Array<any> = kfd.propertys;
+        for(let i = 0;i < propertys.length ;i ++)
+        {
+            let prop = propertys[i];
+            let vtype = KFDataType.GetTypeID(prop.type);
+            data[prop.name] = this.getInitValue(prop,vtype);
+        }
+        return data;
+    }
 
     private kfddata_maps:{[key:string]:any} = {};
 

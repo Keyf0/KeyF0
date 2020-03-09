@@ -1,4 +1,6 @@
 import {DefaultType, IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {TypeEvent} from "../../Core/Misc/TypeEvent";
+import {KFDTable} from "../../KFData/Format/KFDTable";
 
 export interface LoadConfigEnd
 {
@@ -21,6 +23,8 @@ export interface IKFConfigs
 
     basedir():string;
     start():string;
+
+    OnKFDLoaded:TypeEvent<KFDTable>;
 }
 
 export let IKFConfigs_Type:DefaultType<IKFConfigs> = new DefaultType<IKFConfigs>();

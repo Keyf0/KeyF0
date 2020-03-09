@@ -2,7 +2,7 @@ import {TypeEvent} from "../Core/Misc/TypeEvent";
 
 export class KFGameTicker
 {
-    public static FixedTickTime:number = 33;
+    public static FixedTickTime:number = 16;
     public onTick:TypeEvent<number> = new TypeEvent<number>();
     public onFixedTick:TypeEvent<void> = new TypeEvent<void>();
 

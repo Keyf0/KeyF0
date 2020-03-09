@@ -18,6 +18,17 @@ KFDTable.find_extend_kfddata 增加可以提定KFDTABLE实例
 修正之前对空对象写支持但对空对象写不支持的BUG
 将读取特性调整只有mixobject加__cls__
 
+2020.03.08:
+
+如果kfdata上增加 __init__ 则会进行初始化操作
+
+2020.03.09:
+
+修正写个BYTES是的BUG,没有写入长度
+修正如果MIXOBJECT是对象属性，则需要通过对象获取类型
+
+增加 读取对象时可以在kfdata中设置一个__new__的构造函数
+
 */
 
 

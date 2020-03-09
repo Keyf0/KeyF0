@@ -116,6 +116,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public ActivateBLK(KFBlockTargetData:any):void
     {
+        super.ActivateBLK(KFBlockTargetData);
         this.ActivateACT(this.sid);
     }
 
@@ -176,16 +177,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
     }
 
-    protected _AddChild(child: KFBlockTarget):void
-    {
-
-    }
-
-    protected _RemoveChild(child: KFBlockTarget):void
-    {
-
-    }
-
     public AddChild(child: KFBlockTarget): void
     {
         let p = child.parent;
@@ -195,7 +186,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
                 p.RemoveChild(child);
             this.m_children.push(child);
             child.parent = this;
-            this._AddChild(child);
         }
     }
 
@@ -238,7 +228,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             {
                 this.m_children.splice(i,1);
                 child.parent = null;
-                this._RemoveChild(child);
             }
         }
     }

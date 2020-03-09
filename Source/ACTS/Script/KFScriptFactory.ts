@@ -1,11 +1,33 @@
 import {KFDName} from "../../KFData/Format/KFDName";
 import {AMeta, InstantiateFunc, KFMetaManager} from "../../Core/Meta/KFMetaManager";
+import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
+
+
+export interface ScriptDataInit
+{
+    (data, kfd, kfdtb): any;
+}
 
 export class ScriptMeta extends AMeta
 {
-    public constructor(name:string = "", func:InstantiateFunc = null)
+    public DataInit:ScriptDataInit;
+
+    public constructor(name:string = ""
+                       , func:InstantiateFunc = null
+                       , DataInit:ScriptDataInit = null
+                       , group:number = KFScriptGroupType.Target)
     {
         super(name,func);
+
+        if(DataInit == null)
+        {
+            DataInit = (data, kfd, kfdtb)=>{
+                data.type = new KFDName(name);
+                data.group = group;
+            };
+        }
+
+        this.DataInit = DataInit;
     }
 
     public SetDefaultFactroy(name:string, func:InstantiateFunc = null)

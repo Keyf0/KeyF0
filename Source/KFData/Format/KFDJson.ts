@@ -2,6 +2,7 @@ import {KFByteArray} from "../Utils/FKByteArray";
 import {KFDataType} from "./KFD";
 import {KFDTable} from "./KFDTable";
 import {KFDName} from "./KFDName";
+import {KFBytes} from "./KFBytes";
 
 export class KFDJson
 {
@@ -80,8 +81,12 @@ export class KFDJson
             case KFDataType.OT_BYTES:
                 if(skip)
                     bytearr.skipstring();
-                else
-                    retval = bytearr.readkfbytes();
+                else {
+                    ///js时的字节全部转化成对象字节
+                    let kfbytes = new KFBytes();
+                    kfbytes.bytes = bytearr.readkfbytes();
+                    retval = kfbytes;
+                }
                 break;
             case KFDataType.OT_BOOL:
                 if(skip)
@@ -106,6 +111,29 @@ export class KFDJson
                     retval = bytearr.readUInt64();
         }
         return retval
+    }
+
+    public static init_object(data,kfddata):any
+    {
+        if(kfddata)
+        {
+            ///构造函数
+            if(data == null)
+            {
+                if( kfddata.__new__)
+                    data = kfddata.__new__();
+                else
+                    data = {};
+            }
+
+            let initparam = kfddata.__init__;
+            if (initparam)
+            {
+                initparam.func.call(initparam.thisobj, data, kfddata, KFDTable.kfdTB);
+            }
+        }
+
+        return data
     }
 
     private static _read_object_value(bytearr:KFByteArray
@@ -137,11 +165,13 @@ export class KFDJson
         else
         {
             let deep = 0;
-            let obj = null;
-            if(val != null)
-                obj = val;
+            let obj = (val != null ? val : null);
+
             if(obj == null)
-                obj = {};
+            {
+                ///如果提共了实初化函数则调用初始化
+                obj = KFDJson.init_object(obj,kfddata);
+            }
 
             let currKFDData = kfddata;
             let stack = [];
@@ -381,6 +411,11 @@ export class KFDJson
            if(propinfo)
            {
                valueType = KFDataType.GetTypeID(propinfo["type"]);
+               if(valueType == KFDataType.OT_MIXOBJECT)
+               {
+                   ///从对象是MIXOBJECT则是从对角属性中获取
+                   kfddata = KFDTable.kfdTB.get_kfddata(jsonobj["__cls__"]);
+               }
            }
            else if(jsonobj && jsonobj["__cls__"])
            {
@@ -470,7 +505,25 @@ export class KFDJson
                 bytearr.writestring(valObject);
                 break;
             case KFDataType.OT_BYTES:
-                bytearr.writeBytes(valObject);
+                if(valObject instanceof KFBytes)
+                {
+                    let bytesobj = valObject.object;
+                    let bytes = valObject.bytes;
+
+                    if(bytesobj)
+                    {
+                        if(bytes == null)
+                        {
+                            bytes = new KFByteArray();
+                            valObject.bytes = bytes;
+                        }
+                        bytes.length = 0;
+                        KFDJson.write_value(bytes, bytesobj);
+                        bytearr.writekfBytes(bytes);
+                    }
+                    else if(bytes == null) {bytearr.writestring("");}
+                }else {bytearr.writestring("");}
+                ///=============
                 break;
             case KFDataType.OT_BOOL:
                 bytearr.writeBoolean(valObject);

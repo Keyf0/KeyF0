@@ -9,6 +9,23 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
     private m_evthandler:any = null;
     private m_evtname:KFDName;
     private m_target:KFBlockTarget = null;
+    private m_firenode:KFDName = null;
+
+
+    public Input(arg: any)
+    {
+        if(this.m_target == null)
+        {
+            this.Activate();
+
+            let outputs = this.data.outputs;
+            if(outputs && outputs.length > 1)
+            {
+                this.m_firenode = outputs[1].name;
+            }
+        }
+        this.OutNext(arg);
+    }
 
     public Activate()
     {
@@ -38,10 +55,11 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
 
             if (etable)
             {
-                let t = this;
+                let self = this;
                 this.m_evthandler = function (evt:KFEvent)
                 {
-                    t.OutNext(evt.arg);
+                    if(self.m_firenode)
+                        self.m_ctx.m_graph.Input(self.m_firenode, evt.arg);
                 };
 
                 etable.AddEventListener(this.m_evtname

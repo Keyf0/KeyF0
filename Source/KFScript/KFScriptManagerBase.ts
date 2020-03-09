@@ -78,10 +78,13 @@ export class KFScriptManagerBase implements KFScriptContext
         /// 暂时不支持
     }
 
-    public Execute(scriptData: any, context: KFScriptContext): void
+    public Execute(scriptData: any, context: KFScriptContext, targetobj = null): void
     {
         if (context == null)
+        {
             context = this;
+            context.targetObject = targetobj;
+        }
 
         if (scriptData.group == KFScriptGroupType.LowLevel)
         {
@@ -119,14 +122,15 @@ export class KFScriptManagerBase implements KFScriptContext
         }
     }
 
-    public ExecuteFrameScript(id: number, framedata: any, context: KFScriptContext): void
+    public ExecuteFrameScript(id: number
+                              , framedata: any
+                              , context: KFScriptContext
+                                , targetobj = null): void
     {
-        if (framedata == null)
-            return;
-
         if (context == null)
         {
             context = this;
+            context.targetObject = targetobj;
         }
 
         let scriptDatas:Array<any> = framedata.scripts;

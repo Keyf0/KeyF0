@@ -5,6 +5,8 @@ import {LOG, LOG_ERROR} from "../Core/Log/KFLog";
 import {KFDTable} from "../KFData/Format/KFDTable";
 import {KFByteArray} from "../KFData/Utils/FKByteArray";
 import {KFDJson} from "../KFData/Format/KFDJson";
+import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
+import {TypeEvent} from "../Core/Misc/TypeEvent";
 
 export class DefaultAppConfig implements IKFConfigs
 {
@@ -102,6 +104,10 @@ export class DefaultAppConfig implements IKFConfigs
                 }
 
         },function (ret) {
+            ///初始化下数据帮助
+            KFDataHelper.InitAfterKFDTable(KFDTable.kfdTB);
+            self.OnKFDLoaded.emit(KFDTable.kfdTB);
+
             self.load_start(end);
         },{
                 basedir:this._kfdpath + "/"
@@ -201,4 +207,6 @@ export class DefaultAppConfig implements IKFConfigs
     }
 
     public start(): string {return this._start;}
+
+    public OnKFDLoaded: TypeEvent<KFDTable> = new TypeEvent<KFDTable>();
 }

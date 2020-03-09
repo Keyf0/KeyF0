@@ -1,7 +1,7 @@
 import {IKFRuntime} from "../ACTS/Context/IKFRuntime";
 import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {IKFDomain} from "../ACTS/Context/IKFDomain";
-import {KFEventTable} from "../Core/Misc/KFEventTable";
+import {KFEvent, KFEventTable} from "../Core/Misc/KFEventTable";
 import {KFRandom} from "../ACTS/Context/KFRandom";
 import {KFScriptSystem} from "../ACTS/Script/KFScriptSystem";
 import {KFTimers} from "../ACTS/Context/KFTimers";
@@ -42,8 +42,11 @@ export class KFiSayPlayer implements IKFRuntime
     private m_root:KFActor;
 
 
-    public onEnterFrame:TypeEvent<number> = new TypeEvent<number>();
-    public onEndFrame:TypeEvent<number> = new TypeEvent<number>();
+    //public onEnterFrame:TypeEvent<number> = new TypeEvent<number>();
+    //public onEndFrame:TypeEvent<number> = new TypeEvent<number>();
+
+    private onEnterFrame:KFEvent = new KFEvent(KFDName._Param.setString("onEnterFrame"));
+    private onEndFrame:KFEvent = new KFEvent(KFDName._Param.setString("onEndFrame"));
 
     public constructor(userdata:any = null)
     {
@@ -102,10 +105,11 @@ export class KFiSayPlayer implements IKFRuntime
         this.frametimes = this.frametime;
         this.frametimes /= 1000;
 
-        this.onEnterFrame.emit(currenti);
+        //this.onEnterFrame.emit(currenti);
+        this.etable.FireEvent(this.onEnterFrame);
         if(this.m_root)
             this.m_root.Tick(currenti);
-        this.onEndFrame.emit(currenti);
+        this.etable.FireEvent(this.onEndFrame);
     }
 
 }

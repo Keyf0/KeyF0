@@ -1,21 +1,18 @@
 import {KFComponentBase} from "./KFComponentBase";
-import {KFDName} from "../../../KFData/Format/KFDName";
 import {IKFTimelineContext, IKFTimelineEventListener} from "../../Timeline/IKFTimelineProc";
 import {KFTimeline} from "../../Timeline/KFTimeline";
-import {KFTimeBlock} from "../../Timeline/KFTimeBlock";
 import {Disposable} from "../../../Core/Misc/TypeEvent";
 import {IKFTimelineRenderer} from "../../Timeline/IKFTimelineRenderer";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../Context/KFBlockTarget";
 
-export class KFTimelineComponent extends KFComponentBase implements IKFTimelineContext
+export class KFTimelineComponent extends KFComponentBase
 {
     public static Meta:IKFMeta
         = new IKFMeta("KFTimelineComponent");
 
     private m_cfg:any;
     private m_timeline:KFTimeline;
-    private m_listener:IKFTimelineEventListener;
-    private m_listProcKeyFrames:Array<any> = new Array<any>();
     private m_onbeginplay:Disposable;
 
     private freeze:boolean;
@@ -27,7 +24,7 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
     public constructor(target:any)
     {
         super(target, KFTimelineComponent.Meta.type);
-        this.m_timeline = new KFTimeline(this.runtime,target,this);
+        this.m_timeline = new KFTimeline(this.runtime,target);
     }
 
     public ReleaseComponent():void
@@ -81,13 +78,11 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
 
     public LateEnterFrame():void
     {
-        this.ProcKeyFrame();
         if(!this.freeze)
         {
             this.m_timeline.Tick();
         }
     }
-
 
     public ResetFrameBoxInEditor(stateid:number
                                  , frameid:number
@@ -130,25 +125,6 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
         this.IsEditing = value;
     }
 
-    public ProcKeyFrame()
-    {
-        if (this.m_listProcKeyFrames.length > 0)
-        {
-            let keyframe = this.m_listProcKeyFrames[0];
-            this.m_listProcKeyFrames.shift();
-
-            this.targetObject.script
-                .ExecuteFrameScript(keyframe.id, keyframe.data);
-
-            if (keyframe.evt > 0)
-            {
-                if (this.m_listener)
-                    this.m_listener
-                        .OnTimelineEvent(keyframe.id, keyframe.evt);
-            }
-        }
-    }
-
     public Play(stateid:number, force:boolean = false)
     {
         if (!force)
@@ -157,7 +133,6 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
         }
         this.playing = true;
         this.stateid = stateid;
-        this.m_listProcKeyFrames.length = 0;
         //this.ClearKeyFrame();
         this.m_timeline.Play(stateid, 0);
     }
@@ -185,13 +160,12 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
 
     public PlayRepeatFrame(startFrameIndex:number = 0)
     {
-        this.m_listProcKeyFrames.length = 0;
+
         this.m_timeline.Play(this.stateid, startFrameIndex);
     }
 
     public PlayRepeatTime(startTimeNormalized:number = 0.0)
     {
-        this.m_listProcKeyFrames.length = 0;
         this.m_timeline.Play1(this.stateid, startTimeNormalized);
     }
 
@@ -213,7 +187,7 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
 
     public SetTimelineEventListener(listener:IKFTimelineEventListener)
     {
-        this.m_listener = listener;
+        this.m_timeline.listener = listener;
     }
 
     public SetTimelineRenderer(renderer:IKFTimelineRenderer)
@@ -228,18 +202,7 @@ export class KFTimelineComponent extends KFComponentBase implements IKFTimelineC
 
     //public ExecuteGraphBlock(blockname:KFDName) {}
 
-    public OnFrameBox(box: any): void
-    {
-        this.model.SetFrameBox(box);
-    }
 
-    public OnKeyFrame(blockdata: any, keyframe: any): void
-    {
-        if (!this.IsEditing)
-        {
-            this.m_listProcKeyFrames.push(keyframe);
-        }
-    }
 
     public HasState(stateid:number):boolean
     {

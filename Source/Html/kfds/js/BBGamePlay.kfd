@@ -1,9 +1,108 @@
 [
     {
         "includes": [
+            "BBEngine.ts"
+        ],
+        "class": "BBEngine",
+        "extend": "HCanvas",
+        "propertys": [],
+        "clsid": 1370
+    },
+    {
+        "includes": [
+            "BBGamePlay.ts",
+            "BABYLON.Vector3F.h"
+        ],
+        "class": "BABYLON.Node",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "position",
+                "type": "object",
+                "otype": "BABYLON.Vector3"
+            },
+            {
+                "id": 2,
+                "name": "rotation",
+                "type": "object",
+                "otype": "BABYLON.Vector3"
+            },
+            {
+                "id": 3,
+                "name": "scaling",
+                "type": "object",
+                "otype": "BABYLON.Vector3"
+            }
+        ],
+        "clsid": 1371
+    },
+    {
+        "includes": [
+            "BBGamePlay.ts"
+        ],
+        "class": "BABYLON.FreeCamera",
+        "extend": "BABYLON.Node",
+        "propertys": [],
+        "clsid": 1372
+    },
+    {
+        "includes": [
+            "BBGamePlay.ts"
+        ],
+        "class": "BABYLON.HemisphericLight",
+        "extend": "BABYLON.Node",
+        "propertys": [],
+        "clsid": 1373
+    },
+    {
+        "includes": [
+            "BBGamePlay.ts"
+        ],
+        "class": "BABYLON.Sphere",
+        "extend": "BABYLON.Node",
+        "propertys": [],
+        "clsid": 1374
+    },
+    {
+        "includes": [
+            "BBGamePlay.ts"
+        ],
+        "class": "BABYLON.Ground",
+        "extend": "BABYLON.Node",
+        "propertys": [],
+        "clsid": 1375
+    },
+    {
+        "includes": [
+            "BBNode.ts",
+            "BABYLON.NodeF.h"
+        ],
+        "class": "BBNode",
+        "extend": "KFActor",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "target",
+                "type": "mixobject",
+                "otype": "BABYLON.Node"
+            }
+        ],
+        "clsid": 1376
+    },
+    {
+        "includes": [
+            "BBScene.ts"
+        ],
+        "class": "BBScene",
+        "extend": "KFActor",
+        "propertys": [],
+        "clsid": 1377
+    },
+    {
+        "includes": [
             "Data/Exportkfd.ts"
         ],
-        "class": "BBV3",
+        "class": "BABYLON.Vector3",
         "propertys": [
             {
                 "id": 1,
@@ -21,12 +120,12 @@
                 "type": "num1"
             }
         ],
-        "clsid": 1363
+        "clsid": 1378
     },
     {
         "includes": [
             "Data/Exportkfd.ts",
-            "BBV3F.h"
+            "BABYLON.Vector3F.h"
         ],
         "class": "OneScriptData",
         "extend": "KFScriptData",
@@ -35,7 +134,7 @@
                 "id": 1,
                 "name": "position",
                 "type": "object",
-                "otype": "BBV3"
+                "otype": "BABYLON.Vector3"
             }
         ],
         "clsid": 1364

@@ -397,6 +397,12 @@ export class KFByteArray
         this.SetPosition(this._position + 1);
     }
 
+    public writekfBytes(bytes: KFByteArray)
+    {
+        this.writevaruint(bytes.length);
+        this.writeBytes(bytes);
+    }
+
     public writeBytes(bytes: KFByteArray, offset: number = 0, length: number = 0): void {
         let writeLength: number;
         if (offset < 0) {

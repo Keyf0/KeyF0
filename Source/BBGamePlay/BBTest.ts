@@ -3,7 +3,6 @@ import * as BABYLON from 'babylonjs';
 
 export class BBTest
 {
-
     private _engine:BABYLON.Engine = null;
     private _scene:BABYLON.Scene = null;
     private _camera:BABYLON.FreeCamera = null;
