@@ -14,16 +14,13 @@ export class KFTimelineComponent extends KFComponentBase
     private m_timeline:KFTimeline;
     private m_onbeginplay:Disposable;
 
-    private freeze:boolean;
     private playing:boolean;
     private stateid:number = -1;
-
-    public IsEditing: boolean;
 
     public constructor(target:any)
     {
         super(target, KFTimelineComponent.Meta.type);
-        this.m_timeline = new KFTimeline(this.runtime,target);
+        this.m_timeline = new KFTimeline(target);
     }
 
     public ReleaseComponent():void
@@ -69,55 +66,11 @@ export class KFTimelineComponent extends KFComponentBase
         this.stateid = 0;
         this.playing = true;
         this.m_cfg = null;
-        //this.m_timeline.Deactive();
     }
 
-    public LateEnterFrame():void
+    public EnterFrame(frameindex:number):void
     {
-        if(!this.freeze)
-        {
-            this.m_timeline.Tick();
-        }
-    }
-
-    public ResetFrameBoxInEditor(stateid:number
-                                 , frameid:number
-                                 , box:any)
-    {
-        if(!box)
-        {
-            //LOG_ERROR("box is null!");
-            return;
-        }
-
-        let state = this.m_timeline.GetState(stateid);//KFTimelineData
-        let layers = state ? state.layers : null;
-
-        if(layers && layers.length > 0)
-        {
-            let layer = layers[0];
-            let blocks = layer.blocks;
-            if(blocks.length > 0)
-            {
-                let data = blocks[0];
-                let len = data.keyframes.length;
-                let i = 0;
-                for (i = 0; i < len; ++i)
-                {
-                    let frame = data.keyframes[i];
-                    if (frame.id == frameid)
-                    {
-                        frame.box = box;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    public SetEditing(value:boolean)
-    {
-        this.IsEditing = value;
+        this.m_timeline.Tick(frameindex);
     }
 
     public Play(stateid:number, force:boolean = false)
@@ -164,7 +117,6 @@ export class KFTimelineComponent extends KFComponentBase
         this.m_timeline.Play1(this.stateid, startTimeNormalized);
     }
 
-
     //public Stop() {}
 
     public StopAt(stopFrameIndex:number = 0)
@@ -184,20 +136,6 @@ export class KFTimelineComponent extends KFComponentBase
     {
         this.m_timeline.listener = listener;
     }
-
-    public SetTimelineRenderer(renderer:IKFTimelineRenderer)
-    {
-        this.m_timeline.SetRenderer(renderer);
-    }
-
-    public SetFreeze(value:boolean)
-    {
-        this.freeze = value;
-    }
-
-    //public ExecuteGraphBlock(blockname:KFDName) {}
-
-
 
     public HasState(stateid:number):boolean
     {

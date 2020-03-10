@@ -8,14 +8,6 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
 {
     private m_target:KFBlockTarget = null;
 
-    public Tick(frameIndex:number)
-    {
-        if (this.m_target)
-        {
-            this.m_target.Tick(frameIndex);
-        }
-    }
-
     public Input(arg: any)
     {
         super.Input(arg);
@@ -41,14 +33,11 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
 
         let targetdata = this.data.target;
 
-        if (targetdata && targetdata.option == KFBlockTargetOption.Create) {
-            this.m_target = this.m_ctx.runtime.domain.CreateBlockTarget(targetdata);
-            if (this.m_target) {
-                this.m_ctx.targetObject.AddChild(this.m_target);
-                this.m_target.ActivateBLK(targetdata);
-
-                this.m_ctx.m_graph.AddTickBlock(this);
-            } else {
+        if (targetdata && targetdata.option == KFBlockTargetOption.Create)
+        {
+            this.m_target = this.m_ctx.targetObject.CreateChild(targetdata);
+            if (this.m_target == null)
+            {
                 LOG_ERROR("Cannot Create BlockTarget:{0}", targetdata.asseturl);
             }
         } else {
@@ -63,11 +52,7 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         let targetdata = this.data.target;
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
-            this.m_ctx.m_graph.RemoveTickBlock(this);
-
-            this.m_target.DeactiveBLK(this.data.target);
-            this.m_ctx.targetObject.RemoveChild(this.m_target);
-            this.m_ctx.runtime.domain.DestroyBlockTarget(targetdata);
+            this.m_ctx.targetObject.DeleteChild(this.m_target,targetdata);
         }
 
         this.m_target = null;

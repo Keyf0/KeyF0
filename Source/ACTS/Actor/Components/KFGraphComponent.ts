@@ -12,8 +12,6 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     public static Meta:IKFMeta
         = new IKFMeta("KFGraphComponent");
 
-    public IsEditing: boolean = false;
-
     private m_cfg:any;
 
     public m_graph:KFGraph;
@@ -53,16 +51,6 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
         this.m_graph.Deactive();
     }
 
-    public EnterFrame()
-    {
-        this.m_graph.Tick(this.runtime.frameindex);
-    }
-
-    public SetEditing(value:boolean)
-    {
-        this.IsEditing = value;
-    }
-
     public Play():void
     {
         this.m_graph.Play();
@@ -72,6 +60,4 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     {
         this.m_graph.Stop();
     }
-
-
 }

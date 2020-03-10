@@ -11,7 +11,6 @@ export class KFGraph
     private m_ctx:IKFGraphContext;
     private m_cfg:any;
     private m_blocks:{[key:number]:KFGraphBlockBase} = {};
-    private m_tickblks:Array<KFGraphBlockBase> = [];
     private m_inputnames:Array<KFDName> = [];
 
     public currblock:KFGraphBlockBase = null;
@@ -44,9 +43,9 @@ export class KFGraph
         {
             this.m_blocks[it].Release();
         }
+
         this.m_blocks = {};
         this.m_inputnames.length = 0;
-        this.m_tickblks.length  = 0;
         this.m_cfg = cfg;
 
         for ( let data of cfg.data.blocks)
@@ -134,18 +133,6 @@ export class KFGraph
         return this.m_blocks[id.value];
     }
 
-    public AddTickBlock(block:KFGraphBlockBase):void
-    {
-        this.m_tickblks.push(block);
-    }
-
-    public RemoveTickBlock(block:KFGraphBlockBase):void
-    {
-        let i = this.m_tickblks.indexOf(block);
-        if(i != -1)
-            this.m_tickblks.splice(i,1);
-    }
-
     public Input(blockname:KFDName, arg:any)
     {
         let block = this.m_blocks[blockname.value];
@@ -157,16 +144,6 @@ export class KFGraph
         else
         {
             //LOG_TAG_ERROR("Can't find block: %s", blockname.c_str());
-        }
-    }
-
-    public Tick(frameIndex:number):void
-    {
-        let i = this.m_tickblks.length - 1;
-        while (i >= 0)
-        {
-            this.m_tickblks[i].Tick(frameIndex);
-            i -= 1;
         }
     }
 }

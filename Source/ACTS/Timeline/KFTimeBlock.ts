@@ -2,7 +2,6 @@ import {IKFRuntime} from "../Context/IKFRuntime";
 import {IKFTimelineContext} from "./IKFTimelineProc";
 import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
-import {KFTimeBlockOpOption} from "../Data/KFTimeBlockOpOption";
 
 class KFTimeBlockTweenScope
 {
@@ -12,7 +11,6 @@ class KFTimeBlockTweenScope
 
 export class KFTimeBlock
 {
-    private m_runtime:IKFRuntime;
     private m_ctx:IKFTimelineContext;
     private m_container:IKFBlockTargetContainer;
     private m_keyframes:{[key:number]:any} = {};
@@ -22,13 +20,11 @@ export class KFTimeBlock
     public keep:boolean;
     public option:number = KFBlockTargetOption.Ignore;
 
-    public Create(runtime:IKFRuntime
-                  , container:IKFBlockTargetContainer
+    public Create(  container:IKFBlockTargetContainer
                   , ctx:IKFTimelineContext
                   , data:any)
     {
         this.m_container = container;
-        this.m_runtime = runtime;
         this.m_ctx = ctx;
         this.SetData(data);
     }
@@ -37,7 +33,6 @@ export class KFTimeBlock
     {
         this.Deactive(true);
         this.m_container = null;
-        this.m_runtime = null;
         this.m_ctx = null;
         this.data = null;
         this.m_keyframes = {};
@@ -89,8 +84,7 @@ export class KFTimeBlock
         {
             frameIndex -= this.data.begin;
 
-            if (    frameIndex == 0
-                &&  this.m_target == null)
+            if ( frameIndex == 0 &&  this.m_target == null)
             {
                 this.Activate();
             }
@@ -112,11 +106,6 @@ export class KFTimeBlock
         if (keyframe)
         {
             this.m_ctx.OnKeyFrame(this.m_target, keyframe);
-
-            if (this.option == KFBlockTargetOption.Create)
-            {
-                this.m_target.Tick(frameIndex);
-            }
         }
         else if (bJumpFrame)
         {
@@ -126,20 +115,9 @@ export class KFTimeBlock
                 keyframe = this.m_keyframes[prevFrameIndex];
                 if (keyframe)
                 {
-                    if (this.option == KFBlockTargetOption.Create)
-                    {
-                        this.m_target.Tick(frameIndex);
-                    }
                     break;
                 }
                 --prevFrameIndex;
-            }
-        }
-        else
-        {
-            if (this.option == KFBlockTargetOption.Create)
-            {
-                this.m_target.Tick(frameIndex);
             }
         }
     }
@@ -150,15 +128,8 @@ export class KFTimeBlock
 
         if (this.option == KFBlockTargetOption.Create)
         {
-            this.m_target = this.m_runtime.domain
-                .CreateBlockTarget(targetdata);
-
-            if (this.m_target != null)
-            {
-                this.m_container.AddChild(this.m_target);
-                this.m_target.ActivateBLK(targetdata);
-            }
-            else
+            this.m_target = this.m_container.CreateChild(targetdata);
+            if (this.m_target == null)
             {
                 //LOG_ERROR("Cannot Create BlockTarget: %s", m_data->target.asseturl.c_str());
             }
@@ -178,9 +149,7 @@ export class KFTimeBlock
             let targetdata = this.data.target;
             if (targetdata.option == KFBlockTargetOption.Create)
             {
-                this.m_target.DeactiveBLK(targetdata);
-                this.m_container.RemoveChild(this.m_target);
-                this.m_runtime.domain.DestroyBlockTarget(this.m_target);
+                this.m_container.DeleteChild(this.m_target,targetdata);
             }
         }
 

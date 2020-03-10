@@ -12,6 +12,8 @@ export interface IKFBlockTargetContainer
     GetChildAt(index:number):KFBlockTarget;
     FindChild(name:number):KFBlockTarget;
     GetRuntime():IKFRuntime;
+    CreateChild(targetdata:any):KFBlockTarget;
+    DeleteChild(child:KFBlockTarget,targetdata:any):boolean
 }
 
 export class KFBlockTarget
@@ -24,6 +26,7 @@ export class KFBlockTarget
     public parent:IKFBlockTargetContainer;
     public etable:KFEventTable;
     public runtime:IKFRuntime;
+    public tickable:boolean  = false;
 
     public Construct(metadata:any, runtime:IKFRuntime)
     {
@@ -34,7 +37,6 @@ export class KFBlockTarget
     //Release():void{}
 
     public Tick(frameindex:number):void{}
-    public TickInEditor(frameindex:number):void{}
 
     public ActivateBLK(KFBlockTargetData:any):void{
         ///如果有MEATDATA数据则给对象赋值

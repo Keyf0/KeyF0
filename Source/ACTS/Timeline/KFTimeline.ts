@@ -15,7 +15,6 @@ export class KFTimeline implements IKFTimelineContext
     public currframeindex:number = 0;
     public listener:IKFTimelineEventListener;
 
-    private m_runtime:IKFRuntime;
     private m_cfg:any;
     private m_states:{[key:number]:any} = {};
     private m_blocks:Array<KFTimeBlock> = new Array<KFTimeBlock>();
@@ -40,10 +39,8 @@ export class KFTimeline implements IKFTimelineContext
 
     private m_listProcSize:number = 0;
 
-    public constructor(     runtime:IKFRuntime
-                       ,    target:any)
+    public constructor(target:any)
     {
-        this.m_runtime = runtime;
         this.m_target = target;
         this.m_tpf = KFGlobalDefines.TPF / 1000.0;
     }
@@ -112,7 +109,7 @@ export class KFTimeline implements IKFTimelineContext
                     for (let data of layer.blocks)
                     {
                         let block = m_pool.Fetch();
-                        block.Create(this.m_runtime, this.m_target, this, data);
+                        block.Create(this.m_target, this, data);
                         this.m_blocks.push(block);
                     }
                 }
@@ -175,7 +172,7 @@ export class KFTimeline implements IKFTimelineContext
         return this.m_states[stateid] != null;
     }
 
-    public Tick()
+    public Tick(findex:number)
     {
         if (this.currstate)
         {
@@ -189,15 +186,6 @@ export class KFTimeline implements IKFTimelineContext
                 }
                 else
                 {
-                    ///目标还是需要TICK的 不然只有一帧的子集也不执行了
-                    for (let block of this.m_blocks)
-                    {
-                        if (block.option != KFBlockTargetOption.Attach)
-                        {
-                            block.m_target.Tick(nextFrameIndex);
-                        }
-                    }
-
                     this.onPlayEnd.emit(this.currstate.id);
                 }
             }

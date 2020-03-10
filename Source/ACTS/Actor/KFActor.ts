@@ -6,6 +6,8 @@ import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {KFScriptComponent} from "./Components/KFScriptComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFDName} from "../../KFData/Format/KFDName";
+
 
 
 export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
@@ -17,17 +19,21 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     }
 );
 
-    //public model:KFActorModel;
+    public static PARENT:KFDName = new KFDName("parent");
+
     public pause:boolean  = false;
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
     public script:KFScriptComponent;
 
-    protected m_mapComponents:{[key: number]: KFComponentBase;} = {};
-    protected m_listComponents:Array<KFComponentBase> = new Array<KFComponentBase>();
     protected m_children:Array<KFBlockTarget> = new Array<KFBlockTarget>();
+    protected m_removelist:Array<{target:KFBlockTarget;data:any;}> = [];
 
-    public constructor() {super();}
+    public constructor()
+    {
+        super();
+        this.tickable = true;
+    }
 
     public Construct(metadata:any, runtime:IKFRuntime)
     {
@@ -54,39 +60,28 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     {
         let type:number = cls.Meta.value;///KFDName
         let p:KFComponentBase = new cls(this, type);
-        this.m_listComponents.push(p);
-        this.m_mapComponents[type] = p;
         return p;
     }
 
-    public GetComponent(type:number):KFComponentBase
-    {return this.m_mapComponents[type];}
-
     public ResetAllComponent():void
     {
-        let cnt = this.m_listComponents.length;
-        for (let i = 0; i < cnt; i++)
-        {
-            this.m_listComponents[i].ResetComponent();
-        }
+        this.timeline.ResetComponent();
+        this.script.ResetComponent();
+        this.graph.ReleaseComponent();
     }
 
     public ActivateAllComponent():void
     {
-        let cnt = this.m_listComponents.length;
-        for (let i = 0; i < cnt; i++)
-        {
-            this.m_listComponents[i].ActivateComponent();
-        }
+        this.timeline.ActivateComponent();
+        this.script.ActivateComponent();
+        this.graph.ActivateComponent();
     }
 
     public DeactiveAllComponent():void
     {
-        let cnt = this.m_listComponents.length;
-        for (let i = 0; i < cnt; i++)
-        {
-            this.m_listComponents[i].DeactiveComponent();
-        }
+        this.timeline.DeactiveComponent();
+        this.script.DeactiveComponent();
+        this.graph.DeactiveComponent();
     }
 
     public Reset():void
@@ -94,52 +89,45 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.ResetAllComponent();
     }
 
-    public ActivateACT(sid:number):void
+    public ActivateBLK(KFBlockTargetData:any):void
     {
+        super.ActivateBLK(KFBlockTargetData);
         this.etable = new KFEventTable();
         this.ActivateAllComponent();
     }
 
-    public Deactive():void
+    public DeactiveBLK(KFBlockTargetData:any):void
     {
         this.DeactiveAllComponent();
         this.etable = null;
     }
 
-    public ActivateBLK(KFBlockTargetData:any):void
-    {
-        super.ActivateBLK(KFBlockTargetData);
-        this.ActivateACT(this.sid);
-    }
-
-    public DeactiveBLK(KFBlockTargetData:any):void
-    {
-        this.Deactive();
-    }
-    //public IsActived():boolean{}
-
     public Tick(frameindex:number):void
     {
         if (this.pause) {return;}
-        this.TickComponents(frameindex);
-    }
 
-    public TickComponents(frameindex:number):void
-    {
-        let cnt = this.m_listComponents.length;
-        for (let i = 0; i < cnt; i++)
+        this.script.EnterFrame(frameindex);
+        ///暂时都不需要
+        ///this.graph.EnterFrame(frameindex);
+        this.timeline.EnterFrame(frameindex);
+
+        for(let i = 0; i < this.m_children.length; i ++)
         {
-            this.m_listComponents[i].PreEnterFrame();
+            let child = this.m_children[i];
+            if(child.tickable)
+                child.Tick(frameindex);
         }
 
-        for (let i = 0; i < cnt; i++)
+        ///删除元素
+        let removelen = this.m_removelist.length;
+        if(removelen > 0)
         {
-            this.m_listComponents[i].EnterFrame();
-        }
-
-        for (let i = 0; i < cnt; i++)
-        {
-            this.m_listComponents[i].LateEnterFrame();
+            for(let i = 0; i < removelen; i ++)
+            {
+                let info = this.m_removelist[i];
+                this._DeleteChild(info.target,info.data);
+            }
+            this.m_removelist.length = 0;
         }
     }
 
@@ -157,11 +145,11 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public FindChild(name:number): KFBlockTarget
     {
-        let child = this.GetChild(name);
-        if(!child && this.parent)
+        if(name == KFActor.PARENT.value)
         {
-            child = this.parent.FindChild(name);
+            return <any>this.parent;
         }
+        let child = this.GetChild(name);
         return child;
     }
 
@@ -198,14 +186,35 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
     }
 
-    /// KFActorConfig
-    protected LoadConfig(path:string):any
-    {
-        return this.runtime.configs.GetActorConfig(path,false);
-    }
-
     public GetRuntime(): IKFRuntime
     {
         return this.runtime;
+    }
+
+    public CreateChild(targetdata):KFBlockTarget
+    {
+        let newtarget = this.runtime.domain
+            .CreateBlockTarget(targetdata);
+        if (newtarget != null)
+        {
+            this.AddChild(newtarget);
+            newtarget.ActivateBLK(targetdata);
+        }
+        return newtarget;
+    }
+
+    public DeleteChild(child:KFBlockTarget, targetdata):boolean
+    {
+        this.m_removelist.push({target:child,data:targetdata});
+        return true;
+    }
+
+    private _DeleteChild(child:KFBlockTarget, targetdata):boolean
+    {
+        child.DeactiveBLK(targetdata);
+        this.RemoveChild(child);
+        this.runtime.domain.DestroyBlockTarget(child);
+
+        return  true;
     }
 }

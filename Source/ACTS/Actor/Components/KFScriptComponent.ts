@@ -52,7 +52,7 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
         KFRegister.Clear(this.thisRegister);
     }
 
-    public EnterFrame():void
+    public EnterFrame(frameindex:number):void
     {
         let num = this._nextFrameSCount;
         if (num > 0)

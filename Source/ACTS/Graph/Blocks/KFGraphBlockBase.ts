@@ -9,8 +9,7 @@ export class KFGraphBlockBase
     public data:any;
     public nextname:KFDName;
 
-    public Create(ctx:IKFGraphContext
-                  , data:any)
+    public Create(ctx:IKFGraphContext, data:any)
     {
         this.m_ctx = ctx;
         this.data = data;
@@ -42,7 +41,6 @@ export class KFGraphBlockBase
     public Activate(){}
     public Deactive(force:boolean = false) {}
     public Reset(){}
-    public Tick(frameIndex:number){}
 
     protected OutNext(arg:any)
     {

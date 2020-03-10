@@ -17,7 +17,5 @@ export class KFComponentBase
     public DeactiveComponent():void{}
     public ReleaseComponent():void{}
     public ResetComponent():void {}
-    public EnterFrame():void {}
-    public PreEnterFrame():boolean {return true;}
-    public LateEnterFrame():void{}
+    public EnterFrame(frameindex:number):void {}
 }

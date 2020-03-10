@@ -3,6 +3,7 @@ import {KFBlockTarget} from "./KFBlockTarget";
 import {IKFRuntime} from "./IKFRuntime";
 import {KFMetaManager} from "../../Core/Meta/KFMetaManager";
 import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
+import {KFDName} from "../../KFData/Format/KFDName";
 
 export class KFDomain implements IKFDomain
 {
@@ -30,7 +31,13 @@ export class KFDomain implements IKFDomain
                 target.Construct(metadata, this.m_runtime);
                 this.m_incrsid += 1;
 
-                target.name = KFBlockTargetData.instname;
+                let instname = KFBlockTargetData.instname;
+                if(!instname || instname.value == 0)
+                {
+                    instname = new KFDName("blk_" + this.m_incrsid);
+                }
+
+                target.name = instname;
                 target.sid = this.m_incrsid;
 
                 return target;
