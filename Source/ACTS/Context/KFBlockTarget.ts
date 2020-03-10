@@ -13,7 +13,7 @@ export interface IKFBlockTargetContainer
     FindChild(name:number):KFBlockTarget;
     GetRuntime():IKFRuntime;
     CreateChild(targetdata:any):KFBlockTarget;
-    DeleteChild(child:KFBlockTarget,targetdata:any):boolean
+    DeleteChild(child:KFBlockTarget):boolean
 }
 
 export class KFBlockTarget
@@ -46,7 +46,7 @@ export class KFBlockTarget
             KFDJson.read_value(kfbytes.bytes,false, this);
         }
     }
-    public DeactiveBLK(KFBlockTargetData:any):void{}
+    public DeactiveBLK():void{}
     public position:any;
     public set_position(x:number, y:number, z:number):void{}
     public rotation:any;

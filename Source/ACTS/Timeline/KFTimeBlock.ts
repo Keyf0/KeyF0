@@ -1,13 +1,7 @@
-import {IKFRuntime} from "../Context/IKFRuntime";
 import {IKFTimelineContext} from "./IKFTimelineProc";
 import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
 
-class KFTimeBlockTweenScope
-{
-    begin:any;
-    end:any;
-}
 
 export class KFTimeBlock
 {
@@ -149,7 +143,7 @@ export class KFTimeBlock
             let targetdata = this.data.target;
             if (targetdata.option == KFBlockTargetOption.Create)
             {
-                this.m_container.DeleteChild(this.m_target,targetdata);
+                this.m_container.DeleteChild(this.m_target);
             }
         }
 

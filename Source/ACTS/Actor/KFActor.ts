@@ -27,7 +27,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public script:KFScriptComponent;
 
     protected m_children:Array<KFBlockTarget> = new Array<KFBlockTarget>();
-    protected m_removelist:Array<{target:KFBlockTarget;data:any;}> = [];
+    protected m_removelist:Array<KFBlockTarget> = [];
 
     public constructor()
     {
@@ -96,7 +96,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.ActivateAllComponent();
     }
 
-    public DeactiveBLK(KFBlockTargetData:any):void
+    public DeactiveBLK():void
     {
         this.DeactiveAllComponent();
         this.etable = null;
@@ -124,8 +124,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         {
             for(let i = 0; i < removelen; i ++)
             {
-                let info = this.m_removelist[i];
-                this._DeleteChild(info.target,info.data);
+                let t = this.m_removelist[i];
+                this._DeleteChild(t);
             }
             this.m_removelist.length = 0;
         }
@@ -203,15 +203,15 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         return newtarget;
     }
 
-    public DeleteChild(child:KFBlockTarget, targetdata):boolean
+    public DeleteChild(child:KFBlockTarget):boolean
     {
-        this.m_removelist.push({target:child,data:targetdata});
+        this.m_removelist.push(child);
         return true;
     }
 
-    private _DeleteChild(child:KFBlockTarget, targetdata):boolean
+    private _DeleteChild(child:KFBlockTarget):boolean
     {
-        child.DeactiveBLK(targetdata);
+        child.DeactiveBLK();
         this.RemoveChild(child);
         this.runtime.domain.DestroyBlockTarget(child);
 

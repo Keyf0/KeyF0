@@ -19,9 +19,11 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
 
         if(this.m_target)
         {
-            let script = this.m_target.script;
             let framedata = this.data.frame;
-            this.m_ctx.script.ExecuteFrameScript(0, framedata,this.m_target);
+
+            if(framedata && framedata.scripts.length > 0) {
+                this.m_ctx.script.ExecuteFrameScript(0, framedata, this.m_target);
+            }
         }
 
         this.OutNext(arg);
@@ -52,7 +54,7 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         let targetdata = this.data.target;
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
-            this.m_ctx.targetObject.DeleteChild(this.m_target,targetdata);
+            this.m_ctx.targetObject.DeleteChild(this.m_target);
         }
 
         this.m_target = null;

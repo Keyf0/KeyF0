@@ -235,9 +235,10 @@ export class KFTimeline implements IKFTimelineContext
                 {
                     target = this.m_target;
                 }
-
-                this.m_target.script.ExecuteFrameScript(keyframe.id, keyframe.data, target);
-
+                let framedata = keyframe.data;
+                if(framedata.scripts.length > 0) {
+                    this.m_target.script.ExecuteFrameScript(keyframe.id, framedata, target);
+                }
                 if (keyframe.evt > 0)
                 {
                     if (this.listener)
