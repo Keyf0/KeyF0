@@ -5,8 +5,7 @@
     "outDir": "Html/libs",
     "sourceMap": true,
     "types": [
-      "babylonjs"
-    ]
+      "babylonjs"]
   },
   "exclude": [
       "node_modules"

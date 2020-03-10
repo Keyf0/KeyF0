@@ -1,10 +1,9 @@
 import {KFComponentBase} from "./KFComponentBase";
-import {IKFTimelineContext, IKFTimelineEventListener} from "../../Timeline/IKFTimelineProc";
+import {IKFTimelineEventListener} from "../../Timeline/IKFTimelineProc";
 import {KFTimeline} from "../../Timeline/KFTimeline";
 import {Disposable} from "../../../Core/Misc/TypeEvent";
 import {IKFTimelineRenderer} from "../../Timeline/IKFTimelineRenderer";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
-import {KFBlockTarget} from "../../Context/KFBlockTarget";
 
 export class KFTimelineComponent extends KFComponentBase
 {
@@ -45,7 +44,7 @@ export class KFTimelineComponent extends KFComponentBase
         let tmp:number = this.stateid;
         this.stateid = -1;
         this.m_timeline.Reset();
-        let tconfig = this.runtime.configs.GetTimelineConfig(this.model.path);
+        let tconfig = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl);
         this.m_cfg = tconfig;
 
         this.m_timeline.SetConfig(tconfig);
@@ -55,11 +54,8 @@ export class KFTimelineComponent extends KFComponentBase
 
     public ActivateComponent():void
     {
-        //this.m_timeline.Activate(m_model->sid());
-        this.m_cfg = this.runtime.configs.GetTimelineConfig(this.model.path);
+        this.m_cfg = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl);
         this.m_timeline.SetConfig(this.m_cfg);
-        this.m_onbeginplay = this.m_timeline.onPlayBegin
-            .on((stateid)=> this.model.SetFrameBox(null));
     }
 
     public DeactiveComponent():void
@@ -112,7 +108,6 @@ export class KFTimelineComponent extends KFComponentBase
                     if (frame.id == frameid)
                     {
                         frame.box = box;
-                        this.model.SetFrameBox(box);
                         break;
                     }
                 }

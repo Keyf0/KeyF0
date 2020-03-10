@@ -1,14 +1,11 @@
 import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {IKFRuntime} from "../Context/IKFRuntime";
-import {KFActorModel} from "./Model/KFActorModel";
 import {KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFComponentBase} from "./Components/KFComponentBase";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {KFScriptComponent} from "./Components/KFScriptComponent";
-import {KFGlobalDefines} from "../KFACTSDefines";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {IKFConfigs} from "../Context/IKFConfigs";
 
 
 export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
@@ -20,7 +17,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     }
 );
 
-    public model:KFActorModel;
+    //public model:KFActorModel;
+    public pause:boolean  = false;
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
     public script:KFScriptComponent;
@@ -39,10 +37,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public Init(asseturl:string):void
     {
-        if(this.model == null) {
-            this.model = this.CreateModel();
-            this.model.path = asseturl;
-            this.model.actived = false;
+        if(this.timeline == null)
+        {
             this.InitAllComponent();
         }
     }
@@ -95,22 +91,18 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public Reset():void
     {
-        this.model.Reset();
-        this.model.actived = false;
         this.ResetAllComponent();
     }
 
     public ActivateACT(sid:number):void
     {
         this.etable = new KFEventTable();
-        this.model.Activate(sid,this.etable);
         this.ActivateAllComponent();
     }
 
     public Deactive():void
     {
         this.DeactiveAllComponent();
-        this.model.Deactive();
         this.etable = null;
     }
 
@@ -128,33 +120,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public Tick(frameindex:number):void
     {
-        if (!this.model.actived || this.model.pause)
-        {
-            return;
-        }
-
-        let freezetimeMS:number = this.model.freezetime;
-        if (freezetimeMS > 0)
-        {
-            freezetimeMS -= KFGlobalDefines.TPF;
-            if (freezetimeMS <= 0)
-            {
-                freezetimeMS = 0;
-                ///在播放中或不在冻结中则继续
-                if (!this.model.pause)
-                {
-                    this.timeline.SetFreeze(false);
-                }
-            }
-            else
-            {
-                this.timeline.SetFreeze(true);
-            }
-
-            this.model.freezetime = freezetimeMS;
-            return;
-        }
-
+        if (this.pause) {return;}
         this.TickComponents(frameindex);
     }
 
@@ -236,11 +202,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     protected LoadConfig(path:string):any
     {
         return this.runtime.configs.GetActorConfig(path,false);
-    }
-
-    protected CreateModel():KFActorModel
-    {
-        return new KFActorModel();
     }
 
     public GetRuntime(): IKFRuntime

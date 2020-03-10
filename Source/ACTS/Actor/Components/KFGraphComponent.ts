@@ -31,15 +31,15 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     public ResetComponent()
     {
         this.m_graph.Reset();
-        this.m_cfg = this.runtime.configs.GetGraphConfig(this.model.path);
+        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl);
         this.m_graph.SetConfig(this.m_cfg);
         this.m_graph.Play();
     }
 
     public ActivateComponent()
     {
-        this.m_graph.Activate(this.model.sid);
-        this.m_cfg = this.runtime.configs.GetGraphConfig(this.model.path);
+        this.m_graph.Activate(this.targetObject.sid);
+        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl);
         this.m_graph.SetConfig(this.m_cfg);
         this.m_graph.Play();
     }
