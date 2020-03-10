@@ -29,6 +29,8 @@ export class KFTimeline implements IKFTimelineContext
     private m_length:number = 0;
     private m_loop:boolean = true;
     private m_tpf:number = 0;
+
+    ///当前组件的对象
     private m_target:any = null;
 
     private m_listProcKeyFrames:Array<{
@@ -241,25 +243,12 @@ export class KFTimeline implements IKFTimelineContext
                 let keyframe = frameinfo.keyframe;
                 let target = frameinfo.target;
 
-                if(target)
+                if(target == null)
                 {
-                    if(target.script)
-                    {
-                        target.script.ExecuteFrameScript(keyframe.id, keyframe.data,null);
-                    }
-                    else
-                    {
-                        this.m_runtime.scripts.ExecuteFrameScript(
-                            keyframe.id
-                            , keyframe.data
-                            , target);
-                    }
+                    target = this.m_target;
                 }
-                else
-                {
-                    this.m_target.script
-                        .ExecuteFrameScript(keyframe.id, keyframe.data);
-                }
+
+                this.m_target.script.ExecuteFrameScript(keyframe.id, keyframe.data, target);
 
                 if (keyframe.evt > 0)
                 {

@@ -29,18 +29,7 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         {
             let script = this.m_target.script;
             let framedata = this.data.frame;
-
-            if(script)
-            {
-                script.ExecuteFrameScript(0, framedata,null);
-            }
-            else
-            {
-                this.m_ctx.runtime.scripts.ExecuteFrameScript(
-                    0
-                    , framedata
-                    , this.m_target);
-            }
+            this.m_ctx.script.ExecuteFrameScript(0, framedata,this.m_target);
         }
 
         this.OutNext(arg);

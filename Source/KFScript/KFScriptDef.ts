@@ -13,9 +13,9 @@ export interface KFScriptContext
     PushRegister(paramnum:number, varsize:number):KFRegister;
     PopRegister():KFRegister;
     CallProperty(name:string, codeline:any):void;
-    ExecuteFrameScript(id:number,framedata:any,context:KFScriptContext):void;
-    Execute(scriptData:any, context:KFScriptContext):void;
-    ExecCodeLine(codeline:any, context:KFScriptContext):void;
+    ExecuteFrameScript(id:number,framedata:any,target:any):void;
+    Execute(scriptData:any, target:any):void;
+    ExecCodeLine(codeline:any, target:any):void;
 }
 
 export class KFScript
@@ -23,8 +23,7 @@ export class KFScript
     ///区分脚本的ID
     public typeid:number = 0;
 
-    public Execute(scriptdata:any
-                    , context:KFScriptContext = null):void
+     public Execute(scriptdata:any, context:KFScriptContext = null):void
      {
 
      }

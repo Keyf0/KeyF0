@@ -15,7 +15,9 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     public IsEditing: boolean = false;
 
     private m_cfg:any;
+
     public m_graph:KFGraph;
+    public script: KFScriptContext;
 
     public constructor(target:any)
     {
@@ -38,6 +40,7 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
 
     public ActivateComponent()
     {
+        this.script = this.targetObject.script;
         this.m_graph.Activate(this.targetObject.sid);
         this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl);
         this.m_graph.SetConfig(this.m_cfg);
@@ -69,4 +72,6 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     {
         this.m_graph.Stop();
     }
+
+
 }

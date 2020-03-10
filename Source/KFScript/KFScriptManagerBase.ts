@@ -72,19 +72,14 @@ export class KFScriptManagerBase implements KFScriptContext
     public CallProperty(name: string, codeline: any): void
     {}
 
-    public ExecCodeLine(codeline: any
-                        , context: KFScriptContext): void
+    public ExecCodeLine(codeline: any, target: any): void
     {
         /// 暂时不支持
     }
-
-    public Execute(scriptData: any, context: KFScriptContext, targetobj = null): void
+    
+    public Execute(scriptData: any , target: any): void
     {
-        if (context == null)
-        {
-            context = this;
-            context.targetObject = targetobj;
-        }
+        this.targetObject = target;
 
         if (scriptData.group == KFScriptGroupType.LowLevel)
         {
@@ -113,48 +108,41 @@ export class KFScriptManagerBase implements KFScriptContext
                     this._G_SCRIPT_INSTANCE[scriptType.value] = script;
                 }
 
-                script.Execute(scriptData, context);
+                script.Execute(scriptData, this);
             }
         }
         else
         {
-            script.Execute(scriptData, context);
+            script.Execute(scriptData, this);
         }
     }
 
-    public ExecuteFrameScript(id: number
-                              , framedata: any
-                              , context: KFScriptContext
-                                , targetobj = null): void
+    public ExecuteFrameScript(id: number, framedata: any, target: any): void
     {
-        if (context == null)
-        {
-            context = this;
-            context.targetObject = targetobj;
-        }
+        this.targetObject = target;
 
         let scriptDatas:Array<any> = framedata.scripts;
-        let reg:KFRegister = context.thisRegister;
+        let reg:KFRegister = this.thisRegister;
 
         if (reg == null)
         {
             for (let i = 0; i < scriptDatas.length; i++)
             {
                 // Debug.Log("    Trigger-Script 开始执行 -> " + scriptData.scriptType);
-                this.Execute(scriptDatas[i], context);
+                this.Execute(scriptDatas[i], this);
             }
         }
         else
         {
             //建立新的寄存器集合
-            let regs:KFRegister = context.PushRegister(framedata.paramsize, framedata.varsize);
+            let regs:KFRegister = this.PushRegister(framedata.paramsize, framedata.varsize);
             regs._PC = framedata.startPC;
             for (; regs._PC < scriptDatas.length;)
             {
-                this.Execute(scriptDatas[regs._PC], context);
+                this.Execute(scriptDatas[regs._PC], this);
                 regs._PC += 1;
             }
-            context.PopRegister();
+            this.PopRegister();
         }
     }
 

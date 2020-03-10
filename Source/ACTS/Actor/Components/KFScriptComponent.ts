@@ -22,17 +22,21 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
     private _isEndingscope:boolean = false;
     private _removeKeepScripts:{[key:number]:boolean} = {};
     private _hasRemoveKeep:boolean = false;
-    private _nextFrameScripts:Array<any> = new Array<any>();
-    private _beginscopeScriptes:Array<any> = new Array<any>();
+
+    private _nextFrameScripts:Array<{target:any;scriptdata:any}> = [];
+    private _nextFrameSCount = 0;
+    private _beginscopeScriptes:Array<{target:any;scriptdata:any}> = [];
+    private _beginscopeSCount = 0;
+
     private _variables:{[key:number]:Variable} = {};
     private _ExecingFrame:any;
-
-
+    
     public thisRegister: KFRegister;
 
     public constructor(target:any)
     {
         super(target, KFScriptComponent.Meta.type);
+        this.targetObject = null;
         this.thisRegister =  KFRegister.Create();
     }
 
@@ -40,7 +44,9 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
     {
         this.EndScope();
         this._nextFrameScripts.length = 0;
+        this._nextFrameSCount = 0;
         this._beginscopeScriptes.length = 0;
+        this._beginscopeSCount = 0;
         this._scriptruning = false;
         this._keepScriptID = 0;
         KFRegister.Clear(this.thisRegister);
@@ -48,19 +54,22 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
 
     public EnterFrame():void
     {
-        let num = this._nextFrameScripts.length;
+        let num = this._nextFrameSCount;
         if (num > 0)
         {
             for (let i:number = 0
                 ; i < num
                 ; i++)
             {
-                let scriptData = this._nextFrameScripts[i];
+                let scriptinfo = this._nextFrameScripts[i];
+                let scriptData = scriptinfo.scriptdata;
+
                 this.ExecuteAt(scriptData.type, scriptData
-                    , null, false);
+                    , scriptinfo.target, false);
             }
             this._nextFrameScripts.length = 0;
         }
+        this._nextFrameSCount = 0;
 
         num = this._scopeKeepScripts.length;
         if (num > 0)
@@ -106,18 +115,17 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
 
     public BeginScope(): void
     {
-        let num = this._beginscopeScriptes.length;
+        let num = this._beginscopeSCount;
         if (num > 0)
         {
-            for (let i = 0
-                ; i < num; i++)
+            for (let i = 0; i < num; i++)
             {
-                let scriptData:any = this._beginscopeScriptes[i];
-                this.ExecuteAt(scriptData.type, scriptData
-                , null, false);
+                let info = this._beginscopeScriptes[i];
+                let scriptData:any = info.scriptdata;
+                this.ExecuteAt(scriptData.type, scriptData, info.target, false);
             }
-            this._beginscopeScriptes.length = 0;
         }
+        this._beginscopeSCount = 0;
     }
 
     public CallProperty(name: string, codeline: any): void {}
@@ -150,31 +158,23 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
         this._isEndingscope = false;
     }
 
-    public ExecCodeLine(codeline: any, context: KFScriptContext): void
+    public ExecCodeLine(codeline: any, target: any): void
     {
         if (codeline == null)
             return;
-        if (context == null)
-            context = this;
         //KFVM::ExecCodeLine(codeline, context);
     }
 
-    public Execute(scriptData: any, context: KFScriptContext): void
+    public Execute(scriptData: any, target: any): void
     {
-        this.ExecuteAt(scriptData.type, scriptData
-            , null,false);
+        this.ExecuteAt(scriptData.type, scriptData, target,false);
     }
 
     public ExecuteAt(scriptType: KFDName
                      , scriptData: any
-                     , context: KFScriptContext
+                     , target: any
                      , beginscope: boolean): void
     {
-        if(context == null)
-        {
-            context = this;
-        }
-
         let sgroup = scriptData.group;
         if (sgroup == KFScriptGroupType.Target)
         {
@@ -182,10 +182,30 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
             if (this._isEndingscope)
             {
                 ///有些脚本需要在下一个scrope开始前执行比如说打断残影
-                if (beginscope)
-                    this._beginscopeScriptes.push(scriptData);
-                else
-                    this._nextFrameScripts.push(scriptData);
+                if (beginscope) {
+                    if(this._beginscopeSCount >= this._beginscopeScriptes.length)
+                    {
+                        this._beginscopeScriptes.push({target:target,scriptdata:scriptData});
+                    }
+                    else {
+                       let info =  this._beginscopeScriptes[this._beginscopeSCount];
+                        info.target = target;
+                        info.scriptdata = scriptData;
+                    }
+                    this._beginscopeSCount += 1;
+                }else {
+
+                    if(this._nextFrameSCount >= this._nextFrameScripts.length)
+                    {
+                        this._nextFrameScripts.push({target:target,scriptdata:scriptData});
+                    }
+                    else {
+                        let info =  this._nextFrameScripts[this._nextFrameSCount];
+                        info.target = target;
+                        info.scriptdata = scriptData;}
+
+                    this._nextFrameSCount += 1;
+                }
                 return;
             }
 
@@ -203,26 +223,27 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
 
                     if(targetScript["SetContext"])
                     {
-                        (<KFACTSScript>targetScript).SetContext(<KFACTSScriptContext>context);
+                        (<KFACTSScript>targetScript).SetContext(this);
                     }
                 }
             }
 
             if (targetScript != null)
             {
-                targetScript.Execute(scriptData, context);
+                this.targetObject = target;
+                targetScript.Execute(scriptData, this);
             }
         }
         else
         {
             ///执行全局脚本
-            this.runtime.scripts.Execute(scriptData, context);
+            this.runtime.scripts.Execute(scriptData, target);
         }
     }
 
     public ExecuteFrameScript(id: number
                        , frameData: any
-                       , context: KFScriptContext): void
+                       , target: any): void
     {
         if (frameData != null)
         {
@@ -252,24 +273,19 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
                 }
 
                 this.thisRegister._PC = frameData.startPC;
+                let globalscript:KFScriptContext = this.runtime.scripts;
 
                 for (; this.thisRegister._PC < count;)
                 {
                     let data = scriptDatas[this.thisRegister._PC];
                     let scriptType = data.type;
 
-                    if (data.group == KFScriptGroupType.LowLevel)
+                    if (data.group == KFScriptGroupType.Global)
                     {
-                        //KFVM::ExecCodeLine(data, this);
-                        /*
-                        if (m_scriptmgr != nullptr)
-                        {
-                        m_scriptmgr->ExecCodeLine(data, this);
-                        }
-                        */
+                        globalscript.Execute(data, target);
                     }
-                else
-                    this.ExecuteAt(scriptType, data, context, false);
+                    else
+                        this.ExecuteAt(scriptType, data, target, false);
 
                     this.thisRegister._PC += 1;
                 }
@@ -311,7 +327,6 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
         return undefined;
     }
 
-
     public PopRegister(): KFRegister
     {
         if(this.thisRegister != null)
@@ -332,12 +347,12 @@ export class KFScriptComponent extends KFComponentBase implements KFACTSScriptCo
         return null;
     }
 
-    RemoveAllKeepScript(): void
+    public RemoveAllKeepScript(): void
     {
 
     }
 
-    RemoveKeepScript(script: KFScript): void
+    public RemoveKeepScript(script: KFScript): void
     {
         if (this._scriptruning)
         {

@@ -8,7 +8,7 @@ export interface IKFGraphContext
     runtime:any;
     //兼容KFSCRIPTCONTEXT的类型用any
     targetObject:any;
-
     IsEditing:boolean;
     m_graph:any;
+    script:KFScriptContext;
 }
