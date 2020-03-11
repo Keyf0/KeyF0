@@ -1,11 +1,10 @@
 import {TypeEvent} from "../../Core/Misc/TypeEvent";
-import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFTimeBlock} from "./KFTimeBlock";
 import {IKFTimelineContext, IKFTimelineEventListener} from "./IKFTimelineProc";
-import {IKFTimelineRenderer} from "./IKFTimelineRenderer";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFPool} from "../../Core/Misc/KFPool";
-import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
+import {KFBlockTarget} from "../Context/KFBlockTarget";
+import {KFScriptContext} from "../../KFScript/KFScriptDef";
 
 export class KFTimeline implements IKFTimelineContext
 {
@@ -30,7 +29,7 @@ export class KFTimeline implements IKFTimelineContext
     private m_tpf:number = 0;
 
     ///当前组件的对象
-    private m_target:any = null;
+    private m_target:KFBlockTarget = null;
 
     private m_listProcKeyFrames:Array<{
         target: any;
@@ -38,8 +37,9 @@ export class KFTimeline implements IKFTimelineContext
     }> = [];
 
     private m_listProcSize:number = 0;
+    private m_scripts:KFScriptContext = null;
 
-    public constructor(target:any)
+    public constructor(target:KFBlockTarget)
     {
         this.m_target = target;
         this.m_tpf = KFGlobalDefines.TPF / 1000.0;
@@ -50,8 +50,10 @@ export class KFTimeline implements IKFTimelineContext
         if(!cfg) return;
 
         this.DestroyBlocks();
+
         this.m_cfg = cfg;
         this.m_states = {};
+        this.m_scripts = this.m_target.runtime.scripts;
 
         for (let data of cfg.states)
         {
@@ -109,7 +111,7 @@ export class KFTimeline implements IKFTimelineContext
                     for (let data of layer.blocks)
                     {
                         let block = m_pool.Fetch();
-                        block.Create(this.m_target, this, data);
+                        block.Create(<any>this.m_target, this, data);
                         this.m_blocks.push(block);
                     }
                 }
@@ -120,8 +122,6 @@ export class KFTimeline implements IKFTimelineContext
 
         return false;
     }
-
-    public SetRenderer(renderer:IKFTimelineRenderer) {}
 
     public Release():void
     {
@@ -236,14 +236,17 @@ export class KFTimeline implements IKFTimelineContext
                     target = this.m_target;
                 }
                 let framedata = keyframe.data;
-                if(framedata.scripts.length > 0) {
-                    this.m_target.script.ExecuteFrameScript(keyframe.id, framedata, target);
+                if(framedata.scripts.length > 0)
+                {
+                    this.m_scripts.ExecuteFrameScript(keyframe.id, framedata, target);
                 }
                 if (keyframe.evt > 0)
                 {
                     if (this.listener)
+                    {
                         this.listener
                             .OnTimelineEvent(keyframe.id, keyframe.evt);
+                    }
                 }
 
                 i += 1;

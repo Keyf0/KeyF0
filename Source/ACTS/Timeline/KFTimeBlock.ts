@@ -123,10 +123,6 @@ export class KFTimeBlock
         if (this.option == KFBlockTargetOption.Create)
         {
             this.m_target = this.m_container.CreateChild(targetdata);
-            if (this.m_target == null)
-            {
-                //LOG_ERROR("Cannot Create BlockTarget: %s", m_data->target.asseturl.c_str());
-            }
         }
         else if (this.option == KFBlockTargetOption.Attach)
         {

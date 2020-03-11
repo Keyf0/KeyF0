@@ -4,7 +4,6 @@ import {KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFComponentBase} from "./Components/KFComponentBase";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
-import {KFScriptComponent} from "./Components/KFScriptComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFDName} from "../../KFData/Format/KFDName";
 
@@ -24,7 +23,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public pause:boolean  = false;
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
-    public script:KFScriptComponent;
 
     protected m_children:Array<KFBlockTarget> = new Array<KFBlockTarget>();
     protected m_removelist:Array<KFBlockTarget> = [];
@@ -52,7 +50,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public InitAllComponent():void
     {
         this.timeline = this.AddComponent(KFTimelineComponent);
-        this.script = this.AddComponent(KFScriptComponent);
         this.graph = this.AddComponent(KFGraphComponent);
     }
 
@@ -66,21 +63,18 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public ResetAllComponent():void
     {
         this.timeline.ResetComponent();
-        this.script.ResetComponent();
         this.graph.ReleaseComponent();
     }
 
     public ActivateAllComponent():void
     {
         this.timeline.ActivateComponent();
-        this.script.ActivateComponent();
         this.graph.ActivateComponent();
     }
 
     public DeactiveAllComponent():void
     {
         this.timeline.DeactiveComponent();
-        this.script.DeactiveComponent();
         this.graph.DeactiveComponent();
     }
 
@@ -106,7 +100,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     {
         if (this.pause) {return;}
 
-        this.script.EnterFrame(frameindex);
         ///暂时都不需要
         ///this.graph.EnterFrame(frameindex);
         this.timeline.EnterFrame(frameindex);

@@ -1,12 +1,15 @@
+import {IKFRuntime} from "../../Context/IKFRuntime";
+import {KFBlockTarget} from "../../Context/KFBlockTarget";
+
 export class KFComponentBase
 {
     //兼容KFSCRIPTCONTEXT的类型用any
-    public targetObject:any;
+    public targetObject:KFBlockTarget;
     //兼容KFSCRIPTCONTEXT的类型用any
-    public runtime: any;
+    public runtime: IKFRuntime;
     public comtype:number;
 
-    public constructor(target:any, type:number)
+    public constructor(target:KFBlockTarget, type:number)
     {
         this.targetObject = target;
         this.comtype = type;

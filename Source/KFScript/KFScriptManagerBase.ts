@@ -119,8 +119,6 @@ export class KFScriptManagerBase implements KFScriptContext
 
     public ExecuteFrameScript(id: number, framedata: any, target: any): void
     {
-        this.targetObject = target;
-
         let scriptDatas:Array<any> = framedata.scripts;
         let reg:KFRegister = this.thisRegister;
 
@@ -129,7 +127,7 @@ export class KFScriptManagerBase implements KFScriptContext
             for (let i = 0; i < scriptDatas.length; i++)
             {
                 // Debug.Log("    Trigger-Script 开始执行 -> " + scriptData.scriptType);
-                this.Execute(scriptDatas[i], this);
+                this.Execute(scriptDatas[i], target);
             }
         }
         else
@@ -139,7 +137,7 @@ export class KFScriptManagerBase implements KFScriptContext
             regs._PC = framedata.startPC;
             for (; regs._PC < scriptDatas.length;)
             {
-                this.Execute(scriptDatas[regs._PC], this);
+                this.Execute(scriptDatas[regs._PC], target);
                 regs._PC += 1;
             }
             this.PopRegister();

@@ -2,8 +2,8 @@ import {KFComponentBase} from "./KFComponentBase";
 import {IKFTimelineEventListener} from "../../Timeline/IKFTimelineProc";
 import {KFTimeline} from "../../Timeline/KFTimeline";
 import {Disposable} from "../../../Core/Misc/TypeEvent";
-import {IKFTimelineRenderer} from "../../Timeline/IKFTimelineRenderer";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../Context/KFBlockTarget";
 
 export class KFTimelineComponent extends KFComponentBase
 {
@@ -17,7 +17,7 @@ export class KFTimelineComponent extends KFComponentBase
     private playing:boolean;
     private stateid:number = -1;
 
-    public constructor(target:any)
+    public constructor(target:KFBlockTarget)
     {
         super(target, KFTimelineComponent.Meta.type);
         this.m_timeline = new KFTimeline(target);
@@ -41,7 +41,7 @@ export class KFTimelineComponent extends KFComponentBase
         let tmp:number = this.stateid;
         this.stateid = -1;
         this.m_timeline.Reset();
-        let tconfig = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl);
+        let tconfig = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl,false);
         this.m_cfg = tconfig;
 
         this.m_timeline.SetConfig(tconfig);
@@ -51,7 +51,7 @@ export class KFTimelineComponent extends KFComponentBase
 
     public ActivateComponent():void
     {
-        this.m_cfg = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl);
+        this.m_cfg = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl,false);
         this.m_timeline.SetConfig(this.m_cfg);
     }
 

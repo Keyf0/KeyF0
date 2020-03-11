@@ -17,7 +17,7 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     public m_graph:KFGraph;
     public script: KFScriptContext;
 
-    public constructor(target:any)
+    public constructor(target:KFBlockTarget)
     {
         super(target, KFGraphComponent.Meta.type);
         this.m_graph = new KFGraph(this);
@@ -31,16 +31,16 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
     public ResetComponent()
     {
         this.m_graph.Reset();
-        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl);
+        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl,false);
         this.m_graph.SetConfig(this.m_cfg);
         this.m_graph.Play();
     }
 
     public ActivateComponent()
     {
-        this.script = this.targetObject.script;
+        this.script = this.runtime.scripts;
         this.m_graph.Activate(this.targetObject.sid);
-        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl);
+        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl,false);
         this.m_graph.SetConfig(this.m_cfg);
         this.m_graph.Play();
     }

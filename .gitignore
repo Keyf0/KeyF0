@@ -135,3 +135,6 @@ Source/Html/libs/KungfuJS.js
 Source/Html/libs/KungfuJS.js.map
 /Source/.idea
 /Source/Html/libs
+/Source/Html/tool/logs
+/Source/Html/tool/.idea
+/Source/Html/tool/exportcpp
