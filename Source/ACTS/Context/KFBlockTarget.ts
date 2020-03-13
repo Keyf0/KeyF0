@@ -31,20 +31,20 @@ export class KFBlockTarget
     {
         this.metadata = metadata;
         this.runtime = runtime;
-    }
-
-    //Release():void{}
-
-    public Tick(frameindex:number):void{}
-
-    public ActivateBLK(KFBlockTargetData:any):void{
         ///如果有MEATDATA数据则给对象赋值
+        ///不考虑延时创建的对象了[不纯粹]，METADATA就是类初始化时赋值的
         let kfbytes:KFBytes = this.metadata.data;
         if(kfbytes && kfbytes.bytes)
         {
             KFDJson.read_value(kfbytes.bytes,false, this);
         }
     }
+
+    //Release():void{}
+
+    public Tick(frameindex:number):void{}
+
+    public ActivateBLK(KFBlockTargetData:any):void {}
     public DeactiveBLK():void{}
     public position:any;
     public set_position(x:number, y:number, z:number):void{}

@@ -36,10 +36,8 @@ export class BBScene extends KFActor implements IBBObject
         engine._target.runRenderLoop(this.renderThread);
     }
 
-    public Deactive(): void
-    {
-        super.Deactive();
-
+    public DeactiveBLK(): void {
+        super.DeactiveBLK();
         if(this.target)
         {
             this.target.getEngine().stopRenderLoop(this.renderThread);

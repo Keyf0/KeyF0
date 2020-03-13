@@ -33,6 +33,8 @@ export class HElementTarget extends KFBlockTarget implements HElement
 
     public ActivateBLK(KFBlockTargetData: any): void
     {
+        super.ActivateBLK(KFBlockTargetData);
+
         let parent = <HElementTarget><any>this.parent;
         this.document = parent.document;
         this.target = HElementCreator.DefaultCreateHtml(parent.target
@@ -41,8 +43,10 @@ export class HElementTarget extends KFBlockTarget implements HElement
             , this.metadata);
     }
 
-    public DeactiveBLK(KFBlockTargetData: any): void
+    public DeactiveBLK(): void
     {
+        super.DeactiveBLK();
+
         let parent = <HElementTarget><any>this.parent;
         HElementCreator.DefaultDestroyHtml(parent.target, this);
         this.target = null;

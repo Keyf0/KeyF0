@@ -8,7 +8,6 @@ import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
 
 
 ///KFD(C,CLASS=BBNode,EXTEND=KFActor)
-///KFD(P=1,NAME=target,TYPE=mixobject, OTYPE=BABYLON.Node)
 ///KFD(*)
 
 export class BBNode extends KFActor implements IBBObject
@@ -55,20 +54,23 @@ export class BBNode extends KFActor implements IBBObject
 
     public ActivateBLK(KFBlockTargetData: any): void
     {
+        super.ActivateBLK(KFBlockTargetData);
+
         let obj = <IBBObject><any>this.parent;
         this.scene  = obj.scene;
         this.target = this.CreateTarget(KFBlockTargetData);
-        super.ActivateBLK(KFBlockTargetData);
     }
 
-    public Deactive(): void
+    public DeactiveBLK(): void
     {
-        super.Deactive();
+        super.DeactiveBLK();
+
         if(this.target)
         {
             this.target.dispose();
             this.target = null;
         }
+
         this.scene = null;
     }
 }

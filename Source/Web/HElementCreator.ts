@@ -1,6 +1,5 @@
 import {HElement, IDocument} from "./HElementTarget";
 import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
-import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
 
 export class HElementCreator {
 

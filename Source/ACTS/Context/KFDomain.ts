@@ -27,8 +27,7 @@ export class KFDomain implements IKFDomain
             {
                 let target:KFBlockTarget = meta.instantiate();
                 //kfgcRetain(target);
-                LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
-                target.Construct(metadata, this.m_runtime);
+
                 this.m_incrsid += 1;
 
                 let instname = KFBlockTargetData.instname;
@@ -39,6 +38,9 @@ export class KFDomain implements IKFDomain
 
                 target.name = instname;
                 target.sid = this.m_incrsid;
+
+                LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
+                target.Construct(metadata, this.m_runtime);
 
                 return target;
             }

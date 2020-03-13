@@ -38,9 +38,8 @@ export class HElementActor extends KFActor implements HElement
         super.ActivateBLK(KFBlockTargetData);
     }
 
-    public Deactive(): void
-    {
-        super.Deactive();
+    public DeactiveBLK(): void {
+        super.DeactiveBLK();
         if(this.parent) {
             let parent = <HElementActor>this.parent;
             HElementCreator.DefaultDestroyHtml(parent.target, this);
