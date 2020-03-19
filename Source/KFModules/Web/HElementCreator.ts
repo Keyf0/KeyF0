@@ -1,5 +1,5 @@
 import {HElement, IDocument} from "./HElementTarget";
-import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
+import {KFDataHelper} from "../../ACTS/Data/KFDataHelper";
 
 export class HElementCreator {
 

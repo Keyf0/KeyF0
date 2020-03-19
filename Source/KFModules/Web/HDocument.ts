@@ -1,7 +1,7 @@
 import {IDocument} from "./HElementTarget";
-import {IKFRuntime} from "../ACTS/Context/IKFRuntime";
-import {IKFMeta} from "../Core/Meta/KFMetaManager";
-import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
+import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElementActor} from "./HElementActor";
 
 ///KFD(C,CLASS=HDocument,EXTEND=HElementActor)

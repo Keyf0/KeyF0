@@ -68,8 +68,10 @@
     "../node_modules"
   , "../Html"
   , "../Backend"
-  , "../BBGamePlay"
-  , "../Web"
+  ,
+    "../KFModules/BBGamePlay"
+  ,
+    "../KFModules/Web"
   ],
   "include": [
     "../**/*"

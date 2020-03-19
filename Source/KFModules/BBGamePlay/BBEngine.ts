@@ -1,7 +1,7 @@
 import {HCanvas} from "../Web/HCanvas";
 import * as BABYLON from 'babylonjs';
-import {IKFMeta} from "../Core/Meta/KFMetaManager";
-import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 
 ///KFD(C,CLASS=BBEngine,EXTEND=HCanvas)
 ///KFD(*)

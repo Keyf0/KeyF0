@@ -1,6 +1,6 @@
 import {BBMeta} from "./BBInterface";
 import * as BABYLON from "babylonjs";
-import {KFDTable} from "../KFData/Format/KFDTable";
+import {KFDTable} from "../../KFData/Format/KFDTable";
 import {BBEngine} from "./BBEngine";
 import {BBNode} from "./BBNode";
 import {BBScene} from "./BBScene";

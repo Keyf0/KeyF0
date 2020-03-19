@@ -1,10 +1,10 @@
-import {KFActor} from "../ACTS/Actor/KFActor";
+import {KFActor} from "../../ACTS/Actor/KFActor";
 import * as BABYLON from 'babylonjs';
 import {BBObjectFactory, IBBObject} from "./BBInterface";
-import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
-import {KFDName} from "../KFData/Format/KFDName";
-import {IKFMeta} from "../Core/Meta/KFMetaManager";
-import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
+import {KFDataHelper} from "../../ACTS/Data/KFDataHelper";
+import {KFDName} from "../../KFData/Format/KFDName";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 
 
 ///KFD(C,CLASS=BBNode,EXTEND=KFActor)

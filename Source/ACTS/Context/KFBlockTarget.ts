@@ -16,6 +16,14 @@ export interface IKFBlockTargetContainer
     DeleteChild(child:KFBlockTarget):boolean
 }
 
+///在哪一端执行
+export class BlkExecSide
+{
+    static UNKNOW:number = 0;
+    static CLIENT:number = 1;
+    static SERVER:number = 2;
+};
+
 export class KFBlockTarget
 {
     ///名称
@@ -25,6 +33,7 @@ export class KFBlockTarget
     public parent:IKFBlockTargetContainer;
     public etable:KFEventTable;
     public runtime:IKFRuntime;
+    ///是否需要TICK
     public tickable:boolean  = false;
 
     public Construct(metadata:any, runtime:IKFRuntime)

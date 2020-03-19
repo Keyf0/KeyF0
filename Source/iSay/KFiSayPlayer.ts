@@ -10,6 +10,7 @@ import {TypeEvent} from "../Core/Misc/TypeEvent";
 import {KFDomain} from "../ACTS/Context/KFDomain";
 import {KFActor} from "../ACTS/Actor/KFActor";
 import {KFDName} from "../KFData/Format/KFDName";
+import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
 
 export class KFiSayPlayer implements IKFRuntime
 {
@@ -23,14 +24,9 @@ export class KFiSayPlayer implements IKFRuntime
     public random: KFRandom;
     public realytime: number;
     public realytimes: number;
+    public execSide: number = BlkExecSide.UNKNOW;
 
-    public root(): IKFRuntime
-    {
-        if(this.parent == null)
-            return this;
-        return this.parent.root();
-    }
-
+    public root: IKFRuntime;
     public scripts: KFScriptSystem;
     public timers: KFTimers;
 

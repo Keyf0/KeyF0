@@ -7,7 +7,7 @@ import {IKFConfigs} from "./IKFConfigs";
 
 export interface IKFRuntime
 {
-     root():IKFRuntime;
+     root:IKFRuntime;
      parent:IKFRuntime;
      etable:KFEventTable;
      random:KFRandom;
@@ -20,6 +20,9 @@ export interface IKFRuntime
 
      frametimes:number;
      realytimes:number;
+
+     ///执行端
+     execSide:number;
 
      scripts:KFScriptSystem;
      configs:IKFConfigs;

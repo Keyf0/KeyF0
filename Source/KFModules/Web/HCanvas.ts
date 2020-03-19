@@ -1,7 +1,7 @@
-import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
-import {LOG_ERROR} from "../Core/Log/KFLog";
-import {IKFMeta} from "../Core/Meta/KFMetaManager";
-import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
+import {KFDataHelper} from "../../ACTS/Data/KFDataHelper";
+import {LOG_ERROR} from "../../Core/Log/KFLog";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElementActor} from "./HElementActor";
 
 

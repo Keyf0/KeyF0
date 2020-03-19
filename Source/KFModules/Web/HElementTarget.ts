@@ -1,6 +1,6 @@
-import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElementCreator} from "./HElementCreator";
-import {IKFMeta} from "../Core/Meta/KFMetaManager";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 
 ///KFD(C,CLASS=HElementTarget,EXTEND=KFBlockTarget)
 ///KFD(*)

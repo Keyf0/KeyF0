@@ -1,6 +1,6 @@
 import * as BABYLON from "babylonjs";
-import {AMeta, InstantiateFunc, KFMetaManager} from "../Core/Meta/KFMetaManager";
-import {KFDName} from "../KFData/Format/KFDName";
+import {AMeta, InstantiateFunc, KFMetaManager} from "../../Core/Meta/KFMetaManager";
+import {KFDName} from "../../KFData/Format/KFDName";
 
 export interface IBBObject
 {

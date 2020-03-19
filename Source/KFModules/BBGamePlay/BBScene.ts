@@ -1,9 +1,9 @@
-import {KFActor} from "../ACTS/Actor/KFActor";
+import {KFActor} from "../../ACTS/Actor/KFActor";
 import * as BABYLON from 'babylonjs';
 import {BBEngine} from "./BBEngine";
 import {IBBObject} from "./BBInterface";
-import {IKFMeta} from "../Core/Meta/KFMetaManager";
-import {KFBlockTarget} from "../ACTS/Context/KFBlockTarget";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 
 ///KFD(C,CLASS=BBScene,EXTEND=KFActor)
 ///KFD(*)
