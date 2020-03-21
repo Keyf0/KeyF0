@@ -33,7 +33,7 @@ export class ScriptMeta extends AMeta
     public SetDefaultFactroy(name:string, func:InstantiateFunc = null)
     {
         super.SetDefaultFactroy(name,func);
-        if(this.name != "")
+        if(this.name.value != 0)
         {
             KFScriptFactory.Register(this);
         }

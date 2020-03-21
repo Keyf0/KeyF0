@@ -586,7 +586,7 @@ export class KFByteArray
     }
 
 
-    private encodeUTF8(str: string): Uint8Array {
+    public encodeUTF8(str: string): Uint8Array {
         let pos: number = 0;
         let codePoints = this.stringToCodePoints(str);
         let outputBytes = [];
@@ -624,7 +624,7 @@ export class KFByteArray
         return new Uint8Array(outputBytes);
     }
 
-    private decodeUTF8(data: Uint8Array): string {
+    public decodeUTF8(data: Uint8Array): string {
         let fatal: boolean = false;
         let pos: number = 0;
         let result: string = "";

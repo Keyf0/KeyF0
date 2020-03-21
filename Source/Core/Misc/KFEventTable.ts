@@ -16,9 +16,9 @@ export class KFEvent
 
 export class KFEventTable
 {
-    private _listenersMap :{[key:number]: Listener<KFEvent>[];} = {}
+    private _listenersMap :{[key:number]: {func:Listener<KFEvent>,target:any}[];} = {}
 
-    public AddEventListener(type:KFDName, listener:Listener<KFEvent>)
+    public AddEventListener(type:KFDName, listener:Listener<KFEvent>,target:any = null)
     {
         let evtlist = this._listenersMap[type.value];
         if(!evtlist)
@@ -27,7 +27,7 @@ export class KFEventTable
             this._listenersMap[type.value] = evtlist;
         }
 
-        evtlist.push(listener);
+        evtlist.push({func:listener,target:target});
     }
 
     public RemoveEventListener(type:KFDName, listener:Listener<KFEvent>)
@@ -35,10 +35,15 @@ export class KFEventTable
         let evtlist = this._listenersMap[type.value];
         if(evtlist)
         {
-            let index = evtlist.indexOf(listener);
-            if(index != -1)
+            let index = evtlist.length - 1;
+            while(index >= 0)
             {
-                evtlist.splice(index,1);
+                if(evtlist[index].func == listener) {
+
+                    evtlist.splice(index, 1);
+                    break;
+                }
+                index -= 1;
             }
         }
     }
@@ -51,7 +56,8 @@ export class KFEventTable
             let count: number = listeners.length;
             for (let i = 0; i < count; i++)
             {
-                listeners[i](event);
+                let itm = listeners[i];
+                itm.func.call(itm.target,event);
             }
         }
     }

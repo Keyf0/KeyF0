@@ -29,7 +29,14 @@ KFDTable.find_extend_kfddata 增加可以提定KFDTABLE实例
 
 增加 读取对象时可以在kfdata中设置一个__new__的构造函数
 
+2020.03.21:
+
+增加增量写入接口
+name 指定属性名称
+attribFlags {name:{w:true}}
+同时支持了下数组的增量读写
+
 */
 
 
-const KFDVersion:string = "2020.02.24";
+const KFDVersion:string = "2020.03.21";

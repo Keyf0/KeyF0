@@ -4,15 +4,18 @@ import {KFDName} from "../../KFData/Format/KFDName";
 import {KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFBytes} from "../../KFData/Format/KFBytes";
+import {KFGlobalDefines} from "../KFACTSDefines";
 
 export interface IKFBlockTargetContainer
 {
+    parent:IKFBlockTargetContainer;
+    ChildRename(oldname:number, child:KFBlockTarget):void;
     AddChild(child:KFBlockTarget):void;
     RemoveChild(child:KFBlockTarget):void;
     GetChildAt(index:number):KFBlockTarget;
     FindChild(name:number):KFBlockTarget;
     GetRuntime():IKFRuntime;
-    CreateChild(targetdata:any):KFBlockTarget;
+    CreateChild(targetdata:any,meta?:any):KFBlockTarget;
     DeleteChild(child:KFBlockTarget):boolean
 }
 
@@ -22,6 +25,7 @@ export class BlkExecSide
     static UNKNOW:number = 0;
     static CLIENT:number = 1;
     static SERVER:number = 2;
+    static BOTH:number = 3;
 };
 
 export class KFBlockTarget
@@ -53,7 +57,14 @@ export class KFBlockTarget
 
     public Tick(frameindex:number):void{}
 
-    public ActivateBLK(KFBlockTargetData:any):void {}
+    public ActivateBLK(KFBlockTargetData:any):void
+    {
+        if(KFGlobalDefines.IS_Debug) {
+            let self = <any>this;
+            self.CreateTargetData = KFBlockTargetData;
+        }
+    }
+
     public DeactiveBLK():void{}
     public position:any;
     public set_position(x:number, y:number, z:number):void{}

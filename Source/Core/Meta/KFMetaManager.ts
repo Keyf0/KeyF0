@@ -10,7 +10,7 @@ export interface InstantiateFunc
 export class AMeta
 {
     public type:number;
-    public name:string;
+    public name:KFDName;
     public instantiate:InstantiateFunc;
 
     public constructor(name:string = "",func:InstantiateFunc = null)
@@ -18,10 +18,9 @@ export class AMeta
         this.SetDefaultFactroy(name, func);
     }
 
-    public SetDefaultFactroy(name:string, func:InstantiateFunc = null)
+    public SetDefaultFactroy(namestr:string, func:InstantiateFunc = null)
     {
-        this.name = name;
-
+        this.name = new KFDName(namestr);
         if(func == null)
         {
             if(this.instantiate == null)
@@ -42,11 +41,11 @@ export class IKFMeta extends AMeta
         super(name,func);
     }
 
-    public SetDefaultFactroy(name:string, func:InstantiateFunc = null)
+    public SetDefaultFactroy(namestr:string, func:InstantiateFunc = null)
     {
-        super.SetDefaultFactroy(name,func);
+        super.SetDefaultFactroy(namestr,func);
 
-        if(this.name != "")
+        if(this.name.value != 0)
         {
             KFMetaManager.Register(this);
         }
@@ -94,21 +93,23 @@ export class KFMetaManager
 
     public _Register(meta:AMeta):boolean
     {
-        let name = meta.name;
-        if(meta.type > 0 || name == "")
+        let namevalue = meta.name.value;
+
+        if(meta.type > 0 || namevalue == 0)
         {
             return false;
         }
-        let namevalue = KFDName._Strs.GetNameID(name);
+
+        let namestr = meta.name.toString();
         let oldmeta = this.m_mapMetas[namevalue];
         if(oldmeta)
         {
             meta.type = oldmeta.type;
-            LOG_WARNING("[{0}] {1}注册重复", this.m_name, name);
+            LOG_WARNING("[{0}] {1}注册重复", this.m_name, namestr);
             return;
         }
         else{
-            LOG("[{0}] {1}注册成功",this.m_name, name);
+            LOG("[{0}] {1}注册成功",this.m_name, namestr);
         }
 
         meta.type = this.m_metas.length;

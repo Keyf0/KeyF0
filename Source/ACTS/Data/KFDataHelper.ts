@@ -30,7 +30,7 @@ export class KFDataHelper
         for(let i = 0;i < SMetas.length;i ++)
         {
             let meta:ScriptMeta = SMetas[i];
-            let kfd = kfdtable.get_kfddata(meta.name);
+            let kfd = kfdtable.get_kfddata(meta.name.toString());
             if (kfd) {
                 kfd.__init__ = {func: meta.DataInit};
             }

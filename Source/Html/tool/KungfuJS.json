@@ -9,7 +9,7 @@
             },
             "import_code_paths": [
                 {
-                    "path": "../../BBGamePlay",
+                    "path": "../../KFModules/BBGamePlay",
                     "headpath": ""
                 }
             ]
@@ -23,7 +23,7 @@
             },
             "import_code_paths": [
                 {
-                    "path": "../../Web",
+                    "path": "../../KFModules/Web",
                     "headpath": ""
                 }
             ]

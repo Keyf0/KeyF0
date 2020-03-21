@@ -3,7 +3,7 @@
         "includes": [
             "Actor/KFActor.h"
         ],
-        "cname": "普通块",
+        "cname": "普通物件",
         "class": "KFActor",
         "extend": "KFBlockTarget",
         "propertys": [],
@@ -17,7 +17,15 @@
         "cname": "块对象",
         "class": "KFBlockTarget",
         "extend": "KFGCObject",
-        "propertys": [],
+        "propertys": [
+            {
+                "id": 1,
+                "cname": "开启更新",
+                "default": "false",
+                "name": "tickable",
+                "type": "bool"
+            }
+        ],
         "clsid": 1012
     },
     {
@@ -201,8 +209,7 @@
     },
     {
         "includes": [
-            "Data/Block/KFBlockTargetData.h",
-            "KFBlockFuncInfoF.h"
+            "Data/Block/KFBlockTargetData.h"
         ],
         "class": "KFBlockTargetData",
         "extend": "",
@@ -228,13 +235,45 @@
             },
             {
                 "id": 4,
-                "cname": "功能信息",
-                "name": "func",
-                "otype": "KFBlockFuncInfo",
-                "type": "object"
+                "cname": "在客户端创建",
+                "default": "true",
+                "name": "createOnClient",
+                "type": "bool"
+            },
+            {
+                "id": 5,
+                "cname": "唯一ID",
+                "default": "0",
+                "name": "instsid",
+                "type": "int32"
             }
         ],
         "clsid": 1020
+    },
+    {
+        "includes": [
+            "Data/Block/KFBlockTargetData.h",
+            "KFMetaDataF.h"
+        ],
+        "class": "KFNewBlkData",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 2,
+                "cname": "原型参数",
+                "name": "metaData",
+                "otype": "KFMetaData",
+                "type": "object"
+            },
+            {
+                "id": 3,
+                "cname": "父级id",
+                "default": "0",
+                "name": "parentsid",
+                "type": "int32"
+            }
+        ],
+        "clsid": 1365
     },
     {
         "includes": [
@@ -2065,249 +2104,6 @@
             }
         ],
         "clsid": 1069
-    },
-    {
-        "includes": [
-            "Data/VKey/VKeyDef.h"
-        ],
-        "class": "VKeyInfo",
-        "extend": "",
-        "propertys": [
-            {
-                "id": 1,
-                "default": "0",
-                "name": "value",
-                "type": "int32"
-            },
-            {
-                "id": 2,
-                "default": "",
-                "name": "keys",
-                "type": "kfstr"
-            },
-            {
-                "id": 3,
-                "default": "0",
-                "name": "checkType",
-                "type": "int32"
-            },
-            {
-                "id": 4,
-                "default": "",
-                "name": "desc",
-                "type": "kfstr"
-            }
-        ],
-        "clsid": 1277
-    },
-    {
-        "includes": [
-            "Data/VKey/VKeyDef.h"
-        ],
-        "nof": 1,
-        "class": "VKeyDef",
-        "extend": "",
-        "propertys": [
-            {
-                "id": 1,
-                "default": "-1",
-                "name": "EMPTY",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "0",
-                "name": "UNKOWN",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "7",
-                "name": "GO_DIRECTION",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "8",
-                "name": "RUN_DIRECTION",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "21",
-                "name": "STRIKE",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "22",
-                "name": "FIGHT",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "23",
-                "name": "JUMP",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "101",
-                "name": "SKILL_1",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "102",
-                "name": "SKILL_2",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "103",
-                "name": "SKILL_3",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "104",
-                "name": "SKILL_4",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "105",
-                "name": "SKILL_5",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "106",
-                "name": "SKILL_6",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "107",
-                "name": "SKILL_7",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "108",
-                "name": "SKILL_8",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "109",
-                "name": "SKILL_9",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "110",
-                "name": "SKILL_10",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "111",
-                "name": "SKILL_11",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "112",
-                "name": "SKILL_12",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "113",
-                "name": "SKILL_13",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "114",
-                "name": "SKILL_14",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "115",
-                "name": "SKILL_15",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "116",
-                "name": "SKILL_16",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "117",
-                "name": "SKILL_17",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "118",
-                "name": "SKILL_18",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "119",
-                "name": "SKILL_19",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "120",
-                "name": "SKILL_20",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "130",
-                "name": "SKILL_SUBSTITUTE",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "200",
-                "name": "HURT",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "201",
-                "name": "DEAD",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "202",
-                "name": "CAPTIVE",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "203",
-                "name": "CAUGHT",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "default": "204",
-                "name": "BETHROWN",
-                "type": "int32"
-            }
-        ],
-        "clsid": 1278
     },
     {
         "includes": [

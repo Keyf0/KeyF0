@@ -1451,6 +1451,18 @@
         {
             "class": "UEUIWidgetConfig",
             "id": 1362
+        },
+        {
+            "class": "GSFireGraphEventScriptData",
+            "id": 1363
+        },
+        {
+            "class": "GSPlayStateScriptData",
+            "id": 1364
+        },
+        {
+            "class": "KFNewBlkData",
+            "id": 1365
         }
     ]
 }

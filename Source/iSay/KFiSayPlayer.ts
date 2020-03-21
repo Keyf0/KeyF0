@@ -24,7 +24,7 @@ export class KFiSayPlayer implements IKFRuntime
     public random: KFRandom;
     public realytime: number;
     public realytimes: number;
-    public execSide: number = BlkExecSide.UNKNOW;
+    public execSide: number = BlkExecSide.BOTH;
 
     public root: IKFRuntime;
     public scripts: KFScriptSystem;
@@ -77,7 +77,7 @@ export class KFiSayPlayer implements IKFRuntime
         //LOG_WARNING("%s", path.c_str());
         this.m_path = path;
 
-        let metaData = this.configs.GetMetaData(path,false);
+        //let metaData = this.configs.GetMetaData(path,false);
         let KFBlockTargetData = {
                 asseturl:path
             ,   instname:new KFDName("_root")

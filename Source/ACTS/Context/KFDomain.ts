@@ -15,11 +15,11 @@ export class KFDomain implements IKFDomain
         this.m_runtime = runtime;
     }
 
-    public CreateBlockTarget(KFBlockTargetData: any): KFBlockTarget
+    public CreateBlockTarget(KFBlockTargetData: any,meta?:any): KFBlockTarget
     {
         let asseturl = KFBlockTargetData.asseturl;
         //let path = asseturl + ".meta";
-        let metadata = this.m_runtime.configs.GetMetaData(asseturl, false);
+        let metadata = meta ? meta : this.m_runtime.configs.GetMetaData(asseturl, false);
         if(metadata)
         {
             let meta = KFMetaManager.GetMetaName(metadata.type);
@@ -27,17 +27,21 @@ export class KFDomain implements IKFDomain
             {
                 let target:KFBlockTarget = meta.instantiate();
                 //kfgcRetain(target);
-
-                this.m_incrsid += 1;
+                let currsid = KFBlockTargetData.instsid;
+                if(!currsid || currsid == 0)
+                {
+                    this.m_incrsid += 1;
+                    currsid = this.m_incrsid;
+                }
 
                 let instname = KFBlockTargetData.instname;
                 if(!instname || instname.value == 0)
                 {
-                    instname = new KFDName("blk_" + this.m_incrsid);
+                    instname = new KFDName("blk_" + currsid);
                 }
 
                 target.name = instname;
-                target.sid = this.m_incrsid;
+                target.sid = currsid;
 
                 LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
                 target.Construct(metadata, this.m_runtime);

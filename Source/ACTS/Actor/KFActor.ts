@@ -25,6 +25,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public graph:KFGraphComponent;
 
     protected m_children:Array<KFBlockTarget> = new Array<KFBlockTarget>();
+    protected m_childrenmap:{[key:number]:KFBlockTarget;} = {};
     protected m_removelist:Array<KFBlockTarget> = [];
 
     public constructor()
@@ -36,6 +37,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public Construct(metadata:any, runtime:IKFRuntime)
     {
         super.Construct(metadata,runtime);
+        this.etable = new KFEventTable();
         this.Init(this.metadata.asseturl);
     }
 
@@ -86,14 +88,15 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public ActivateBLK(KFBlockTargetData:any):void
     {
         super.ActivateBLK(KFBlockTargetData);
-        this.etable = new KFEventTable();
+        //把父级映射上去
+        this.m_childrenmap[KFActor.PARENT.value] = <any>this.parent;
         this.ActivateAllComponent();
     }
 
     public DeactiveBLK():void
     {
+        delete this.m_childrenmap[KFActor.PARENT.value];
         this.DeactiveAllComponent();
-        this.etable = null;
     }
 
     public Tick(frameindex:number):void
@@ -124,6 +127,12 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
     }
 
+    public ChildRename(oldname:number,child:KFBlockTarget):void
+    {
+        delete this.m_childrenmap[oldname];
+        this.m_childrenmap[child.name.value] = child;
+    }
+
     public AddChild(child: KFBlockTarget): void
     {
         let p = child.parent;
@@ -132,31 +141,14 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             if(p != null)
                 p.RemoveChild(child);
             this.m_children.push(child);
+            this.m_childrenmap[child.name.value] = child;
             child.parent = this;
         }
     }
 
     public FindChild(name:number): KFBlockTarget
     {
-        if(name == KFActor.PARENT.value)
-        {
-            return <any>this.parent;
-        }
-        let child = this.GetChild(name);
-        return child;
-    }
-
-    public GetChild(name:number): KFBlockTarget
-    {
-        let i:number = this.m_children.length -1;
-        while (i >= 0)
-        {
-            let child:KFBlockTarget = this.m_children[i];
-            if(child.name.value == name)
-                return child;
-            i -= 1;
-        }
-        return null;
+        return this.m_childrenmap[name];
     }
 
     public GetChildAt(index: number): KFBlockTarget
@@ -174,6 +166,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             if(i != -1)
             {
                 this.m_children.splice(i,1);
+                delete this.m_childrenmap[child.name.value];
                 child.parent = null;
             }
         }
@@ -184,10 +177,10 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         return this.runtime;
     }
 
-    public CreateChild(targetdata):KFBlockTarget
+    public CreateChild(targetdata:any,meta?:any):KFBlockTarget
     {
         let newtarget = this.runtime.domain
-            .CreateBlockTarget(targetdata);
+            .CreateBlockTarget(targetdata,meta);
         if (newtarget != null)
         {
             this.AddChild(newtarget);

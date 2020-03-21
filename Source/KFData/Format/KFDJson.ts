@@ -246,13 +246,15 @@ export class KFDJson
                 {
                     let typename = "";
                     if(propinfo) typename = propinfo.otype;
-                    let objarr = [];
+
+                    if(retval == null) retval = [];
+                    else retval.length = 0;
+
                     while (size > 0)
                     {
-                        objarr.push(KFDJson._read_base_value(bytearr, otype, false,null,typename));
+                        retval.push(KFDJson._read_base_value(bytearr, otype, false,null,typename));
                         size -= 1;
                     }
-                    retval = objarr;
                 }
             }
             else
@@ -269,13 +271,27 @@ export class KFDJson
                     }
                     else
                     {
+                        if(retval == null){
+                            //全新的读取
                         let arrobj = [];
-                        while (size > 0)
-                        {
+                        while (size > 0) {
                             arrobj.push(KFDJson._read_array_value(bytearr, otype));
                             size -= 1;
                         }
                         retval = arrobj;
+                        } else {
+                            ///更新读取
+                            retval.length = size;
+                            for(let i = 0;i < size;i ++)
+                            {
+                                let itval = retval[i];
+                                if(itval) {
+                                    KFDJson._read_array_value(bytearr, otype, false, itval);
+                                }
+                                else
+                                    retval[i] = KFDJson._read_array_value(bytearr, otype);
+                            }
+                        }
                     }
                 }
                 else if(otype == KFDataType.OT_OBJECT || otype == KFDataType.OT_MIXOBJECT)
@@ -296,17 +312,28 @@ export class KFDJson
                             kfddata = KFDTable.kfdTB.get_kfddata(propinfo["otype"]);
                         }
 
-                        let objarr = [];
-                        while (size > 0)
-                        {
-                            objarr.push(KFDJson._read_object_value(bytearr, otype, kfddata));
-                            size -= 1;
+                        if(retval == null) {
+                            let objarr = [];
+                            while (size > 0) {
+                                objarr.push(KFDJson._read_object_value(bytearr, otype, kfddata));
+                                size -= 1;
+                            }
+                            retval = objarr;
+                        }else{
+
+                            retval.length = size;
+                            for(let i = 0;i < size ;i ++){
+                                let itmval = retval[i];
+                                if(itmval){
+                                    KFDJson._read_object_value(bytearr, otype, kfddata, false, itmval);
+                                }else
+                                    retval[i] = KFDJson._read_object_value(bytearr, otype, kfddata);
+                            }
+
                         }
-                        retval = objarr;
                     }
                 }
             }
-
         }
         else if(valtype == KFDataType.OT_MIXARRAY)
         {
@@ -321,13 +348,23 @@ export class KFDJson
             }
             else
             {
-                let arrobj = [];
-                while (size > 0)
-                {
-                    arrobj.push(KFDJson.read_value(bytearr,false));
-                    size -= 1;
+                if(retval == null) {
+                    let arrobj = [];
+                    while (size > 0) {
+                        arrobj.push(KFDJson.read_value(bytearr, false));
+                        size -= 1;
+                    }
+                    retval = arrobj;
+                }else{
+                    retval.length = size;
+                    for(let i = 0;i < size ;i ++){
+                        let itmval = retval[i];
+                        if(itmval){
+                            KFDJson.read_value(bytearr, false, itmval);
+                        }else
+                            retval[i] = KFDJson.read_value(bytearr, false);
+                    }
                 }
-                retval = arrobj;
             }
         }
         return retval;
@@ -401,7 +438,8 @@ export class KFDJson
 
     public static write_value(bytearr:KFByteArray
                               , jsonobj:any
-                              , propinfo:any = null)
+                              , propinfo:any = null
+                                , attribFlags:any = null)
     {
         if(jsonobj != null)
         {
@@ -435,12 +473,14 @@ export class KFDJson
                {
                    if(valueType == KFDataType.OT_ARRAY || valueType == KFDataType.OT_MIXARRAY)
                    {
-                       KFDJson._write_array_value(bytearr, valueType, jsonobj, propinfo);
-                   }else if(valueType == KFDataType.OT_OBJECT)
+                       KFDJson._write_array_value(bytearr, valueType, jsonobj, propinfo, attribFlags);
+                   }
+                   else if(valueType == KFDataType.OT_OBJECT)
                    {
                        kfddata = KFDTable.kfdTB.get_kfddata(propinfo["otype"]);
-                       KFDJson._write_object_value(bytearr, valueType, jsonobj, kfddata);
-                   }else if(valueType == KFDataType.OT_MIXOBJECT)
+                       KFDJson._write_object_value(bytearr, valueType, jsonobj, kfddata, attribFlags);
+                   }
+                   else if(valueType == KFDataType.OT_MIXOBJECT)
                    {
                        if(kfddata)
                        {
@@ -449,7 +489,7 @@ export class KFDJson
                        }else
                            bytearr.writevaruint(0);
 
-                       KFDJson._write_object_value(bytearr, valueType, jsonobj, kfddata);
+                       KFDJson._write_object_value(bytearr, valueType, jsonobj, kfddata, attribFlags);
                    }
                }
         }
@@ -522,7 +562,12 @@ export class KFDJson
                         bytearr.writekfBytes(bytes);
                     }
                     else if(bytes == null) {bytearr.writestring("");}
-                }else {bytearr.writestring("");}
+                    else {
+                        //直接写入二进制吧
+                        bytearr.writekfBytes(bytes);
+                    }
+                }
+                else {bytearr.writestring("");}
                 ///=============
                 break;
             case KFDataType.OT_BOOL:
@@ -538,11 +583,13 @@ export class KFDJson
     private static _write_array_value(bytearr:KFByteArray
                                       , valtype:number
                                       , val:any
-                                      , propinfo:any)
+                                      , propinfo:any
+                                      , attribFlags:any = null)
     {
         let arrval = val
         let arrsize = arrval.length;
-        bytearr.writevaruint(arrsize);
+
+
 
         let oType = 0;
         let kfddata = null;
@@ -569,22 +616,36 @@ export class KFDJson
         {
             if(oType != 0 && oType <= KFDataType.OT_UINT64)
             {
+                bytearr.writevaruint(arrsize);
                 bytearr.writeByte(oType);
-                for (let item of arrval) {
+
+                for (let i = 0 ; i < arrsize; i ++)
+                {
+                    let item = arrval[i];
                     KFDJson._write_base_value(bytearr, oType, item);
                 }
-            }else
+            }
+            else
             {
                 if(oType == 0 || oType == KFDataType.OT_ARRAY || oType == KFDataType.OT_MIXARRAY)
                 {
                     ///不支持
-                }else if(oType == KFDataType.OT_OBJECT || oType == KFDataType.OT_MIXOBJECT)
+                    bytearr.writevaruint(0);
+                    bytearr.writeByte(KFDataType.OT_NULL);
+                }
+                else if(oType == KFDataType.OT_OBJECT || oType == KFDataType.OT_MIXOBJECT)
                 {
+                    bytearr.writevaruint(arrsize);
                     bytearr.writeByte(oType);
+
                     if(oType == KFDataType.OT_MIXOBJECT){}
-                    for (let item of arrval)
+
+                    for (let i = 0 ; i < arrsize; i ++)
                     {
-                        KFDJson._write_object_value(bytearr, oType, item, kfddata);
+                        let item = arrval[i];
+                        let attribFlag = attribFlags ? attribFlags._flags_[i] : null;
+
+                        KFDJson._write_object_value(bytearr, oType, item, kfddata, attribFlag);
                     }
                 }
             }
@@ -592,9 +653,14 @@ export class KFDJson
         }
         else if(valtype == KFDataType.OT_MIXARRAY)
         {
-            for (let item of arrval)
+            bytearr.writevaruint(arrsize);
+
+            for (let i = 0 ; i < arrsize; i ++)
             {
-                KFDJson.write_value(bytearr, item)
+                let item = arrval[i];
+                let attribFlag = attribFlags ? attribFlags._flags_[i] : null;
+
+                KFDJson.write_value(bytearr, item, null, attribFlag);
             }
         }
     }
@@ -602,7 +668,8 @@ export class KFDJson
     private static _write_object_value(bytearr:KFByteArray
                                        , dataType:number
                                        , objectval:any
-                                       , kfddata:any)
+                                       , kfddata:any
+                                       , attribFlags:any = null)
     {
         bytearr.writevaruint(KFDataType.OBJ_PROP_ID_BEGIN);
         if(kfddata)
@@ -611,8 +678,10 @@ export class KFDJson
              if(extendcls)
              {
                  let extenddata = KFDTable.kfdTB.get_kfddata(extendcls);
-                 if(extenddata != null)
-                    KFDJson._write_object_value(bytearr, dataType, objectval, extenddata);
+                 if(extenddata != null) {
+
+                     KFDJson._write_object_value(bytearr, dataType, objectval, extenddata, attribFlags);
+                 }
              }
 
              let valarr = kfddata["propertys"];
@@ -620,17 +689,278 @@ export class KFDJson
             {
                 let pid = item["id"];
                 let name = item["name"];
+                let attribFlag = null;
+
+                if(attribFlags) {
+                    //略过不需要写的属性
+                    attribFlag = attribFlags[name];
+
+                    if(!attribFlag || attribFlag._w_ == false) {
+                        continue;
+                    }
+                    else if(attribFlag._w_){
+                        //_w_可写
+                        //已经写过就重置属性状态
+                        attribFlag._w_ = false;
+                    }
+                }
 
                 if(objectval.hasOwnProperty(name) &&
                     pid != KFDataType.OBJ_PROP_ID_BEGIN &&
                     pid != KFDataType.OBJ_PROP_ID_END)
                 {
-                    bytearr.writevaruint(pid)
-                    KFDJson.write_value(bytearr, objectval[name], item)
+                    bytearr.writevaruint(pid);
+                    KFDJson.write_value(bytearr, objectval[name], item, attribFlag);
                 }
             }
         }
         bytearr.writevaruint(KFDataType.OBJ_PROP_ID_END);
+    }
+
+
+    ////////////////////////////////////////////////
+    ///如果数组或对象不为空后再置空可能会有问题[没有完善]
+    /////////////////////////////////////////////////
+
+
+    public static getpropertynet(item):string {
+        let unknowtags = item.unknowtags;
+        for(let tagitem of unknowtags){
+            if(tagitem.tag == "net")
+                return tagitem.val;
+        }
+        return "";
+    }
+
+    public static buildattribflags( obj:any
+                                   , kfddata:any
+                                   , attribflags:any = null
+                                   , creatupdate:boolean = true
+                                   , allprops:boolean = true
+                                   , initflags = null):any {
+
+        attribflags = attribflags ? attribflags : {_w_:true,_v_:obj};
+        let extendcls = kfddata["extend"];
+        if(extendcls) {
+            let extenddata = KFDTable.kfdTB.get_kfddata(extendcls);
+            if(extenddata != null) {
+                KFDJson.buildattribflags(obj, extenddata, attribflags,false, allprops, initflags);
+            }
+        }
+        let valarr = kfddata["propertys"];
+        for (let item of valarr)
+        {
+            let netvalue = (allprops == true ? "life" : KFDJson.getpropertynet(item));
+            if(netvalue != "")
+            {
+                if (netvalue == "life") {
+
+                    let name = item.name;
+                    let currval = obj ? obj[name] : null;
+
+                    let flag: any = {_w_: true, _t_: obj, _v_: currval, _n_: name};
+                    attribflags[name] = flag;
+                    if (!attribflags._flags_)
+                        attribflags._flags_ = [];
+                    attribflags._flags_.push(flag);
+
+                    let typeid = KFDataType.GetTypeID(item.type);
+                    if (typeid <= KFDataType.OT_UINT64) {
+                        ///普通属性的检测
+                        flag.update = function () {
+                            this._w_ = false;
+                            if (this._t_) {
+                                let curr = this._t_[this._n_];
+                                if (curr != this._v_) {
+                                    this._w_ = true;
+                                    this._v_ = curr;
+                                }
+                            }
+                            return this._w_;
+                        };
+                    } else if (typeid == KFDataType.OT_OBJECT) {
+                        let okfd = KFDTable.kfdTB.get_kfddata(item.otype);
+                        KFDJson.buildattribflags(currval, okfd, flag);
+                    } else if (typeid == KFDataType.OT_MIXOBJECT) {
+                        ///对象为空时先用一个空检测函数
+                        flag._null_ = function () {
+                            this._w_ = false;
+                            if (this._t_) {
+                                let curr = this._t_[this._n_];
+                                if (curr != null) {
+                                    this._w_ = true;
+                                    this._v_ = curr;
+                                    let mixkfd = KFDTable.kfdTB.get_kfddata(curr.__cls__);
+                                    KFDJson.buildattribflags(curr, mixkfd, this);
+                                }
+                            }
+                            return this._w_;
+                        };
+
+                        if (currval) {
+                            let mixkfd = KFDTable.kfdTB.get_kfddata(currval.__cls__);
+                            KFDJson.buildattribflags(currval, mixkfd, flag);
+                        } else {
+                            flag.update = flag._null_;
+                        }
+                    } else if (typeid == KFDataType.OT_ARRAY) {
+                        let okfd = KFDTable.kfdTB.get_kfddata(item.otype);
+                        if (okfd) {
+                            ///对象数组
+                            flag._flags_ = [];
+
+                            flag.update = function () {
+                                this._w_ = false;
+                                if (this._t_) {
+                                    let curr = this._t_[this._n_];
+                                    if (curr != this._v_) {
+                                        this._w_ = true;
+                                        this._v_ = curr;
+                                        //变成了空对象了
+                                        if (curr == null) {
+                                            this._flags_ = [];
+                                        }
+                                    }
+
+                                    if (curr) {
+                                        let vallen = curr.length;
+                                        for (let i = 0; i < vallen; i++) {
+
+                                            let arritemval = curr[i];
+                                            let arritemflag = this._flags_[i];
+
+                                            if (arritemflag && arritemflag._v_ != arritemval) {
+                                                //对象都已经变更了
+                                                arritemflag = null;
+                                            }
+
+                                            if (!arritemflag) {
+                                                arritemflag = {
+                                                    _w_: true
+                                                    , _t_: curr
+                                                    , _v_: arritemval
+                                                    , _n_: i
+                                                };
+                                                KFDJson.buildattribflags(arritemval, okfd, arritemflag);
+                                                this._flags_[i] = arritemflag;
+                                                this._w_ = true;
+                                            } else {
+                                                //还是原始对象可以调用更新检测
+                                                this._w_ = this._w_ || arritemflag.update();
+                                            }
+                                        }
+                                    }
+                                }
+                                return this._w_;
+                            }
+
+
+                        } else {
+                            ///普通的数组
+                            flag._v_ = currval ? currval.concat() : null;
+                            flag.update = function () {
+                                this._w_ = false;
+                                if (this._t_) {
+                                    let curr = this._t_[this._n_];
+                                    if (curr) {
+                                        if (!this._v_ || curr.length != this._v_.length) {
+                                            this._w_ = true;
+                                            this._v_ = curr.concat();
+                                        } else {
+                                            ///记录比较
+                                            for (let i = 0; i < this._v_.length; i++) {
+                                                let citemv = curr[i];
+                                                if (this._v_[i] != citemv) {
+                                                    this._v_[i] = citemv;
+                                                    this._w_ = true;
+                                                }
+                                            }
+                                        }
+                                    } else if (this._v_) {
+                                        this._v_ = null;
+                                        this._w_ = true;
+                                    }
+                                }
+                                return this._w_;
+                            }
+                        }
+                    } else if (typeid == KFDataType.OT_MIXARRAY) {
+                        flag._flags_ = [];
+                        flag.update = function () {
+                            this._w_ = false;
+                            if (this._t_) {
+                                let curr = this._t_[this._n_];
+                                if (curr != this._v_) {
+                                    this._w_ = true;
+                                    this._v_ = curr;
+                                    //变成了空对象了
+                                    if (curr == null) {
+                                        this._flags_ = [];
+                                    }
+                                }
+                                if (curr) {
+                                    let vallen = curr.length;
+                                    for (let i = 0; i < vallen; i++) {
+
+                                        let arritemval = curr[i];
+                                        let arritemflag = this._flags_[i];
+
+                                        if (arritemflag && arritemflag._v_ != arritemval) {
+                                            //对象都已经变更了
+                                            arritemflag = null;
+                                        }
+
+                                        if (!arritemflag) {
+                                            arritemflag = {
+                                                _w_: true
+                                                , _t_: curr
+                                                , _v_: arritemval
+                                                , _n_: i
+                                            };
+                                            let arritmkfd = KFDTable.kfdTB.get_kfddata(arritemval.__cls__);
+                                            KFDJson.buildattribflags(arritemval, arritmkfd, arritemflag);
+                                            this._flags_[i] = arritemflag;
+                                            this._w_ = true;
+
+                                        } else {
+                                            //还是原始对象可以调用更新检测
+                                            this._w_ = this._w_ || arritemflag.update();
+                                        }
+                                    }
+                                }
+                            }
+                            return this._w_;
+                        };
+                    }
+
+                }
+
+                if(allprops == false && initflags)
+                {
+                    initflags[name] = {};
+                }
+            }
+        }
+
+        if(creatupdate != false) {
+            attribflags.update = function () {
+                this._w_ = false;
+                let cval = this._v_;
+                if(cval && this._flags_){
+                    let flaglen = this._flags_.length;
+                    for(let i = 0;i < flaglen;i ++) {
+                        let itemflag = this._flags_[i];
+                        if(itemflag._t_ != cval){
+                            itemflag._t_ = cval;
+                            this._w_ = true;
+                        }
+                        this._w_ = this._w_ || itemflag.update();
+                    }
+                }
+                return this._w_;
+            }
+        }
+        return attribflags;
     }
 
 }

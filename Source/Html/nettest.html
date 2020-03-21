@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>nettest</title>
+    <script src="js/require.js"></script>
+</head>
+<body>
+<script>
+
+    require(["libs/KFNetwork/WS/WSMDClient"]
+         ,function(m1){
+
+            console.log("module loaded");
+
+            var client = new m1.WSMDClient({
+                token : "abc"
+            ,   localID : 10000
+            ,   userName: "test"
+            });
+
+            client.connect("ws://127.0.0.1:8000/ws");
+
+        });
+</script>
+</body>
+</html>

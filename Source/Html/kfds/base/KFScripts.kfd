@@ -73,7 +73,7 @@
                 "id": 3,
                 "cname": "脚本分组",
                 "enum": "KFScriptGroupType",
-                "default": "KFScriptGroupType::Target",
+                "default": "KFScriptGroupType::Global",
                 "name": "group",
                 "type": "int8"
             }
