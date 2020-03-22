@@ -1,0 +1,47 @@
+[
+    {
+        "includes": [
+            "PIXIApplication.ts"
+        ],
+        "class": "PIXIApplication",
+        "extend": "HElementActor",
+        "propertys": [],
+        "clsid": 1381
+    },
+    {
+        "includes": [
+            "PIXIGraphics.ts"
+        ],
+        "class": "PIXIGraphics",
+        "extend": "KFBlockTarget",
+        "propertys": [],
+        "clsid": 1389
+    },
+    {
+        "includes": [
+            "PIXIMovieClip.ts"
+        ],
+        "class": "PIXIMovieClip",
+        "extend": "PIXINetActor",
+        "propertys": [],
+        "clsid": 1382
+    },
+    {
+        "includes": [
+            "PIXINetActor.ts"
+        ],
+        "class": "PIXINetActor",
+        "extend": "KFActor",
+        "propertys": [],
+        "clsid": 1383
+    },
+    {
+        "includes": [
+            "PIXIScene.ts"
+        ],
+        "class": "PIXIScene",
+        "extend": "PIXINetActor",
+        "propertys": [],
+        "clsid": 1384
+    }
+]

@@ -2,6 +2,7 @@ import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
 import {KFDName} from "../../KFData/Format/KFDName";
+import {IWebSocket, IWebSocket_Type} from "./IWebSocket";
 
 export class WSMDClient extends KFEventTable
 {
@@ -10,7 +11,7 @@ export class WSMDClient extends KFEventTable
     public isLogined(){return this._islogined;}
     public getLocalID(){return this._localID;}
 
-    private _ws:WebSocket;
+    private _ws:IWebSocket;
     private _token:string = "";
     ///如果连接成功后更改成服务端分配的ID
     private _localID:number = 0;
@@ -114,6 +115,11 @@ export class WSMDClient extends KFEventTable
 
             if(this._islogined)
             {
+                LOG("收到数据from={0},cmd={1},len={2}"
+                ,       readdata.fromid
+                    ,   readdata.cmd
+                    ,   readdata.datalen);
+
                 this._onDataEvt.arg = readdata;
                 this.FireEvent(this._onDataEvt);
             }
@@ -244,7 +250,7 @@ export class WSMDClient extends KFEventTable
         {
             let self  = this;
 
-            this._ws = new WebSocket(url);
+            this._ws = IWebSocket_Type.new_instance(url);
             this._ws.binaryType = 'arraybuffer';
 
             this._ws.onopen = function (evt) {

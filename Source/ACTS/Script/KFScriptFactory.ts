@@ -15,9 +15,10 @@ export class ScriptMeta extends AMeta
     public constructor(name:string = ""
                        , func:InstantiateFunc = null
                        , DataInit:ScriptDataInit = null
-                       , group:number = KFScriptGroupType.Target)
+                       , group:number = KFScriptGroupType.Target
+                       , execSide:number = 3)
     {
-        super(name,func);
+        super(name, func, execSide);
 
         if(DataInit == null)
         {

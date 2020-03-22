@@ -74,19 +74,11 @@
     },
     {
         "includes": [
-            "BBNode.ts",
-            "BABYLON.NodeF.h"
+            "BBNode.ts"
         ],
         "class": "BBNode",
         "extend": "KFActor",
-        "propertys": [
-            {
-                "id": 1,
-                "name": "target",
-                "type": "mixobject",
-                "otype": "BABYLON.Node"
-            }
-        ],
+        "propertys": [],
         "clsid": 1376
     },
     {

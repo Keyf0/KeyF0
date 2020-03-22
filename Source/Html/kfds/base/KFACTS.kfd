@@ -7,6 +7,16 @@
         "class": "KFActor",
         "extend": "KFBlockTarget",
         "propertys": [],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "tickable",
+                "cname": "开启更新",
+                "default": "true",
+                "OR": 1,
+                "type": "bool"
+            }
+        ],
         "clsid": 1011
     },
     {
@@ -253,11 +263,19 @@
     {
         "includes": [
             "Data/Block/KFBlockTargetData.h",
+            "KFBlockTargetDataF.h",
             "KFMetaDataF.h"
         ],
         "class": "KFNewBlkData",
         "extend": "",
         "propertys": [
+            {
+                "id": 1,
+                "cname": "实例参数",
+                "name": "targetData",
+                "otype": "KFBlockTargetData",
+                "type": "object"
+            },
             {
                 "id": 2,
                 "cname": "原型参数",

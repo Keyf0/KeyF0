@@ -49,6 +49,7 @@ export class WSConnection extends KFBlockTarget
     private _waittime:number = 0;
 
     protected _wsClient:WSMDClient;
+    protected _randomname:string;
 
     public Construct(metadata: any, runtime: IKFRuntime) {
 
@@ -68,10 +69,11 @@ export class WSConnection extends KFBlockTarget
             //如果运行的服务端用服务端的ID
             let localid = this.execSide == BlkExecSide.SERVER ?  this.serverid : this.localid;
 
+            this._randomname = "d_" + (new Date()).getTime() + "_" + Math.floor(Math.random() * 1000000);
             this._wsClient = new WSMDClient({
                     token :  this.token
                 ,   localID : localid
-                ,   userName:  "d_" + (new Date()).getTime() + "_" + Math.floor(Math.random() * 1000000)
+                ,   userName: this._randomname
             });
 
             this._wsClient.AddEventListener(this._wsClient._onLoginEvt.type
@@ -123,11 +125,13 @@ export class WSConnection extends KFBlockTarget
 
     protected onLogin(evt:KFEvent) {
         //更新当前的ID
+        this._trytimes = 0;
         this._Conntecting = false;
         this.localid = this._wsClient.getLocalID();
     }
 
     protected onClose(evt:KFEvent) {
+        this._trytimes += 1;
         this._Conntecting = false;
     }
 

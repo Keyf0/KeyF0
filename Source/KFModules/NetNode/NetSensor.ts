@@ -63,12 +63,13 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
                 let namestr = this.name.toString();
                 this.name = NetSensor.Meta.name;
                 parentactor.ChildRename(oldname, this);
-                LOG_WARNING("同步对象的名称错误 NetSensor,name != NetSensor", namestr);
+                LOG_ERROR("同步对象的名称错误 NetSensor,{0} != NetSensor", namestr);
             }
 
             //检测下父级的创建是否合法
-            if(     !parentactor.CreateTargetData
-                ||  parentactor.CreateTargetData.createOnClient != false) {
+            if(     this.execSide == BlkExecSide.SERVER
+                && ( !parentactor.CreateTargetData
+                ||  parentactor.CreateTargetData.createOnClient != false)) {
                 LOG_ERROR("具有同步对象的ACTOR 创建属性createOnClient必需为false");
                 this.tickable = false;
                 return;

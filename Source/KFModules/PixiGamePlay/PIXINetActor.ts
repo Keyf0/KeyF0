@@ -1,8 +1,8 @@
 import {KFActor} from "../../ACTS/Actor/KFActor";
-import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {BlkExecSide} from "../../ACTS/Context/KFBlockTarget";
 import {PIXIObject} from "./PIXIInterface";
 import {LOG_ERROR} from "../../Core/Log/KFLog";
+import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 
 
 ///KFD(C,CLASS=PIXINetActor,EXTEND=KFActor)
@@ -15,6 +15,11 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
     protected _container:PIXI.Container;
     protected newContainer():PIXI.Container{return null;}
+
+    public Construct(metadata: any, runtime: IKFRuntime) {
+        super.Construct(metadata, runtime);
+        this.execSide = runtime.execSide;
+    }
 
     protected TargetNew(KFBlockTargetData: any): any
     {
@@ -33,10 +38,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
                         , pixiParent.name.toString());
                 }
             }
-
-             return true;
         }
-        return false;
     }
 
     protected TargetDelete()

@@ -725,9 +725,11 @@ export class KFDJson
 
     public static getpropertynet(item):string {
         let unknowtags = item.unknowtags;
-        for(let tagitem of unknowtags){
-            if(tagitem.tag == "net")
-                return tagitem.val;
+        if(unknowtags) {
+            for (let tagitem of unknowtags) {
+                if (tagitem.tag == "net")
+                    return tagitem.val;
+            }
         }
         return "";
     }

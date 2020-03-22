@@ -3,6 +3,8 @@ import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {NetProxy} from "./NetSensorManager";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
+import {NetData} from "./NetData";
+import {LOG} from "../../Core/Log/KFLog";
 
 
 
@@ -55,7 +57,8 @@ export class RoleNetSensor extends NetSensor {
             for(let it of this._interesteds){
                 it.sCollectNewBlk(newblks);
             }
-            this._proxy.rpcc_createactors(newblks);
+            this._proxy.rpcc_createactors(NetData.arr(newblks));
+            LOG("通知客户端初始化{0}个Actor",newblks.length);
         }
     }
 

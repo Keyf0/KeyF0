@@ -1,4 +1,4 @@
-import {LOG, LOG_ERROR, LOG_WARNING} from "../Log/KFLog";
+import {LOG, LOG_WARNING} from "../Log/KFLog";
 import {KFDName} from "../../KFData/Format/KFDName";
 
 export interface InstantiateFunc
@@ -12,9 +12,11 @@ export class AMeta
     public type:number;
     public name:KFDName;
     public instantiate:InstantiateFunc;
+    public execSide:number = 3;
 
-    public constructor(name:string = "",func:InstantiateFunc = null)
+    public constructor(name:string = "",func:InstantiateFunc = null, execSide:number = 3)
     {
+        this.execSide = execSide;
         this.SetDefaultFactroy(name, func);
     }
 
@@ -36,9 +38,9 @@ export class AMeta
 
 export class IKFMeta extends AMeta
 {
-    public constructor(name:string = "",func:InstantiateFunc = null)
+    public constructor(name:string = "",func:InstantiateFunc = null, execSide:number = 3)
     {
-        super(name,func);
+        super(name,func,execSide);
     }
 
     public SetDefaultFactroy(namestr:string, func:InstantiateFunc = null)
@@ -57,20 +59,22 @@ export class DefaultType<T>
     public meta:AMeta;
     public instance:T = null;
 
-    public new_default():T
+    public new_default(...rest:any[]):T
     {
         if(this.instance == null)
         {
-            this.instance = this.new_instance();
+            if(this.meta != null) {
+                this.instance = this.meta.instantiate.apply(null, rest);
+            }
         }
         return this.instance;
     }
 
-    public new_instance():T
+    public new_instance(...rest:any[]):T
     {
         if(this.meta == null)
             return null;
-        let instance = this.meta.instantiate();
+        let instance = this.meta.instantiate.apply(null,rest);
         return instance;
     }
 }

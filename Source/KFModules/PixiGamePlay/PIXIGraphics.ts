@@ -1,4 +1,4 @@
-import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
+import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {PIXIObject} from "./PIXIInterface";
 import {LOG_ERROR} from "../../Core/Log/KFLog";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
@@ -12,6 +12,7 @@ export class PIXIGraphics extends KFBlockTarget
         ,():KFBlockTarget=>{
             return new PIXIGraphics();
         }
+        , BlkExecSide.CLIENT
     );
 
     public target:PIXI.Graphics;

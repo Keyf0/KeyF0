@@ -4,6 +4,7 @@ import {KFDName} from "../../KFData/Format/KFDName";
 import {BlkExecSide} from "../../ACTS/Context/KFBlockTarget";
 import {KFDataType} from "../../KFData/Format/KFD";
 import {WSConnection} from "./WSConnection";
+import {LOG, LOG_WARNING} from "../../Core/Log/KFLog";
 
 export interface RPCObject
 {
@@ -80,6 +81,8 @@ export class NetData
             objsid);
         if(methodinfo){
             methodinfo.func.apply(methodinfo.target, args)
+        }else{
+            LOG_WARNING("对象ID={0},名称={1} 参数长度={2} RPC调用被丢失", objsid, methodstr, arglen);
         }
     }
 
@@ -95,8 +98,17 @@ export class NetData
         //public clientCall(toclientid:number, objectsid:number, method:string,...args:any[]) {}
         allnames =  allnames ? allnames : obj;
 
+        ///注意在ES6中如果对象编译成class是遍历不出方法
+        ///需要自己定义一个方法的map名字叫_rpcmethods_
+        if(     allnames.hasOwnProperty("_rpcmethods_")
+            &&  allnames._rpcmethods_){
+            allnames = allnames._rpcmethods_;
+        }
+
         if(execSide == BlkExecSide.SERVER) {
+
             for (let mname in allnames) {
+
                 if (mname.indexOf("rpcc_") != -1) {
                     //此函数需要重定向到一个远程调用上
                     if(wsconn){
@@ -104,11 +116,15 @@ export class NetData
                         args.splice(0,0,localid, objsid, mname);
                         wsconn.clientCall.apply(wsconn, args);
                         };
+
+                        LOG("注册RPC {0}", mname);
                     }
 
                 } else if (handlers && mname.indexOf("rpcs_") != -1) {
                     handlers[KFDName._Strs.GetNameID(mname)]
                     = {func:obj[mname],target:obj};
+
+                    LOG("注册回调 {0}", mname);
                 }
             }
         } else if(execSide == BlkExecSide.CLIENT) {
@@ -116,12 +132,15 @@ export class NetData
                 if (handlers && mname.indexOf("rpcc_") != -1) {
                     handlers[KFDName._Strs.GetNameID(mname)]
                         = {func:obj[mname],target:obj};
+                    LOG("注册回调 {0}", mname);
                 }else if (mname.indexOf("rpcs_") != -1) {
                     if(wsconn){
                         obj[mname] = function (...args:any[]) {
                             args.splice(0,0, objsid, mname);
                             wsconn.serverCall.apply(wsconn, args);
                         };
+
+                        LOG("注册RPC {0}", mname);
                     }
                 }
             }

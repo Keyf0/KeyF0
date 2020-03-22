@@ -3,7 +3,6 @@ import {PIXIObject} from "./PIXIInterface";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 
-
 ///KFD(C,CLASS=PIXIApplication,EXTEND=HElementActor)
 ///KFD(*)
 

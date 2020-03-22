@@ -18,14 +18,16 @@ export class AppLauncher
 
     public constructor(execSide:number = BlkExecSide.BOTH)
     {
+        this.execSide = execSide;
         ///默认的配置文件管理器
         IKFConfigs_Type.meta = DefaultAppConfig.Meta;
         ///生成文件系统
-        HttpRequest_Type.meta = WebHttpRequest.Meta;
-        IKFFileIO_Type.meta = KFHttpFileIO.Meta;
+        if(!HttpRequest_Type.meta)
+            HttpRequest_Type.meta = WebHttpRequest.Meta;
+        if(!IKFFileIO_Type.meta)
+            IKFFileIO_Type.meta = KFHttpFileIO.Meta;
         IKFFileIO_Type.new_default();
         this.config = IKFConfigs_Type.new_default();
-        this.execSide = execSide;
     }
 
     public stop_tick()

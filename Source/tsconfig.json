@@ -5,7 +5,7 @@
     "outDir": "Html/libs",
     "sourceMap": true,
     "types": [
-      "babylonjs","pixi.js"]
+      "babylonjs","pixi.js","node"]
   },
   "exclude": [
       "node_modules"

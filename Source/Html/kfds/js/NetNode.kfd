@@ -1,0 +1,116 @@
+[
+    {
+        "includes": [
+            "NetSensor.ts"
+        ],
+        "class": "NetSensor",
+        "extend": "KFBlockTarget",
+        "propertys": [],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "tickable",
+                "cname": "开启更新",
+                "default": "true",
+                "OR": 1,
+                "type": "bool"
+            }
+        ],
+        "clsid": 1385
+    },
+    {
+        "includes": [
+            "NetSensorManager.ts",
+            "KFBlockTargetDataF.h"
+        ],
+        "class": "NetSensorManager",
+        "extend": "WSConnection",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "roleTargetData",
+                "cname": "角色创建",
+                "type": "object",
+                "otype": "KFBlockTargetData"
+            }
+        ],
+        "clsid": 1386
+    },
+    {
+        "includes": [
+            "RoleNetSensor.ts"
+        ],
+        "class": "RoleNetSensor",
+        "extend": "NetSensor",
+        "propertys": [],
+        "clsid": 1387
+    },
+    {
+        "includes": [
+            "WSConnection.ts"
+        ],
+        "class": "WSConnection",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "wsurl",
+                "cname": "网络地址",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "localid",
+                "cname": "本地编号",
+                "default": "10000",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "name": "serverid",
+                "cname": "服务编号",
+                "default": "100",
+                "type": "int32"
+            },
+            {
+                "id": 4,
+                "name": "token",
+                "cname": "服务密码",
+                "default": "abc",
+                "type": "kfstr"
+            },
+            {
+                "id": 5,
+                "name": "timeout",
+                "cname": "超时时间[ms]",
+                "default": "3000",
+                "type": "int32"
+            },
+            {
+                "id": 6,
+                "name": "readbuffsize",
+                "cname": "缓冲大小[b]",
+                "default": "32768",
+                "type": "int32"
+            },
+            {
+                "id": 7,
+                "name": "tryinterval",
+                "cname": "重连间隔[ms]",
+                "default": "1000",
+                "type": "int32"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "tickable",
+                "cname": "开启更新",
+                "default": "true",
+                "OR": 1,
+                "type": "bool"
+            }
+        ],
+        "clsid": 1388
+    }
+]

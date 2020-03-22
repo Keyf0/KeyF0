@@ -1531,6 +1531,46 @@
         {
             "class": "KFExpression",
             "id": 1380
+        },
+        {
+            "class": "KFNewBlkData",
+            "id": 1365
+        },
+        {
+            "class": "PIXIApplication",
+            "id": 1381
+        },
+        {
+            "class": "PIXIMovieClip",
+            "id": 1382
+        },
+        {
+            "class": "PIXINetActor",
+            "id": 1383
+        },
+        {
+            "class": "PIXIScene",
+            "id": 1384
+        },
+        {
+            "class": "NetSensor",
+            "id": 1385
+        },
+        {
+            "class": "NetSensorManager",
+            "id": 1386
+        },
+        {
+            "class": "RoleNetSensor",
+            "id": 1387
+        },
+        {
+            "class": "WSConnection",
+            "id": 1388
+        },
+        {
+            "class": "PIXIGraphics",
+            "id": 1389
         }
     ]
 }
