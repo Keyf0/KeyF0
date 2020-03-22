@@ -19,25 +19,19 @@ export class BBScene extends KFActor implements IBBObject
 
     public target:BABYLON.Scene;
     public scene:BABYLON.Scene;
+    public engine:BABYLON.Engine;
     public renderThread:any = null;
 
-    public ActivateBLK(KFBlockTargetData: any): void
+    protected TargetNew(KFBlockTargetData: any): any
     {
-        let engine = <BBEngine><any>this.parent;
-        this.target = this.CreateTarget(engine._target);
+        let bbengine = <BBEngine><any>this.parent;
+        this.engine = bbengine._target;
+        this.target = this.CreateTarget(this.engine);
         this.scene = this.target;
-        super.ActivateBLK(KFBlockTargetData);
-        let self = this;
-        this.renderThread = () =>
-        {
-            self.scene.render();
-        };
-
-        engine._target.runRenderLoop(this.renderThread);
     }
 
-    public DeactiveBLK(): void {
-        super.DeactiveBLK();
+    protected TargetDelete()
+    {
         if(this.target)
         {
             this.target.getEngine().stopRenderLoop(this.renderThread);
@@ -50,5 +44,17 @@ export class BBScene extends KFActor implements IBBObject
     public CreateTarget(engine:BABYLON.Engine):BABYLON.Scene
     {
         return new BABYLON.Scene(engine);
+    }
+
+
+    public ActivateBLK(KFBlockTargetData: any): void
+    {
+        super.ActivateBLK(KFBlockTargetData);
+        let self = this;
+        this.renderThread = () =>
+        {
+            self.scene.render();
+        };
+        this.engine.runRenderLoop(this.renderThread);
     }
 }

@@ -1,6 +1,7 @@
 import {KFiSayPlayer} from "./KFiSayPlayer";
 import {KFGameInputs} from "./KFGameInputs";
 import {KFGameTicker} from "./KFGameTicker";
+import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
 
 export class KFApp
 {
@@ -8,6 +9,7 @@ export class KFApp
     public player:KFiSayPlayer;
     public gameInput:KFGameInputs;
     public gameTicker:KFGameTicker;
+    public execSide:number = BlkExecSide.BOTH;
 
     public constructor()
     {
@@ -43,6 +45,7 @@ export class KFApp
     public Play(basedir:string, path:string)
     {
         this.player = new KFiSayPlayer(this.userdata);
+        this.player.execSide = this.execSide;
         this.player.Init(basedir);
         this.player.Play(path);
     }

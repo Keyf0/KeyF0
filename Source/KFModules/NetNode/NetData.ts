@@ -8,7 +8,7 @@ import {WSConnection} from "./WSConnection";
 export interface RPCObject
 {
     connection:WSConnection;
-    childrens:{[key:number]:any;};
+    children:{[key:number]:any;};
     actorsid:number;
 
     getRPCMethod(method:KFDName, objsid?:number) :{func:Function,target:any};

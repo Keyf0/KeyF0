@@ -85,18 +85,23 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.ResetAllComponent();
     }
 
+    protected TargetNew(KFBlockTargetData:any): any{}
+    protected TargetDelete(){}
+
     public ActivateBLK(KFBlockTargetData:any):void
     {
         super.ActivateBLK(KFBlockTargetData);
         //把父级映射上去
         this.m_childrenmap[KFActor.PARENT.value] = <any>this.parent;
+        this.TargetNew(KFBlockTargetData);
         this.ActivateAllComponent();
     }
 
     public DeactiveBLK():void
     {
-        delete this.m_childrenmap[KFActor.PARENT.value];
         this.DeactiveAllComponent();
+        delete this.m_childrenmap[KFActor.PARENT.value];
+        this.TargetDelete();
     }
 
     public Tick(frameindex:number):void

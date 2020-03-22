@@ -11,18 +11,35 @@ import {NetData, RPCObject} from "./NetData";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFActor} from "../../ACTS/Actor/KFActor";
 import {RoleNetSensor} from "./RoleNetSensor";
-import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {KFGlobalDefines} from "../../ACTS/KFACTSDefines";
+import {LOG_ERROR} from "../../Core/Log/KFLog";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
+
+///KFD(C,CLASS=NetSensorManager,EXTEND=WSConnection)
 
 export class NetSensorManager extends WSConnection implements RPCObject {
 
+    public static Meta:IKFMeta = new IKFMeta("NetSensorManager"
+        ,():KFBlockTarget=>{
+            return new NetSensorManager();
+        });
+
+    ///KFD(P=1,NAME=roleTargetData,CNAME=角色创建,TYPE=object,OTYPE=KFBlockTargetData)
     //目标的TARGETDATA
     public roleTargetData:any;
-    public childrens:{[key:number]:any;} = {};
+
+    public sensordata = {asseturl: "", instname: NetSensor.Meta.name};
+    public netmeta:any = {type:NetSensor.Meta.name};
+    public rolenetmeta:any = {type:RoleNetSensor.Meta.name};
+    ///KFD(*)
+
+    public children:{[key:number]:any;} = {};
     public rpcmethods:{[key:number]:{ func: Function; target: any } } = {};
     public proxy:NetProxy;
     public connection:WSConnection;
     public actorsid: number;
+    public actor:KFActor;
 
     private isRegisted:boolean = false;
 
@@ -34,6 +51,9 @@ export class NetSensorManager extends WSConnection implements RPCObject {
 
     public ActivateBLK(KFBlockTargetData: any): void {
         super.ActivateBLK(KFBlockTargetData);
+
+        let parentactor = <any>this.parent;
+
         if(KFGlobalDefines.IS_Debug) {
             //检测名称是否叫否则自动改名称
             let oldname = this.name.value;
@@ -43,19 +63,22 @@ export class NetSensorManager extends WSConnection implements RPCObject {
             }
         }
 
+        this.actor = parentactor;
+        this.actorsid = 0;//根的SID置0
     }
 
     public AddObject(obj:any) {
         let sensor = <NetSensor>obj;
-        this.childrens[sensor.actorsid] = sensor;
+        this.children[sensor.actorsid] = sensor;
     }
 
     public RemoveObject(obj:any) {
         let sensor = <NetSensor>obj;
-        delete this.childrens[sensor.actorsid];
+        delete this.children[sensor.actorsid];
     }
 
     protected onLogin(evt: KFEvent) {
+
         super.onLogin(evt);
         if(!this.isRegisted) {
             ///注册
@@ -63,7 +86,6 @@ export class NetSensorManager extends WSConnection implements RPCObject {
             NetData.registerpc(this.proxy, this.execSide, this.localid, 0, this.rpcmethods, this);
         }
     }
-
 
     protected onData(evt: KFEvent) {
         let rpcdata:any = evt.arg;
@@ -139,11 +161,11 @@ export class NetProxy {
             //通知登录成功
             clientproxy.rpcc_postlogin(blk.sid);
             //创建或寻找感知对象
-            let rolesensor = <RoleNetSensor>this.mgr.childrens[blk.sid];
+            let rolesensor = <RoleNetSensor>this.mgr.children[blk.sid];
             if(!rolesensor) {
                 //通过名称关联
-                let sensordata = {asseturl: "", instname: NetSensor.Meta.name};
-                let meta:any = {type:RoleNetSensor.Meta.name};
+                let sensordata = this.mgr.sensordata;
+                let meta:any = this.mgr.rolenetmeta;
                 rolesensor = <RoleNetSensor>blk.CreateChild(sensordata ,meta);
             }
             //连接proxy
@@ -162,6 +184,34 @@ export class NetProxy {
     //调用客户端创建对象arr<KFTargetData>
     public rpcc_createactors(newblkdatas:any[]) {
 
+        let scene:KFActor = this.mgr.actor;
+        let parent:KFActor = null;
+
+        for(let newdata of newblkdatas) {
+
+            let parentsid = newdata.parentsid;
+            if(parentsid == 0) {
+                parent = scene;
+            } else {
+                let rpcobj: NetSensor = <NetSensor>this.mgr.rpcobjects[parentsid];
+                parent = rpcobj.actor;
+            }
+            if(parent) {
+                let newactor:KFActor = <KFActor>parent.CreateChild(newdata.targetData);
+                if(newactor) {
+                    //创建网络对象
+                    let netobject:NetSensor = <NetSensor>newactor.CreateChild(
+                        this.mgr.sensordata, this.mgr.netmeta);
+                    //写入初始数据
+                    if(netobject) {
+                        netobject.rpcc_update(newdata.metadata, true);
+                    }
+                }
+            } else {
+                LOG_ERROR("没有找到父级,对象创建失败aasseturl={0}"
+                    ,newdata.targetData.asseturl);
+            }
+        }
     }
 }
 

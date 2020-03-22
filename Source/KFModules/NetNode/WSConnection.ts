@@ -2,22 +2,38 @@ import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {WSMDClient} from "../../KFNetwork/WS/WSMDClient";
 import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
-import {NetData} from "./NetData";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 
 ///KFD(C,CLASS=WSConnection,EXTEND=KFBlockTarget)
-///KFD(*)
+///KFD(P=1,NAME=tickable,CNAME=开启更新,DEFAULT=true,OR=1,TYPE=bool)
+
 
 export class WSConnection extends KFBlockTarget
 {
+    public static Meta:IKFMeta = new IKFMeta("WSConnection"
+        ,():KFBlockTarget=>{
+            return new WSConnection();
+        });
+
+    ///KFD(P=1,NAME=wsurl,CNAME=网络地址,TYPE=kfstr)
     public wsurl:string = "ws://127.0.0.1:8000/ws";
+    ///KFD(P=2,NAME=localid,CNAME=本地编号,DEFAULT=10000,TYPE=int32)
     public localid:number = 10000;
+    ///KFD(P=3,NAME=serverid,CNAME=服务编号,DEFAULT=100,TYPE=int32)
     public serverid:number = 100;
+    ///KFD(P=4,NAME=token,CNAME=服务密码,DEFAULT=abc,TYPE=kfstr)
     public token:string = "abc";
+    ///KFD(P=5,NAME=timeout,CNAME=超时时间[ms],DEFAULT=3000,TYPE=int32)
     public timeout:number = 3000;
     ///默认32kb
+    ///KFD(P=6,NAME=readbuffsize,CNAME=缓冲大小[b],DEFAULT=32768,TYPE=int32)
     public readbuffsize:number = 1024 * 32;
     ///尝试时间
+    ///KFD(P=7,NAME=tryinterval,CNAME=重连间隔[ms],DEFAULT=1000,TYPE=int32)
     public tryinterval:number = 1000;
+
+
+    ///KFD(*)
 
     public isLogined():boolean {
         return this._wsClient ?

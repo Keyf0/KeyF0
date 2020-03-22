@@ -29,7 +29,7 @@ export class HDocument extends HElementActor implements IDocument
         this.target = this.nativedom.body;
     }
 
-    public CreateHtml(): void
+    protected TargetNew(KFBlockTargetData: any): any
     {
     }
 }

@@ -18,9 +18,10 @@ export class BBEngine extends HCanvas
 
     public _target:BABYLON.Engine;
 
-    public CreateHtml(): void
+    protected TargetNew(KFBlockTargetData: any): void
     {
-        super.CreateHtml();
+        super.TargetNew(KFBlockTargetData);
+
         let self = this;
         let domele:HTMLCanvasElement = <HTMLCanvasElement>this.target;
         this._target = new BABYLON.Engine(domele);

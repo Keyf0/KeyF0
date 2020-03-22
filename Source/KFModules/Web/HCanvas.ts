@@ -17,7 +17,7 @@ export class HCanvas extends HElementActor
         }
     );
 
-    public CreateHtml()
+    protected TargetNew(KFBlockTargetData: any): any
     {
         let parent = <HElementActor>this.parent;
         this.document = parent.document;
@@ -53,6 +53,5 @@ export class HCanvas extends HElementActor
             ptarget.insertAdjacentHTML("beforeend", htmlstr);
             this.target = ptarget.lastElementChild;
         }
-
     }
 }

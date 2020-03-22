@@ -21,7 +21,7 @@ export class HElementActor extends KFActor implements HElement
     public document: IDocument;
     public target: Element;
 
-    public CreateHtml(): void
+    protected TargetNew(KFBlockTargetData: any):  any
     {
         let parent = <HElementActor>this.parent;
         this.document = parent.document;
@@ -31,15 +31,7 @@ export class HElementActor extends KFActor implements HElement
             , this.document,this.metadata);
     }
 
-    public ActivateBLK(KFBlockTargetData: any): void
-    {
-        ///前做初始化
-        this.CreateHtml();
-        super.ActivateBLK(KFBlockTargetData);
-    }
-
-    public DeactiveBLK(): void {
-        super.DeactiveBLK();
+    protected TargetDelete(): void {
         if(this.parent) {
             let parent = <HElementActor>this.parent;
             HElementCreator.DefaultDestroyHtml(parent.target, this);

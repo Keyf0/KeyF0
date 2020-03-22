@@ -13,6 +13,11 @@ import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFDTable} from "../../KFData/Format/KFDTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
 
+
+///KFD(C,CLASS=NetSensor,EXTEND=KFBlockTarget)
+///KFD(P=1,NAME=tickable,CNAME=开启更新,DEFAULT=true,OR=1,TYPE=bool)
+///KFD(*)
+
 export class NetSensor extends KFBlockTarget implements RPCObject {
 
     public static Meta:IKFMeta = new IKFMeta("NetSensor"
@@ -20,7 +25,7 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
             return new NetSensor();
         });
 
-    public childrens:{[key:number]:any;} = {};
+    public children:{[key:number]:any;} = {};
     public execSide:number = BlkExecSide.UNKNOW;
     public isActived:boolean = false;
     public isRole:boolean = false;
@@ -166,16 +171,28 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
 
     public AddObject(obj:any) {
         let sensor = <NetSensor>obj;
-        this.childrens[sensor.actorsid] = sensor;
+        this.children[sensor.actorsid] = sensor;
     }
 
     public RemoveObject(obj:any) {
         let sensor = <NetSensor>obj;
-        delete this.childrens[sensor.actorsid];
+        delete this.children[sensor.actorsid];
+    }
+
+    public sCollectNewBlk(arr:any[])
+    {
+        arr.push(this.sKFNewBlkData);
+        for(let sid in this.children) {
+            this.children[sid].sCollectNewBlk(arr);
+        }
     }
 
     //同步客户端数据了
-    public rpcc_update(KFMetaData:any) {
+    public rpcc_update(KFMetaData:any, init:boolean = false) {
 
+        let kfbytes:KFBytes = KFMetaData.data;
+        if(kfbytes && kfbytes.bytes) {
+            KFDJson.read_value(kfbytes.bytes,false, this.actor);
+        }
     }
 }

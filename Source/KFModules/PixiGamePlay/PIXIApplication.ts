@@ -1,8 +1,19 @@
 import {HElementActor} from "../Web/HElementActor";
-import * as PIXI from "pixi.js"
 import {PIXIObject} from "./PIXIInterface";
+import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
+
+
+///KFD(C,CLASS=PIXIApplication,EXTEND=HElementActor)
+///KFD(*)
 
 export class PIXIApplication extends HElementActor implements PIXIObject{
+
+    public static Meta:IKFMeta = new IKFMeta("PIXIApplication"
+        ,():KFBlockTarget=>{
+            return new PIXIApplication();
+        }
+    );
 
     public width:number =  800;         // default: 800
     public height:number = 600;        // default: 600
@@ -12,13 +23,27 @@ export class PIXIApplication extends HElementActor implements PIXIObject{
 
     public _target:PIXI.Application = null;
 
-    public CreateHtml(): void {
-        super.CreateHtml();
+    protected TargetNew(KFBlockTargetData: any): void
+    {
         this._target = new PIXI.Application(this);
         let canvas = this._target.view;
         this.target = canvas;
         let parent = <HElementActor>this.parent;
-        parent.target.appendChild(canvas);
+
+        if(parent) {
+            this.document = parent.document;
+            parent.target.appendChild(canvas);
+        } else {
+            document.body.appendChild(canvas);
+        }
+    }
+
+    protected TargetDelete(): void {
+        ///没有父级自己删除掉
+        if(!parent) {
+            document.body.removeChild(this.target);
+        }
+        super.TargetDelete();
     }
 
     public getPIXITarget(): PIXI.Container {

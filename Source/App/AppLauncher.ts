@@ -6,6 +6,7 @@ import {WebHttpRequest} from "../KFNetwork/Http/Request/web/WebHttpRequest";
 import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {DefaultAppConfig} from "./DefaultAppConfig";
 import {KFApp} from "../iSay/KFApp";
+import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
 
 export class AppLauncher
 {
@@ -13,8 +14,9 @@ export class AppLauncher
     private _tickid:number = -1;
 
     public config:IKFConfigs = null;
+    public execSide:number = BlkExecSide.BOTH;
 
-    public constructor()
+    public constructor(execSide:number = BlkExecSide.BOTH)
     {
         ///默认的配置文件管理器
         IKFConfigs_Type.meta = DefaultAppConfig.Meta;
@@ -23,6 +25,7 @@ export class AppLauncher
         IKFFileIO_Type.meta = KFHttpFileIO.Meta;
         IKFFileIO_Type.new_default();
         this.config = IKFConfigs_Type.new_default();
+        this.execSide = execSide;
     }
 
     public stop_tick()
@@ -51,6 +54,7 @@ export class AppLauncher
         if(this._app == null)
         {
             this._app = new KFApp();
+            this._app.execSide = this.execSide;
             this._app.Create();
         }
 

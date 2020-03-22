@@ -22,8 +22,11 @@ export class BBNode extends KFActor implements IBBObject
     public target:BABYLON.Node;
     public scene:BABYLON.Scene;
 
-    public CreateTarget(KFBlockTargetData: any):BABYLON.Node
+    protected TargetNew(KFBlockTargetData:any):boolean
     {
+        let obj = <IBBObject><any>this.parent;
+        this.scene  = obj.scene;
+
         ///targetClass是目标的类名
         let Values:{[key:string]:string;} = KFDataHelper.Meta2MapValue(this.metadata);
         if(Values.targetJS)
@@ -49,22 +52,11 @@ export class BBNode extends KFActor implements IBBObject
            }
         }
 
-        return this.target;
+        return true;
     }
 
-    public ActivateBLK(KFBlockTargetData: any): void
+    public TargetDelete(): void
     {
-        super.ActivateBLK(KFBlockTargetData);
-
-        let obj = <IBBObject><any>this.parent;
-        this.scene  = obj.scene;
-        this.target = this.CreateTarget(KFBlockTargetData);
-    }
-
-    public DeactiveBLK(): void
-    {
-        super.DeactiveBLK();
-
         if(this.target)
         {
             this.target.dispose();
