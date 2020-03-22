@@ -38,11 +38,9 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
             this.m_target = this.m_ctx.targetObject.CreateChild(targetdata);
-            if (this.m_target == null)
+        }
+        else
             {
-                LOG_ERROR("Cannot Create BlockTarget:{0}", targetdata.asseturl);
-            }
-        } else {
             this.m_target = this.GetAttachTarget();
         }
     }

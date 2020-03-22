@@ -100,7 +100,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public DeactiveBLK():void
     {
         this.DeactiveAllComponent();
-        delete this.m_childrenmap[KFActor.PARENT.value];
+        this.DeleteChildren();
+        ///这个顺序不知道可以不，先这样
+        //delete this.m_childrenmap[KFActor.PARENT.value];
         this.TargetDelete();
     }
 
@@ -200,7 +202,19 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         return true;
     }
 
-    private _DeleteChild(child:KFBlockTarget):boolean
+    public DeleteChildren() {
+
+        for(let child of this.m_children){
+            child.DeactiveBLK();
+            child.parent = null;
+            this.runtime.domain.DestroyBlockTarget(child);
+        }
+        this.m_removelist.length = 0;
+        this.m_children.length = 0;
+        this.m_childrenmap = null;
+    }
+
+    public _DeleteChild(child:KFBlockTarget):boolean
     {
         child.DeactiveBLK();
         this.RemoveChild(child);

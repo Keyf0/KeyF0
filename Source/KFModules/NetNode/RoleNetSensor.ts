@@ -57,7 +57,7 @@ export class RoleNetSensor extends NetSensor {
             for(let it of this._interesteds){
                 it.sCollectNewBlk(newblks);
             }
-            this._proxy.rpcc_createactors(NetData.arr(newblks));
+            this._proxy.rpcc_createactors(NetData.arr(newblks), true);
             LOG("通知客户端初始化{0}个Actor",newblks.length);
         }
     }

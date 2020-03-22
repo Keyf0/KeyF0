@@ -12,7 +12,7 @@ import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFActor} from "../../ACTS/Actor/KFActor";
 import {RoleNetSensor} from "./RoleNetSensor";
 import {KFGlobalDefines} from "../../ACTS/KFACTSDefines";
-import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
+import {LOG, LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 
@@ -91,9 +91,9 @@ export class NetSensorManager extends WSConnection implements RPCObject {
         if(this.execSide == BlkExecSide.SERVER){
             LOG("\n==============\n==============\n服务启动成功\n场景:{0}\n==============\n==============\n"
                 , this.actor.metadata.asseturl);
-        } else {
+        } else if(this.execSide == BlkExecSide.CLIENT){
 
-            LOG("{0}请求登录" ,this._randomname)
+            LOG("{0}请求登录" ,this._randomname);
             this.proxy.rpcs_login(this.localid,this._randomname);
         }
     }
@@ -101,10 +101,24 @@ export class NetSensorManager extends WSConnection implements RPCObject {
     protected onData(evt: KFEvent) {
 
         let rpcdata:any = evt.arg;
-        if(rpcdata.cmd == NetData.RPC_cmd) {
+        let cmd = rpcdata.cmd;
+
+        if(cmd == NetData.RPC_cmd) {
             let databytes:KFByteArray = rpcdata.databytes;
             databytes.SetPosition(0);
             NetData.readrpcCall(databytes, this);
+        } else if(cmd == NetData.OFFLINE_cmd){
+            ///有连接离线了
+            let fromid = rpcdata.fromid;
+            LOG("收到{0}离线信息",fromid);
+
+            let bytevalue = KFDName._Strs.GetNameID("_bye_" + fromid);
+            let methodinfo = this.rpcmethods[bytevalue];
+
+            if(methodinfo) {
+                delete this.rpcmethods[bytevalue];
+                methodinfo.func.call(methodinfo.target);
+            }
         }
     }
     //objectsid:对象sid
@@ -136,12 +150,32 @@ export class NetSensorManager extends WSConnection implements RPCObject {
 export class NetProxy {
 
     public mgr:NetSensorManager;
+    public attachactor:KFActor;
     public localid:number = 0;
     public proxys:{[key:number]:NetProxy;} = {};
+    private _offlineid:number = 0;
 
     public constructor(mgr:NetSensorManager) {
         this.mgr = mgr;
     }
+
+    public offline() {
+        ///离线调用
+        LOG("目前没有登录成功,无需离线");
+    }
+
+    private _soffline(){
+        ///服务端的退出调用
+        if(this.attachactor) {
+            let actorname = this.attachactor.name;
+            this.mgr.actor._DeleteChild(this.attachactor);
+            this.attachactor = null;
+            ///删除引用
+            delete this.mgr.proxy.proxys[actorname.value];
+            LOG("{0} 成功离线", actorname.toString());
+        }
+    }
+
 
     //服务端调用，
     //定义RPC方法 rpcs_ rpcc_
@@ -154,9 +188,14 @@ export class NetProxy {
 
             clientproxy = new NetProxy(this.mgr);
             clientproxy.localid = localid;
+
             this.proxys[instname.value] = clientproxy;
             //只注册发送不注册侦听
             NetData.registerpc(clientproxy, this.mgr.execSide, localid, 0, null, this.mgr);
+
+            //注册一个退出回调
+            this.mgr.rpcmethods[KFDName._Strs.GetNameID("_bye_" + localid)]
+                = {func:clientproxy._soffline,target:clientproxy};
         }
 
         let targetdata = this.mgr.roleTargetData;
@@ -181,11 +220,10 @@ export class NetProxy {
                 let meta:any = this.mgr.rolenetmeta;
                 rolesensor = <RoleNetSensor>blk.CreateChild(sensordata ,meta);
             }
-
             LOG("{0}服务端对象创建成功...",username);
             //连接proxy
+            clientproxy.attachactor = blk;
             rolesensor.Connect(clientproxy);
-
         }
         else {
             clientproxy.rpcc_postlogin(-1,"对象创建失败");
@@ -194,16 +232,24 @@ export class NetProxy {
 
     //客户端调用
     public rpcc_postlogin(actorsid:number,data?:string) {
-        if(actorsid > 0){
-            LOG("{0}[{1}]登录服务器成功",data,actorsid);
-
+        if(actorsid > 0) {
+            LOG("{0}[{1}]登录服务器成功", data, actorsid);
+            //绑定一个退出调用
+            if(this._offlineid != this.localid) {
+                this._offlineid = this.localid;
+                let self = this;
+                self.offline = function (...args: any[]) {
+                    args.splice(0, 0, self.localid, 0, "_bye_" + self.localid);
+                    self.mgr.clientCall.apply(self.mgr, args);
+                };
+            }
         }else{
             LOG_ERROR("登录失败{0}",data);
         }
     }
 
     //调用客户端创建对象arr<KFTargetData>
-    public rpcc_createactors(newblkdatas:any[]) {
+    public rpcc_createactors(newblkdatas:any[],init:boolean) {
 
         LOG("收到创建角色的信息长度:{0}",newblkdatas.length);
 
@@ -220,14 +266,26 @@ export class NetProxy {
                 parent = rpcobj.actor;
             }
             if(parent) {
-                let newactor:KFActor = <KFActor>parent.CreateChild(newdata.targetData);
+                ///先寻找
+                let targetData = newdata.targetData;
+                let newactor:KFActor = <KFActor>parent.FindChild(targetData.instname.value);
+
+                if(!newactor) {
+                    newactor = <KFActor>parent.CreateChild(targetData);
+                }
+
                 if(newactor) {
                     //创建网络对象
-                    let netobject:NetSensor = <NetSensor>newactor.CreateChild(
-                        this.mgr.sensordata, this.mgr.netmeta);
+                    let sensordata = this.mgr.sensordata;
+                    let netobject:NetSensor = <NetSensor>newactor.FindChild(sensordata.instname.value);
+
+                    if(netobject == null) {
+                        netobject = <NetSensor>newactor.CreateChild(
+                                            sensordata, this.mgr.netmeta);
+                    }
                     //写入初始数据
                     if(netobject) {
-                        netobject.rpcc_update(newdata.metaData, true);
+                        netobject.rpcc_update(newdata.metaData, init);
                     }
                 }
             } else {

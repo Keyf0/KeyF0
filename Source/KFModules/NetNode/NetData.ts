@@ -20,6 +20,7 @@ export interface RPCObject
 export class NetData
 {
     public static RPC_cmd:number = 100;
+    public static OFFLINE_cmd:number = 404;
 
     public static int8(val:number):any{return {value:val,type:"int8",rpctype:true};}
     public static int32(val:number):any{return {value:val,type:"int32",rpctype:true};}

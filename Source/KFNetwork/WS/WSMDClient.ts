@@ -15,6 +15,8 @@ export class WSMDClient extends KFEventTable
     private _token:string = "";
     ///如果连接成功后更改成服务端分配的ID
     private _localID:number = 0;
+    ///此ID需要记住只用于登录时候用
+    private _remoteID:number = 0;
     private _userName:string = "";
     private _writebuff:KFByteArray;
     private _readdata:any;
@@ -52,9 +54,13 @@ export class WSMDClient extends KFEventTable
         LOG("连接成功发送登陆信息...");
 
         this.isConnected = true;
+
+        if(this._remoteID == 0)
+            this._remoteID = this._localID;
+
         let logindata = {
             token:this._token
-            , remoteID:this._localID
+            , remoteID:this._remoteID
             , userName:this._userName
         };
 
