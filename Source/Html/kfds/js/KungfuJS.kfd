@@ -73,7 +73,7 @@
             {
                 "id": 1,
                 "name": "data",
-                "cname": "脚本数据",
+                "cname": "内容数据",
                 "type": "mixobject",
                 "otype": "KFScriptData"
             },

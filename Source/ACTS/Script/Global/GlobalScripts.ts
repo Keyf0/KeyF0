@@ -69,7 +69,7 @@ export class GSExpressionScript extends KFScript
 ///KFD(C,CLASS=GSRemoteScriptData,CNAME=远程脚本,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=GSRemoteScriptData,OR=1,TYPE=kfname)
 ///KFD(P=3,NAME=group,CNAME=脚本分组,DEFAULT=4,OR=1,ENUM=KFScriptGroupType,TYPE=int8)
-///KFD(P=1,NAME=data,CNAME=脚本数据,TYPE=mixobject,OTYPE=KFScriptData)
+///KFD(P=1,NAME=data,CNAME=内容数据,TYPE=mixobject,OTYPE=KFScriptData)
 ///KFD(P=2,NAME=execSide,CNAME=发送,DEFAULT=3,TYPE=uint8,ENUM=BlkExecSide)
 ///KFD(*)
 

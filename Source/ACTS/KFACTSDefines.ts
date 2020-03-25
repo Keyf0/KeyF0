@@ -1,5 +1,3 @@
-
-
 export class KFGlobalDefines
 {
     ///每帧的时间间隔ms
