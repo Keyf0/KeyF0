@@ -22,10 +22,8 @@ export class HCanvas extends HElementActor
         let parent = <HElementActor>this.parent;
         this.document = parent.document;
 
-        let Values:{[key:string]:string;} = KFDataHelper.Meta2MapValue(this.metadata);
-        if(Values.attachId)
+        if(this.attachId)
         {
-            this.attachId = Values.attachId;
             this.target = this.document.nativedom.getElementById(this.attachId);
 
             ///类型判定
@@ -35,13 +33,12 @@ export class HCanvas extends HElementActor
                 LOG_ERROR("绑定类型错误需要<Canvas> 结果为{0}",tagName);
                 this.target = null;
             }
-
         }
         else
         {
             //let blktarget:KFBlockTarget = <KFBlockTarget><any>element;
             //let eleid:string = "_kfwebid_" + blktarget.sid;
-            let htmlstr = Values.html;
+            let htmlstr = this.html;
             ///或者可以手动创建，暂时用简单的
             if(!htmlstr || htmlstr.indexOf("<canvas") != 0)
             {

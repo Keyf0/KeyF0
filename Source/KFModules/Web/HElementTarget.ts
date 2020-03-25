@@ -14,6 +14,7 @@ export interface HElement
 {
     ///元素都有两种模式一种是ATTACH到原来的DOM上一种是新创建
     attachId:string;
+    html:string;
     target:Element;
     document:IDocument;
 }
@@ -29,22 +30,22 @@ export class HElementTarget extends KFBlockTarget implements HElement
 
     public document: IDocument;
     public attachId:string;
+    public html:string;
     public target: Element;
 
-    public ActivateBLK(KFBlockTargetData: any): void
-    {
+    public ActivateBLK(KFBlockTargetData: any): void {
+
         super.ActivateBLK(KFBlockTargetData);
 
         let parent = <HElementTarget><any>this.parent;
         this.document = parent.document;
         this.target = HElementCreator.DefaultCreateHtml(parent.target
             , this
-            , this.document
-            , this.metadata);
+            , this.document);
     }
 
-    public DeactiveBLK(): void
-    {
+    public DeactiveBLK(): void {
+
         super.DeactiveBLK();
 
         let parent = <HElementTarget><any>this.parent;

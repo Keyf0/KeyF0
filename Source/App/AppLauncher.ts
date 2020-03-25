@@ -11,8 +11,6 @@ import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
 export class AppLauncher
 {
     private _app:KFApp;
-    private _tickid:number = -1;
-
     public config:IKFConfigs = null;
     public execSide:number = BlkExecSide.BOTH;
 
@@ -32,24 +30,13 @@ export class AppLauncher
 
     public stop_tick()
     {
-        if(this._tickid != -1) {
-            clearInterval(this._tickid);
-            this._tickid = -1;
-        }
+        if(this._app){ this._app.gameTicker.Stop();}
     }
 
     public start_tick()
     {
-        if(this._tickid == -1)
-        {
-            let app = this._app;
-
-            this._tickid = setInterval(function () {
-                app.Tick(16);
-            }, 16);
-        }
+        if(this._app){ this._app.gameTicker.Start();}
     }
-
 
     private app_start():void
     {
@@ -62,7 +49,6 @@ export class AppLauncher
 
         this._app.Play(this.config.basedir()
             ,this.config.start());
-
         this.start_tick();
     }
 

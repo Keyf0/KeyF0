@@ -29,6 +29,8 @@ export class NetSensorManager extends WSConnection implements RPCObject {
     //目标的TARGETDATA
     public roleTargetData:any;
 
+    public updatetime:number = 100;
+
     public sensordata = {asseturl: "", instname: NetSensor.Meta.name};
     public netmeta:any = {type:NetSensor.Meta.name};
     public rolenetmeta:any = {type:RoleNetSensor.Meta.name};
@@ -42,6 +44,9 @@ export class NetSensorManager extends WSConnection implements RPCObject {
     public actor:KFActor;
 
     private isRegisted:boolean = false;
+    private _netupdatetime:number = 0;
+    private _fixtpf:number = 0;
+    private _realframe:number = 0;
 
     public constructor() {
         super();
@@ -51,6 +56,8 @@ export class NetSensorManager extends WSConnection implements RPCObject {
 
     public ActivateBLK(KFBlockTargetData: any): void {
         super.ActivateBLK(KFBlockTargetData);
+
+        this._fixtpf = this.runtime.fixtpf;
 
         let parentactor = <any>this.parent;
 
@@ -77,6 +84,17 @@ export class NetSensorManager extends WSConnection implements RPCObject {
     public RemoveObject(obj:any) {
         let sensor = <NetSensor>obj;
         delete this.children[sensor.actorsid];
+    }
+
+    public DoOffline(fromid:number){
+
+        let bytevalue = KFDName._Strs.GetNameID("_bye_" + fromid);
+        let methodinfo = this.rpcmethods[bytevalue];
+
+        if(methodinfo) {
+            delete this.rpcmethods[bytevalue];
+            methodinfo.func.call(methodinfo.target);
+        }
     }
 
     protected onLogin(evt: KFEvent) {
@@ -111,14 +129,7 @@ export class NetSensorManager extends WSConnection implements RPCObject {
             ///有连接离线了
             let fromid = rpcdata.fromid;
             LOG("收到{0}离线信息",fromid);
-
-            let bytevalue = KFDName._Strs.GetNameID("_bye_" + fromid);
-            let methodinfo = this.rpcmethods[bytevalue];
-
-            if(methodinfo) {
-                delete this.rpcmethods[bytevalue];
-                methodinfo.func.call(methodinfo.target);
-            }
+            this.DoOffline(fromid);
         }
     }
     //objectsid:对象sid
@@ -128,10 +139,10 @@ export class NetSensorManager extends WSConnection implements RPCObject {
         args.splice(0,0, objectsid, method);
         this._wsClient.writefromfunc(this.serverid,NetData.RPC_cmd,NetData.writerpc, args);
     }
-    public clientCall(toclientid:number, objectsid:number, method:string,...args:any[]) {
+    public clientCall(toclientid:any, objectsid:number, method:string,...args:any[]) {
 
         args.splice(0,0, objectsid, method);
-        this._wsClient.writefromfunc(toclientid,NetData.RPC_cmd,NetData.writerpc,args);
+        this._wsClient.writefromfunc(toclientid, NetData.RPC_cmd, NetData.writerpc, args);
     }
     //获取一个RPC的注册
     public getRPCMethod(method: KFDName, objsid?: number): { func: Function; target: any } {
@@ -145,13 +156,50 @@ export class NetSensorManager extends WSConnection implements RPCObject {
             return rpcobj == null ? null : rpcobj.getRPCMethod(method, objsid);
         }
     }
+
+    public Tick(frameindex: number): void
+    {
+        ///保证下如果出现网络延时连续执行时不会多次执行
+        ///NETUPDATE更新不精确计时，与同步相关的更新尽量的物件自己的TICK中
+        let rt = this.runtime;
+        let rfindex = rt.realframeindex;
+        if(this._realframe != rfindex) {
+            super.Tick(frameindex);
+            this._realframe = rfindex;
+
+            if(this.execSide == BlkExecSide.SERVER) {
+
+                this._netupdatetime += this._fixtpf;
+                if (this._netupdatetime >= this.updatetime) {
+                    this._netupdatetime -= this._fixtpf;
+                    this.sUpdateNet(this.updatetime);
+                }
+            }
+        }
+    }
+
+    ///网络更新
+    ///NETUPDATE更新不精确计时，与同步相关的更新尽量的物件自己的TICK中
+    public sUpdateNet(dt: number) {
+        ///驱动网络对象更新
+        for(let sid  in this.rpcobjects) {
+            let rpcobj:NetSensor = this.rpcobjects[sid];
+            rpcobj.sUpdateNet(dt);
+        }
+    }
+
+
+    ///无用...
+    sSubscribe(localID: number) {}
+    sUnsubscribe(localID: number) {}
 }
 
 export class NetProxy {
 
     public mgr:NetSensorManager;
-    public attachactor:KFActor;
+    public attachactor:KFBlockTarget;
     public localid:number = 0;
+    public name:KFDName;
     public proxys:{[key:number]:NetProxy;} = {};
     private _offlineid:number = 0;
 
@@ -186,8 +234,11 @@ export class NetProxy {
 
         if(!clientproxy) {
 
+            this.mgr.DoOffline(localid);
+
             clientproxy = new NetProxy(this.mgr);
             clientproxy.localid = localid;
+            clientproxy.name = instname;
 
             this.proxys[instname.value] = clientproxy;
             //只注册发送不注册侦听
@@ -198,27 +249,31 @@ export class NetProxy {
                 = {func:clientproxy._soffline,target:clientproxy};
         }
 
-        let targetdata = this.mgr.roleTargetData;
-        targetdata.createOnClient = false;
         let parent = this.mgr.parent;
-        let blk = <KFActor>parent.FindChild(instname.value);
+        let blk = parent.FindChild(instname.value);
 
         //没有找到则创建一个吧
         if(!blk) {
+
+            let targetdata = this.mgr.roleTargetData;
+            targetdata.execSide = BlkExecSide.SERVER;
             targetdata.instname = instname;
-            blk = <KFActor>parent.CreateChild(targetdata);
+            blk = parent.CreateChild(targetdata);
+            blk.set_position({x:300,y:10 + Math.random() * 500});
+            (<any>blk).velocity.x = 1;
+            (<any>blk).velocity.y = 1;
         }
 
         if(blk) {
             //通知登录成功
             clientproxy.rpcc_postlogin(blk.sid, username);
-            //创建或寻找感知对象
+            //创建或寻找感知对象 第一级对象不从全局找而直接从父级找吧
             let rolesensor = <RoleNetSensor>this.mgr.children[blk.sid];
             if(!rolesensor) {
-                //通过名称关联
-                let sensordata = this.mgr.sensordata;
-                let meta:any = this.mgr.rolenetmeta;
-                rolesensor = <RoleNetSensor>blk.CreateChild(sensordata ,meta);
+                let roleactor = <KFActor>blk;
+                rolesensor = <RoleNetSensor>roleactor.CreateChild(
+                        this.mgr.sensordata
+                    ,   this.mgr.rolenetmeta);
             }
             LOG("{0}服务端对象创建成功...",username);
             //连接proxy
@@ -249,48 +304,88 @@ export class NetProxy {
     }
 
     //调用客户端创建对象arr<KFTargetData>
-    public rpcc_createactors(newblkdatas:any[],init:boolean) {
+    public rpcc_createactors(newblkdatas:any[], init:boolean, deletSIDs?:number[]) {
 
-        LOG("收到创建角色的信息长度:{0}",newblkdatas.length);
+        ///如果传递过来是INIT需要做一些ACTOR的清理和删除
+        LOG("收到创建角色的信息长度:{0} init:{1}",newblkdatas? newblkdatas.length: 0 ,init);
 
-        let scene:KFActor = this.mgr.actor;
-        let parent:KFActor = null;
-
-        for(let newdata of newblkdatas) {
-
-            let parentsid = newdata.parentsid;
-            if(parentsid == 0) {
-                parent = scene;
-            } else {
-                let rpcobj: NetSensor = <NetSensor>this.mgr.rpcobjects[parentsid];
-                parent = rpcobj.actor;
+        if(init) {
+            deletSIDs = [];
+            ///把场景中的所有元素遍历出来
+            let rpcobjects = this.mgr.rpcobjects;
+            for(let sid in rpcobjects){
+                let actorsid = rpcobjects[sid].actorsid;
+                if(actorsid != 0){
+                    deletSIDs.push(actorsid);
+                }
             }
-            if(parent) {
-                ///先寻找
-                let targetData = newdata.targetData;
-                let newactor:KFActor = <KFActor>parent.FindChild(targetData.instname.value);
+        }
 
-                if(!newactor) {
-                    newactor = <KFActor>parent.CreateChild(targetData);
+        if(newblkdatas) {
+
+            let scene: KFActor = this.mgr.actor;
+            let parent: KFActor = null;
+
+            for (let newdata of newblkdatas) {
+
+                let parentsid = newdata.parentsid;
+                if (parentsid == 0) {
+                    parent = scene;
+                } else {
+                    let rpcobj: NetSensor = <NetSensor>this.mgr.rpcobjects[parentsid];
+                    parent = <KFActor>rpcobj.actor;
                 }
+                if (parent) {
+                    ///先寻找
+                    let targetData = newdata.targetData;
 
-                if(newactor) {
-                    //创建网络对象
-                    let sensordata = this.mgr.sensordata;
-                    let netobject:NetSensor = <NetSensor>newactor.FindChild(sensordata.instname.value);
+                    let newblk: KFBlockTarget = parent.FindChild(targetData.instname.value);
+                    ///SID对不上的话还是需要删除的
+                    if(newblk && newblk.sid != targetData.instsid){newblk = null;}
 
-                    if(netobject == null) {
-                        netobject = <NetSensor>newactor.CreateChild(
-                                            sensordata, this.mgr.netmeta);
+                    if (!newblk) {
+                        newblk = parent.CreateChild(targetData);
                     }
-                    //写入初始数据
-                    if(netobject) {
-                        netobject.rpcc_update(newdata.metaData, init);
+                    else if(init) {
+                        ///寻找到了元素,需要从删除列表中去掉
+                        let delindex = deletSIDs.indexOf(newblk.sid);
+                        if(delindex != -1)
+                            deletSIDs.splice(delindex,1);
                     }
+
+                    if (newblk) {
+
+                        //查看是否有网络对象
+                        let netobject: NetSensor = this.mgr.rpcobjects[newblk.sid];
+                        //创建网络对象
+                        if (netobject == null) {
+                            let newactor = <KFActor>newblk;
+                            netobject = <NetSensor>newactor.CreateChild(
+                                this.mgr.sensordata, this.mgr.netmeta);
+                        }
+                        //写入初始数据
+                        if (netobject) {
+                            netobject.cUpdateActor(newdata.metaData, true);
+                        }
+                    }
+                } else {
+                    LOG_ERROR("没有找到父级,对象创建失败aasseturl={0}"
+                        , newdata.targetData.asseturl);
                 }
-            } else {
-                LOG_ERROR("没有找到父级,对象创建失败aasseturl={0}"
-                    ,newdata.targetData.asseturl);
+            }
+        }
+
+        if(deletSIDs) {
+
+            let rpcobjects:{[key:number]:NetSensor} = this.mgr.rpcobjects;
+            for(let delsid of  deletSIDs) {
+                let rspobj = rpcobjects[delsid];
+                if(rspobj) {
+                    let delactor = rspobj.actor;
+                    LOG("取消关注删除对象{0}", delactor.name.toString());
+                    let parent = delactor.parent;
+                    parent._DeleteChild(delactor);
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ import {KFDataType} from "./KFD";
 import {KFDTable} from "./KFDTable";
 import {KFDName} from "./KFDName";
 import {KFBytes} from "./KFBytes";
+import {LOG} from "../../Core/Log/KFLog";
 
 export class KFDJson
 {
@@ -83,9 +84,13 @@ export class KFDJson
                     bytearr.skipstring();
                 else {
                     ///js时的字节全部转化成对象字节
-                    let kfbytes = new KFBytes();
-                    kfbytes.bytes = bytearr.readkfbytes();
-                    retval = kfbytes;
+                    if(!retval){
+                        retval = new KFBytes();
+                        retval.bytes = new KFByteArray();
+                    }else
+                        retval.bytes.length = 0;
+
+                    bytearr.readkfbytes(retval.bytes);
                 }
                 break;
             case KFDataType.OT_BOOL:
@@ -202,13 +207,12 @@ export class KFDJson
                     if(pinfo != null)
                     {
                         let pname = pinfo["name"];
-                        let propobj = null;
+                        let propobj = obj[pname];
 
-                        if(obj != null && obj[pname])
-                        {
-                            propobj = obj[pname];
-                        }
-                        obj[pname] = KFDJson.read_value(bytearr,false, propobj, pinfo);
+                        let retval = KFDJson.read_value(bytearr,false, propobj, pinfo);
+                        obj[pname] = retval;
+                        let rcall = pinfo.call;
+                        if(rcall){obj[rcall](retval);}
                     }
                     else
                     {
@@ -561,13 +565,17 @@ export class KFDJson
                         KFDJson.write_value(bytes, bytesobj);
                         bytearr.writekfBytes(bytes);
                     }
-                    else if(bytes == null) {bytearr.writestring("");}
+                    else if(bytes == null)
+                    {
+                        bytearr.writestring("");
+                    }
                     else {
                         //直接写入二进制吧
                         bytearr.writekfBytes(bytes);
                     }
                 }
-                else {bytearr.writestring("");}
+                else {
+                    bytearr.writestring("");}
                 ///=============
                 break;
             case KFDataType.OT_BOOL:
@@ -691,7 +699,7 @@ export class KFDJson
                 let name = item["name"];
                 let attribFlag = null;
 
-                if(attribFlags) {
+                if(attribFlags && !attribFlags._all_) {
                     //略过不需要写的属性
                     attribFlag = attribFlags[name];
 
@@ -727,19 +735,26 @@ export class KFDJson
         let unknowtags = item.unknowtags;
         if(unknowtags) {
             for (let tagitem of unknowtags) {
-                if (tagitem.tag == "net")
+                if (tagitem.tag == "NET")
                     return tagitem.val;
             }
         }
         return "";
     }
 
+    ///会给对象增加__cls__属性方面读写数据
     public static buildattribflags( obj:any
                                    , kfddata:any
                                    , attribflags:any = null
                                    , creatupdate:boolean = true
                                    , allprops:boolean = true
                                    , initflags = null):any {
+
+
+        if(creatupdate && !obj.hasOwnProperty("__cls__")){
+            ///对象不包括__cls__属性需要增加
+            obj.__cls__ = kfddata["class"];
+        }
 
         attribflags = attribflags ? attribflags : {_w_:true,_v_:obj};
         let extendcls = kfddata["extend"];
@@ -755,9 +770,18 @@ export class KFDJson
             let netvalue = (allprops == true ? "life" : KFDJson.getpropertynet(item));
             if(netvalue != "")
             {
+                let name = item.name;
+
+                if(allprops == false && initflags)
+                {
+                    ///增加_all_表示所有的子集
+                    initflags[name] = {_all_:true};
+                    LOG("收集初始化数据:{0}",name);
+                }
+
                 if (netvalue == "life") {
 
-                    let name = item.name;
+
                     let currval = obj ? obj[name] : null;
 
                     let flag: any = {_w_: true, _t_: obj, _v_: currval, _n_: name};
@@ -848,7 +872,7 @@ export class KFDJson
                                                 this._w_ = true;
                                             } else {
                                                 //还是原始对象可以调用更新检测
-                                                this._w_ = this._w_ || arritemflag.update();
+                                                this._w_ = arritemflag.update() || this._w_;
                                             }
                                         }
                                     }
@@ -926,7 +950,7 @@ export class KFDJson
 
                                         } else {
                                             //还是原始对象可以调用更新检测
-                                            this._w_ = this._w_ || arritemflag.update();
+                                            this._w_ =  arritemflag.update() || this._w_ ;
                                         }
                                     }
                                 }
@@ -935,11 +959,6 @@ export class KFDJson
                         };
                     }
 
-                }
-
-                if(allprops == false && initflags)
-                {
-                    initflags[name] = {};
                 }
             }
         }
@@ -956,7 +975,7 @@ export class KFDJson
                             itemflag._t_ = cval;
                             this._w_ = true;
                         }
-                        this._w_ = this._w_ || itemflag.update();
+                        this._w_ = itemflag.update() || this._w_;
                     }
                 }
                 return this._w_;

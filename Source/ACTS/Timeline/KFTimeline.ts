@@ -3,7 +3,7 @@ import {KFTimeBlock} from "./KFTimeBlock";
 import {IKFTimelineContext, IKFTimelineEventListener} from "./IKFTimelineProc";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFPool} from "../../Core/Misc/KFPool";
-import {KFBlockTarget} from "../Context/KFBlockTarget";
+import {BlkExecSide, KFBlockTarget} from "../Context/KFBlockTarget";
 import {KFScriptContext} from "../../KFScript/KFScriptDef";
 
 export class KFTimeline implements IKFTimelineContext
@@ -105,14 +105,21 @@ export class KFTimeline implements IKFTimelineContext
 
                 this.DestroyBlocks();
 
+                let CurrSide = this.m_target.runtime.execSide;
+
                 let m_pool = KFTimeline.TB_pool;
                 for (let layer of this.currstate.layers)
                 {
                     for (let data of layer.blocks)
                     {
-                        let block = m_pool.Fetch();
-                        block.Create(<any>this.m_target, this, data);
-                        this.m_blocks.push(block);
+                        let tdata = data.target;
+                        let execSide = tdata.execSide ? tdata.execSide : BlkExecSide.BOTH;
+                        if((CurrSide & execSide) == 0)
+                            continue;
+
+                       let block = m_pool.Fetch();
+                       block.Create(<any>this.m_target, this, data);
+                       this.m_blocks.push(block);
                     }
                 }
 

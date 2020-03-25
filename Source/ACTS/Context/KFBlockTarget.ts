@@ -13,10 +13,13 @@ export interface IKFBlockTargetContainer
     AddChild(child:KFBlockTarget):void;
     RemoveChild(child:KFBlockTarget):void;
     GetChildAt(index:number):KFBlockTarget;
+    FindChildBySID(sid:number):KFBlockTarget;
     FindChild(name:number):KFBlockTarget;
     GetRuntime():IKFRuntime;
-    CreateChild(targetdata:any,meta?:any):KFBlockTarget;
-    DeleteChild(child:KFBlockTarget):boolean
+    CreateChild(targetdata:any,meta?:any,Init?:any):KFBlockTarget;
+    DeleteChild(child:KFBlockTarget):boolean;
+    ///直接删除不建议用
+    _DeleteChild(child:KFBlockTarget):boolean;
 }
 
 ///在哪一端执行
@@ -47,9 +50,11 @@ export class KFBlockTarget
         ///如果有MEATDATA数据则给对象赋值
         ///不考虑延时创建的对象了[不纯粹]，METADATA就是类初始化时赋值的
         let kfbytes:KFBytes = this.metadata.data;
-        if(kfbytes && kfbytes.bytes)
+        let buff = kfbytes ? kfbytes.bytes : null;
+        if(buff)
         {
-            KFDJson.read_value(kfbytes.bytes,false, this);
+            buff.SetPosition(0);
+            KFDJson.read_value(buff,false, this);
         }
     }
 
@@ -66,9 +71,9 @@ export class KFBlockTarget
     }
 
     public DeactiveBLK():void{}
-    public position:any;
-    public set_position(x:number, y:number, z:number):void{}
-    public rotation:any;
-    public set_rotation(x:number, y:number, z:number):void{}//Vector3
+    public position:{x:number,y:number,z?:number};
+    public set_position(v3?:{x:number,y:number,z?:number}):void{}
+    public rotation:{x?:number,y?:number,z:number};
+    public set_rotation(v3?:{x?:number,y?:number,z:number}):void{}
     public SetCustomArg(value:number,...args:number[]):void{}
 }

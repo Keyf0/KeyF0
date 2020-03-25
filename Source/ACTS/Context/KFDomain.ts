@@ -8,7 +8,7 @@ import {KFDName} from "../../KFData/Format/KFDName";
 export class KFDomain implements IKFDomain
 {
     private m_runtime:IKFRuntime;
-    private m_incrsid:number = 0;
+    private m_incrsid:number;
     private m_execSide:number;
     private m_NoSideLog:string;
 
@@ -16,18 +16,26 @@ export class KFDomain implements IKFDomain
     {
         this.m_runtime = runtime;
         this.m_execSide = runtime.execSide;
-        this.m_NoSideLog = "{0} 不能创建在" + (this.m_execSide == BlkExecSide.SERVER ? "服务端" : "客户端");
+        let endstr = "服务端";
+        ///客户端创建的ID从一个很大的数字开始
+        this.m_incrsid = 0;
+        if(this.m_execSide ==  BlkExecSide.CLIENT)
+        {
+            endstr = "客户端";
+            this.m_incrsid = 90000000;
+        }
+        this.m_NoSideLog = "{0} 不能创建在" + endstr ;
     }
 
     public CreateBlockTarget(KFBlockTargetData: any,meta?:any): KFBlockTarget
     {
         let asseturl = KFBlockTargetData.asseturl;
 
-        ///不在客户端创建?
-        let notCC = KFBlockTargetData.createOnClient == false;
-        if(notCC && this.m_execSide != BlkExecSide.SERVER)
+        ///可创建判定
+        let execSide = KFBlockTargetData.execSide ? KFBlockTargetData.execSide : BlkExecSide.BOTH;
+        if((this.m_execSide & execSide) == 0) {
             return null;
-
+        }
 
         //let path = asseturl + ".meta";
         let metadata = meta ? meta : this.m_runtime.configs.GetMetaData(asseturl, false);
@@ -61,6 +69,7 @@ export class KFDomain implements IKFDomain
 
                 LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
                 target.Construct(metadata, this.m_runtime);
+
 
                 return target;
             }

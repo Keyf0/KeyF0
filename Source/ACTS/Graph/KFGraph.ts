@@ -5,6 +5,7 @@ import {KFDName} from "../../KFData/Format/KFDName";
 import {KF_GRAPHARG_NULL, KFGraphBlockType} from "../Data/KFGraphBlockType";
 import {KFGraphBlockNormal} from "./Blocks/KFGraphBlockNormal";
 import {KFGraphBlockEventPoint} from "./Blocks/KFGraphBlockEventPoint";
+import {BlkExecSide} from "../Context/KFBlockTarget";
 
 export class KFGraph
 {
@@ -48,8 +49,18 @@ export class KFGraph
         this.m_inputnames.length = 0;
         this.m_cfg = cfg;
 
+        let CurrSide = this.m_ctx.runtime.execSide;
+
         for ( let data of cfg.data.blocks)
         {
+            ///不在客户端创建
+            let tdata = data.target;
+
+            let execSide = (tdata && tdata.execSide) ? tdata.execSide : BlkExecSide.BOTH;
+            if((CurrSide & execSide) == 0)
+                continue;
+
+
             let block:KFGraphBlockBase = null;
             switch (data.type)
             {

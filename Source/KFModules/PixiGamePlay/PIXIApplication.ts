@@ -48,4 +48,8 @@ export class PIXIApplication extends HElementActor implements PIXIObject{
     public getPIXITarget(): PIXI.Container {
         return this._target ? this._target.stage : null;
     }
+
+    public getPIXIApp(): PIXI.Application {
+        return this._target;
+    }
 }

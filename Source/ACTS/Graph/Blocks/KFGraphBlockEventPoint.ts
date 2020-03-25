@@ -11,16 +11,14 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
     private m_target:KFBlockTarget = null;
     private m_firenode:KFDName = null;
 
-
     public Input(arg: any)
     {
         if(this.m_target == null)
         {
             this.Activate();
-
+            
             let outputs = this.data.outputs;
-            if(outputs && outputs.length > 1)
-            {
+            if(outputs && outputs.length > 1) {
                 this.m_firenode = outputs[1].name;
             }
         }
@@ -38,23 +36,17 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
 
             let etable:KFEventTable = null;
 
-            if (m_evtscope == KFGraphBlockType.EventPointGlobal)
-            {
-                etable = this.m_ctx.runtime.root().etable;
-            }
-            else if (m_evtscope == KFGraphBlockType.EventPointDomain)
-            {
-                etable = this.m_ctx.runtime.etable;
-            }
-            else
-            {
+            if (m_evtscope == KFGraphBlockType.EventPoint) {
                 this.m_target = this.GetAttachTarget();
                 if(this.m_target)
                     etable = this.m_target.etable;
             }
+            else  {
+                etable = this.m_ctx.runtime.etable;
+            }
 
-            if (etable)
-            {
+            if (etable) {
+
                 let self = this;
                 this.m_evthandler = function (evt:KFEvent)
                 {
@@ -77,20 +69,17 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
             let m_evtscope = this.data.type;
             let etable:KFEventTable = null;
 
-            if (m_evtscope == KFGraphBlockType.EventPointGlobal)
-            {
-                etable = this.m_ctx.runtime.root().etable;
-            }
-            else if (m_evtscope == KFGraphBlockType.EventPointDomain)
-            {
-                etable = this.m_ctx.runtime.etable;
-            }
-            else
+            if (m_evtscope == KFGraphBlockType.EventPoint)
             {
                 this.m_target = this.GetAttachTarget();
                 if(this.m_target)
                     etable = this.m_target.etable;
             }
+            else
+            {
+                etable = this.m_ctx.runtime.etable;
+            }
+
 
             if (etable)
             {

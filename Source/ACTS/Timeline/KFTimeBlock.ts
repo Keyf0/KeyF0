@@ -7,12 +7,12 @@ export class KFTimeBlock
 {
     private m_ctx:IKFTimelineContext;
     private m_container:IKFBlockTargetContainer;
-    private m_keyframes:{[key:number]:any} = {};
+    private m_keyframes:{[key:number]:any};
 
     public m_target:KFBlockTarget;
     public data:any;
     public keep:boolean;
-    public option:number = KFBlockTargetOption.Ignore;
+    public option:number;
 
     public Create(  container:IKFBlockTargetContainer
                   , ctx:IKFTimelineContext
@@ -29,12 +29,13 @@ export class KFTimeBlock
         this.m_container = null;
         this.m_ctx = null;
         this.data = null;
-        this.m_keyframes = {};
+        this.m_keyframes = null;
     }
 
     public SetData(data:any)
     {
         this.data = data;
+        this.option = data.target.option;
         this.m_keyframes = {};
 
         let keyframes = data.keyframes;
@@ -67,11 +68,14 @@ export class KFTimeBlock
             preframe["__next__"] = null;
         }
 
-        this.option = this.data.target.option;
     }
 
     public Tick(frameIndex:number, bJumpFrame:boolean)
     {
+        if(this.option == KFBlockTargetOption.Disabled)
+            return;
+
+
         let endi = this.data.end;
         if(     frameIndex >= this.data.begin
             &&  frameIndex <= endi)
@@ -136,8 +140,7 @@ export class KFTimeBlock
         if (this.m_target != null)
         {
             //LOG_WARNING("%s", m_data->label.c_str());
-            let targetdata = this.data.target;
-            if (targetdata.option == KFBlockTargetOption.Create)
+            if (this.option == KFBlockTargetOption.Create)
             {
                 this.m_container.DeleteChild(this.m_target);
             }

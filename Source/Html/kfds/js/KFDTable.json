@@ -1571,6 +1571,38 @@
         {
             "class": "PIXIGraphics",
             "id": 1389
+        },
+        {
+            "class": "kfVector3",
+            "id": 1390
+        },
+        {
+            "class": "BlkExecSide",
+            "id": 1366
+        },
+        {
+            "class": "TSSmoothMove2D",
+            "id": 1391
+        },
+        {
+            "class": "TSControlMove2D",
+            "id": 1392
+        },
+        {
+            "class": "HKeyboard",
+            "id": 1393
+        },
+        {
+            "class": "TSSmoothMoveData",
+            "id": 1394
+        },
+        {
+            "class": "TSControlMoveData",
+            "id": 1395
+        },
+        {
+            "class": "GSRemoteScriptData",
+            "id": 1396
         }
     ]
 }

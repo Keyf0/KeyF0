@@ -6,16 +6,14 @@ export class HElementCreator {
     public static DefaultCreateHtml(parent:Element
                              , element:HElement
                                     , document:IDocument
-                                , metadata:any):Element
+                                , metadata?:any):Element
     {
-        let Values:{[key:string]:string;} = KFDataHelper.Meta2MapValue(metadata);
-        if(Values.attachId) {
+        if(element.attachId) {
 
-            element.attachId = Values.attachId;
             element.target = document.nativedom.getElementById(element.attachId);
         }
         else {
-                let htmlstr = Values.html;
+                let htmlstr = element.html;
                 if(htmlstr && htmlstr != "") {
 
                     parent.insertAdjacentHTML("beforeend", htmlstr);

@@ -5,7 +5,7 @@ import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
 
 export class KFGraphBlockExportPoint extends KFGraphBlockBase
 {
-        private  m_evtdata:KFEvent = new KFEvent();
+        private m_evtdata:KFEvent = new KFEvent();
 
         public Input(arg: any)
         {
@@ -16,31 +16,26 @@ export class KFGraphBlockExportPoint extends KFGraphBlockBase
           {
               let etable:KFEventTable = null;
 
-              if (outtype == KFGraphBlockType.EventPointGlobal)
-              {
-                  etable = this.m_ctx.runtime.root().etable;
-              }
-              else if (outtype == KFGraphBlockType.EventPointDomain)
-              {
-                  etable = this.m_ctx.runtime.etable;
-              }
-              else
+              if (outtype == KFGraphBlockType.EventPoint)
               {
                   let target = this.GetAttachTarget();
                   if (target)
                       etable = target.etable;
               }
-
-              if (etable)
+              else if (outtype == KFGraphBlockType.EventPointDomain)
               {
+                  etable = this.m_ctx.runtime.etable;
+              }
+
+              if (etable) {
+
                   this.m_evtdata.type.value = this.data.name.value;
                   this.m_evtdata.arg = arg;
 
                   etable.FireEvent(this.m_evtdata);
               }
           }
-          else
-          {
+          else {
               this.OutNext(arg);
           }
         }

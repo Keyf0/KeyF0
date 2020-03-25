@@ -8,7 +8,7 @@ export interface KFScriptContext
     ///当前对象
     targetObject:any;
     /// 当前的寄存器
-    thisRegister:KFRegister;
+    _reg:KFRegister;
     /// 设置寄存器
     PushRegister(paramnum:number, varsize:number):KFRegister;
     PopRegister():KFRegister;
@@ -16,32 +16,35 @@ export interface KFScriptContext
     ExecuteFrameScript(id:number,framedata:any,target:any):void;
     Execute(scriptData:any, target:any):void;
     ExecCodeLine(codeline:any, target:any):void;
+
+    ReturnScript(script:KFScript,type:KFDName);
+}
+
+
+export class KFScriptData {
+
+    public static WRITE_S:number = 0;
+    public static READ_S:number = 1;
+    public static WAITR_S:number = 2;
+
+    public static RFS:{[key:number]:(sd:any,objs:any[],pints:number[])=>void;} = {};
 }
 
 export class KFScript
 {
-    ///区分脚本的ID
-    public typeid:number = 0;
+    ///是否在运行中
+    public isrunning:boolean;
 
      public Execute(scriptdata:any, context:KFScriptContext = null):void
-     {
+     {}
 
-     }
-
-     /*销毁这个脚本前*/
      public Destory():boolean
      {
          return true;
      }
 
-     public Update():void {}
-     public  Stop():void{}
+     public Update(frameindex:number) {}
+     public Stop():void {}
 
-     /*一定要定义一个脚本集*/
-     public GetScriptTypes():Array<KFDName>
-     {
-         return this.m_scripttypes;
-     }
-
-     protected m_scripttypes = new Array<KFDName>();
+     public scriptTypes:KFDName[];
 }

@@ -28,11 +28,77 @@
     },
     {
         "includes": [
-            "PIXINetActor.ts"
+            "PIXINetActor.ts",
+            "kfVector3F.h"
         ],
         "class": "PIXINetActor",
         "extend": "KFActor",
-        "propertys": [],
+        "propertys": [
+            {
+                "id": 1,
+                "name": "position",
+                "cname": "位置",
+                "type": "object",
+                "otype": "kfVector3",
+                "unknowtags": [
+                    {
+                        "tag": "NET",
+                        "val": "life"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "rotation",
+                "cname": "朝向",
+                "type": "object",
+                "otype": "kfVector3",
+                "unknowtags": [
+                    {
+                        "tag": "NET",
+                        "val": "life"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "name": "velocity",
+                "cname": "当前速度",
+                "type": "object",
+                "otype": "kfVector3",
+                "unknowtags": [
+                    {
+                        "tag": "NET",
+                        "val": "life"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "name": "maxVelocity",
+                "cname": "最大速度",
+                "type": "num1"
+            },
+            {
+                "id": 5,
+                "name": "accelerate",
+                "cname": "加速度",
+                "type": "object",
+                "otype": "kfVector3",
+                "unknowtags": [
+                    {
+                        "tag": "NET",
+                        "val": "life"
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "name": "maxAccelerate",
+                "cname": "最大加速度",
+                "type": "num1"
+            }
+        ],
         "clsid": 1383
     },
     {
@@ -43,5 +109,93 @@
         "extend": "PIXINetActor",
         "propertys": [],
         "clsid": 1384
+    },
+    {
+        "includes": [
+            "Scripts/PIXIScripts.ts"
+        ],
+        "class": "TSSmoothMoveData",
+        "cname": "2D平滑移动",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "stop",
+                "cname": "停止",
+                "type": "bool",
+                "default": "false"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "TSSmoothMove",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "1",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1394
+    },
+    {
+        "includes": [
+            "Scripts/PIXIScripts.ts",
+            "kfVector3F.h"
+        ],
+        "class": "TSControlMoveData",
+        "cname": "2D移动控制",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "stop",
+                "cname": "停止",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 2,
+                "name": "dir",
+                "cname": "朝向",
+                "type": "object",
+                "otype": "kfVector3"
+            },
+            {
+                "id": 3,
+                "name": "speed",
+                "cname": "速度",
+                "type": "num1"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "TSSmoothMove",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "1",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1395
     }
 ]

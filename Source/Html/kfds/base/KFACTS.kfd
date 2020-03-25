@@ -167,6 +167,45 @@
             "Data/Block/KFBlockTargetData.h"
         ],
         "nof": 1,
+        "class": "BlkExecSide",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 1,
+                "cname": "不确定",
+                "default": "0",
+                "name": "UNKNOW",
+                "type": "uint8"
+            },
+            {
+                "id": 1,
+                "cname": "客户端",
+                "default": "1",
+                "name": "CLIENT",
+                "type": "uint8"
+            },
+            {
+                "id": 1,
+                "cname": "服务端",
+                "default": "2",
+                "name": "SERVER",
+                "type": "uint8"
+            },
+            {
+                "id": 1,
+                "cname": "都执行",
+                "default": "3",
+                "name": "BOTH",
+                "type": "uint8"
+            }
+        ],
+        "clsid": 1366
+    },
+    {
+        "includes": [
+            "Data/Block/KFBlockTargetData.h"
+        ],
+        "nof": 1,
         "class": "KFBlockFuncType",
         "extend": "",
         "propertys": [
@@ -226,6 +265,7 @@
         "propertys": [
             {
                 "id": 1,
+                "cname": "选项",
                 "enum": "KFBlockTargetOption",
                 "default": "0",
                 "name": "option",
@@ -245,10 +285,11 @@
             },
             {
                 "id": 4,
-                "cname": "在客户端创建",
-                "default": "true",
-                "name": "createOnClient",
-                "type": "bool"
+                "cname": "执行参数",
+                "enum": "BlkExecSide",
+                "default": "BlkExecSide::BOTH",
+                "name": "execSide",
+                "type": "uint8"
             },
             {
                 "id": 5,

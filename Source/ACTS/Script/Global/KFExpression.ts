@@ -5,6 +5,8 @@
 ///KFD(P=2,NAME=once,CNAME=缓存结果,TYPE=bool)
 ///KFD(*)
 
+import {LOG} from "../../../Core/Log/KFLog";
+
 export class KFExpression
 {
     public text:string = "";
@@ -21,11 +23,13 @@ export class KFExpression
         return eval(text);
     }
 
-    public value(self:any):any
+    ///全局脚本调用需要FORCE切记
+    public value(self:any,force:boolean = false):any
     {
-        if(this._exec)
+        if(this._exec && !force)
         {
-            if(this.once) return this._result;
+            if(this.once)
+                return this._result;
             return this._func();
         }
         this._exec = true;
@@ -44,6 +48,7 @@ export class KFExpression
             }
 
             this._result = this._func();
+            LOG("执行:{0}",this.text);
         }
 
         return this._result;

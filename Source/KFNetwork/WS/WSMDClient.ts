@@ -121,10 +121,10 @@ export class WSMDClient extends KFEventTable
 
             if(this._islogined)
             {
-                LOG("收到数据from={0},cmd={1},len={2}"
+                /*LOG("收到数据from={0},cmd={1},len={2}"
                 ,       readdata.fromid
                     ,   readdata.cmd
-                    ,   readdata.datalen);
+                    ,   readdata.datalen);*/
 
                 this._onDataEvt.arg = readdata;
                 this.FireEvent(this._onDataEvt);
@@ -171,6 +171,10 @@ export class WSMDClient extends KFEventTable
                         , fromid:number=0
                         , toid:number=0)
     {
+
+        if(!this.isConnected)
+            return;
+
         let databytes = data;
 
         if( typeof(data)=='string')
@@ -210,8 +214,15 @@ export class WSMDClient extends KFEventTable
         this._ws.send(this._writebuff.buffer);
     }
 
-    public writefromfunc(toid:number, cmd:number, serialize:Function, args:any,target:any = null)
+    /// toid:number|number[]
+    public writefromfunc(toid:any, cmd:number, serialize:Function, args:any,target:any = null)
     {
+        if(!this.isConnected)
+            return;
+
+        let isnum:boolean = (typeof(toid) == "number");
+
+
         this._writebuff.length = 0;
 
         this._writebuff.writeByte(97);
@@ -219,6 +230,7 @@ export class WSMDClient extends KFEventTable
         this._writebuff.writeByte(99);
         this._writebuff.writeShort(cmd);
         ///evtlen
+        let evtlenpos = this._writebuff.GetPosition();
         this._writebuff.writeShort( 0);
         ///bodytype
         this._writebuff.writeByte(1);
@@ -227,9 +239,20 @@ export class WSMDClient extends KFEventTable
 
         this._writebuff.writeInt(0);
         this._writebuff.writeInt(this._localID);
-        this._writebuff.writeInt(toid);
+        this._writebuff.writeInt(isnum ? toid : -2);
+        let bodystart = 0;
 
-        let bodystart = this._writebuff.GetPosition();
+        if(!isnum) {
+            let toidarr = JSON.stringify(toid);
+            let strlen = this._writebuff.writeUTFBytes(toidarr);
+            bodystart = this._writebuff.GetPosition();
+            this._writebuff.SetPosition(evtlenpos);
+            this._writebuff.writeShort(strlen);
+            this._writebuff.SetPosition(bodystart);
+        }
+        else
+            bodystart = this._writebuff.GetPosition();
+
         serialize.call(target, this._writebuff, args);
         let endpos = this._writebuff.GetPosition();
         let cbodylen = endpos - bodystart;

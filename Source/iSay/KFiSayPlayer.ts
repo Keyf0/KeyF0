@@ -17,13 +17,14 @@ export class KFiSayPlayer implements IKFRuntime
     public configs: IKFConfigs;
     public domain: IKFDomain;
     public etable: KFEventTable;
+    public realframeindex: number;
     public frameindex: number;
+    public fixtpf:number;
     public frametime: number;
-    public frametimes: number;
     public parent: IKFRuntime;
     public random: KFRandom;
     public realytime: number;
-    public realytimes: number;
+    public realyplaytime: number;
     public execSide: number = BlkExecSide.BOTH;
 
     public root: IKFRuntime;
@@ -32,17 +33,15 @@ export class KFiSayPlayer implements IKFRuntime
 
     private m_basedir:string;
     private m_path:string;
-    private m_realytimestart:number;
-    private m_tpf:number = KFGlobalDefines.TPF;
     private m_userdata:any;
     private m_root:KFActor;
 
-
-    //public onEnterFrame:TypeEvent<number> = new TypeEvent<number>();
-    //public onEndFrame:TypeEvent<number> = new TypeEvent<number>();
-
     private onEnterFrame:KFEvent = new KFEvent(KFDName._Param.setString("onEnterFrame"));
-    private onEndFrame:KFEvent = new KFEvent(KFDName._Param.setString("onEndFrame"));
+    private onRenderFrame:KFEvent = new KFEvent(KFDName._Param.setString("onRenderFrame"));
+
+    private m_lastTicks:number = 0;
+    private m_startTicks:number = 0;
+    private m_frameTicks:number = 0;
 
     public constructor(userdata:any = null)
     {
@@ -54,11 +53,11 @@ export class KFiSayPlayer implements IKFRuntime
         //LOG_WARNING("%s", basedir.c_str());
         this.m_basedir = basedir;
 
-        this.m_realytimestart = (new Date()).getTime();
         this.frametime = 0;
         this.frameindex = 0;
         this.realytime = 0;
-        this.m_tpf = KFGlobalDefines.TPF;
+        this.realframeindex = 0;
+        this.fixtpf = KFGlobalDefines.FIX_TPF;
 
         this.configs = IKFConfigs_Type.new_default();
         this.domain = new KFDomain(this);
@@ -85,27 +84,36 @@ export class KFiSayPlayer implements IKFRuntime
         //kfDel(m_root);
         this.m_root = <KFActor>this.domain.CreateBlockTarget(KFBlockTargetData);
         this.m_root.ActivateBLK(KFBlockTargetData);
+
+        this.m_lastTicks = (new Date()).getTime();
+        this.m_startTicks = this.m_lastTicks;
+        this.frameindex = 0;
+        this.m_frameTicks = this.m_lastTicks;
     }
 
-    public Tick()
+    public Tick(dt:number)
     {
-        let currenti  = this.frameindex + 1;
-        this.frameindex = currenti;
+        this.realframeindex += 1;
         let ticks = (new Date()).getTime();
 
         this.realytime = ticks;
-        this.realytimes = ticks;
+        this.realyplaytime = ticks - this.m_startTicks;
+        this.frametime = ticks - this.m_lastTicks; //单帧的时间
+        this.m_lastTicks = ticks;
 
-        this.realytimes /= 1000;
-        this.frametime = currenti * this.m_tpf;
-        this.frametimes = this.frametime;
-        this.frametimes /= 1000;
+        ///累计的帧时间
+        while ((ticks - this.m_frameTicks) >= this.fixtpf) {
+            this.m_frameTicks += this.fixtpf;
 
-        //this.onEnterFrame.emit(currenti);
-        this.etable.FireEvent(this.onEnterFrame);
-        if(this.m_root)
-            this.m_root.Tick(currenti);
-        this.etable.FireEvent(this.onEndFrame);
+            let currenti  = this.frameindex + 1;
+            this.frameindex = currenti;
+
+            this.etable.FireEvent(this.onEnterFrame);
+            if (this.m_root)
+                this.m_root.Tick(currenti);
+        }
+        ///渲染的帧只要可更新的频率运行
+        this.etable.FireEvent(this.onRenderFrame);
     }
 
 }

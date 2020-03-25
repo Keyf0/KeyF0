@@ -22,10 +22,9 @@ export class KFApp
         this.userdata = userdata;
         this.gameInput.Init();
         this.gameTicker.Init();
-        this.gameTicker.onFixedTick.on(()=>{
-
+        this.gameTicker.onTick.on((dt:number)=>{
             if(this.player != null)
-                this.player.Tick();
+                this.player.Tick(dt);
         });
     }
 
@@ -35,11 +34,6 @@ export class KFApp
         this.gameTicker.Shutdown();
         this.userdata = null;
         this.player = null;
-    }
-
-    public Tick(dt:number)
-    {
-        this.gameTicker.TickInput(dt);
     }
 
     public Play(basedir:string, path:string)

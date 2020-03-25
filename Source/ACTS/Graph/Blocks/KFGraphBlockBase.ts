@@ -1,11 +1,13 @@
 import {IKFGraphContext} from "../IKFGraphContext";
-import {KFBlockTarget} from "../../Context/KFBlockTarget";
+import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
 import {KFDName} from "../../../KFData/Format/KFDName";
+import {IKFRuntime} from "../../Context/IKFRuntime";
 
 export class KFGraphBlockBase
 {
     protected m_ctx:IKFGraphContext;
+
     public data:any;
     public nextname:KFDName;
 
@@ -64,6 +66,7 @@ export class KFGraphBlockBase
                 target = <KFBlockTarget>this.m_ctx.targetObject;
             }
         }
+
         return target;
     }
 }

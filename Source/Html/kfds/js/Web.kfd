@@ -39,7 +39,20 @@
         ],
         "class": "HElementActor",
         "extend": "KFActor",
-        "propertys": [],
+        "propertys": [
+            {
+                "id": 1,
+                "name": "attachId",
+                "cname": "绑定ID",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "html",
+                "cname": "HTML内容",
+                "type": "kfstr"
+            }
+        ],
         "clsid": 1367
     },
     {
@@ -50,5 +63,14 @@
         "extend": "KFBlockTarget",
         "propertys": [],
         "clsid": 1368
+    },
+    {
+        "includes": [
+            "HKeyboard.ts"
+        ],
+        "class": "HKeyboard",
+        "extend": "KFBlockTarget",
+        "propertys": [],
+        "clsid": 1393
     }
 ]

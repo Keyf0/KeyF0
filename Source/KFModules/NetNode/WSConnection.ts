@@ -139,6 +139,9 @@ export class WSConnection extends KFBlockTarget
 
     }
 
+    ///寻找localid的rpcobject
+    public FindTarget(localid:number):any{}
+
     public serverCall(objectsid:number, method:string, ...args:any[]) {}
-    public clientCall(toclientid:number, objectsid:number, method:string,...args:any[]) {}
+    public clientCall(toclientid:any, objectsid:number, method:string,...args:any[]) {}
 }

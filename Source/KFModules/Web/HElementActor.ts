@@ -5,6 +5,8 @@ import {HElementCreator} from "./HElementCreator";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 
 ///KFD(C,CLASS=HElementActor,EXTEND=KFActor)
+///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
+///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr)
 ///KFD(*)
 
 
@@ -18,6 +20,8 @@ export class HElementActor extends KFActor implements HElement
     );
 
     public attachId:string;
+    public html:string;
+
     public document: IDocument;
     public target: Element;
 
@@ -28,7 +32,7 @@ export class HElementActor extends KFActor implements HElement
         this.target = HElementCreator.DefaultCreateHtml(
               parent.target
             , this
-            , this.document,this.metadata);
+            , this.document);
     }
 
     protected TargetDelete(): void {

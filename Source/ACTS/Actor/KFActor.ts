@@ -6,7 +6,7 @@ import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFDName} from "../../KFData/Format/KFDName";
-
+import {KFScript} from "../../KFScript/KFScriptDef";
 
 
 export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
@@ -24,9 +24,13 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
 
-    protected m_children:Array<KFBlockTarget> = new Array<KFBlockTarget>();
+    public GetChildren():KFBlockTarget[]{return this.m_children;};
+
+    protected m_children:KFBlockTarget[] = [];
     protected m_childrenmap:{[key:number]:KFBlockTarget;} = {};
     protected m_removelist:Array<KFBlockTarget> = [];
+    protected m_keepsts:KFScript[];
+    protected m_keepstmap:{[key:number]:KFScript;};
 
     public constructor()
     {
@@ -99,6 +103,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public DeactiveBLK():void
     {
+        this.StopKeepScripts();
         this.DeactiveAllComponent();
         this.DeleteChildren();
         ///这个顺序不知道可以不，先这样
@@ -114,11 +119,33 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         ///this.graph.EnterFrame(frameindex);
         this.timeline.EnterFrame(frameindex);
 
-        for(let i = 0; i < this.m_children.length; i ++)
-        {
+        for(let i = 0; i < this.m_children.length; i ++) {
             let child = this.m_children[i];
             if(child.tickable)
                 child.Tick(frameindex);
+        }
+
+        ///tick保持住的脚本对象
+        let scripti = this.m_keepsts ? this.m_keepsts.length -1 : -1;
+        while (scripti >= 0){
+            let sc = this.m_keepsts[scripti];
+            sc.Update(frameindex);
+            if(!sc.isrunning){
+                this.m_keepsts.splice(scripti,1);
+                let sTypes = sc.scriptTypes;
+                let count:number = sTypes ? sTypes.length : 0;
+                if(count > 0) {
+                    if(!this.m_keepsts){
+                        this.m_keepsts = [];
+                        this.m_keepstmap = {};
+                    }
+                    for (let i: number = 0; i < count; i++) {
+                        delete  this.m_keepstmap[sTypes[i].value];
+                    }
+                    sc.Stop();
+                }
+            }
+            scripti -= 1;
         }
 
         ///删除元素
@@ -153,6 +180,14 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
     }
 
+    public FindChildBySID(sid:number):KFBlockTarget{
+        for(let child of this.m_children){
+            if(child.sid == sid)
+                return child;
+        }
+        return null;
+    }
+
     public FindChild(name:number): KFBlockTarget
     {
         return this.m_childrenmap[name];
@@ -184,12 +219,15 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         return this.runtime;
     }
 
-    public CreateChild(targetdata:any,meta?:any):KFBlockTarget
+    public CreateChild(targetdata:any,meta?:any,Init?:any):KFBlockTarget
     {
         let newtarget = this.runtime.domain
             .CreateBlockTarget(targetdata,meta);
         if (newtarget != null)
         {
+            if(Init){
+                Init(newtarget);
+            }
             this.AddChild(newtarget);
             newtarget.ActivateBLK(targetdata);
         }
@@ -221,5 +259,44 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.runtime.domain.DestroyBlockTarget(child);
 
         return  true;
+    }
+
+    ///保持脚本
+    public KeepScript(script:KFScript):boolean {
+
+        let sTypes = script.scriptTypes;
+        let count:number = sTypes ? sTypes.length : 0;
+        if(count > 0)
+        {
+            if(!this.m_keepsts) {
+                this.m_keepsts = [];
+                this.m_keepstmap = {};
+            }
+            for (let i: number = 0; i < count; i++) {
+               this.m_keepstmap[sTypes[i].value] = script;
+            }
+            this.m_keepsts.push(script);
+            return true;
+        }
+        return false;
+    }
+
+    public FindScript(type:KFDName):KFScript {
+        if(this.m_keepstmap){
+            return this.m_keepstmap[type.value];
+        }
+        return null;
+    }
+
+    public StopKeepScripts() {
+        if(this.m_keepsts) {
+            let scripti = this.m_keepsts.length - 1;
+            while (scripti >= 0) {
+                this.m_keepsts[scripti].Stop();
+                scripti -= 1;
+            }
+            this.m_keepsts.length = 0;
+            this.m_keepstmap = {};
+        }
     }
 }

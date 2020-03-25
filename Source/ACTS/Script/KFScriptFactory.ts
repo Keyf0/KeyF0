@@ -8,14 +8,20 @@ export interface ScriptDataInit
     (data, kfd, kfdtb): any;
 }
 
+export interface ReadStack {
+    (sd:any,objs:any[],pints:number[])
+}
+
 export class ScriptMeta extends AMeta
 {
     public DataInit:ScriptDataInit;
+    public RS:ReadStack;
 
     public constructor(name:string = ""
                        , func:InstantiateFunc = null
-                       , DataInit:ScriptDataInit = null
                        , group:number = KFScriptGroupType.Target
+                       , DataInit:ScriptDataInit = null
+                       , RS:ReadStack = null
                        , execSide:number = 3)
     {
         super(name, func, execSide);
@@ -28,6 +34,7 @@ export class ScriptMeta extends AMeta
             };
         }
 
+        this.RS = RS;
         this.DataInit = DataInit;
     }
 

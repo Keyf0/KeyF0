@@ -13,8 +13,14 @@ export interface RPCObject
     actorsid:number;
 
     getRPCMethod(method:KFDName, objsid?:number) :{func:Function,target:any};
+
     AddObject(obj:any);
     RemoveObject(obj:any);
+    ///网络更新[且只有服务端执行]
+    ///NETUPDATE更新不精确计时，与同步相关的更新尽量的物件自己的TICK中
+    sUpdateNet(dt:number);
+    sSubscribe(localID:number);
+    sUnsubscribe(localID:number);
 }
 
 export class NetData
@@ -27,7 +33,9 @@ export class NetData
     public static num1(val:number):any{return {value:val,type:"num1",rpctype:true};}
     public static kfstr(val:string):any {return {value:val,type:"kfstr",rpctype:true};}
     public static obj(val:any):any{return {value:val,type:"mixobject",rpctype:true}}
-    public static arr(val:any):any{return {value:val,type:"mixarr",rpctype:true}}
+    public static arr(val:any):any {return {value:val,type:"mixarr",rpctype:true}}
+    public static arrint(val:any):any{return {value:val, type:"arr", otype:"int32",rpctype:true}}
+    public static arrstr(val:any):any{return {value:val, type:"arr", otype:"kfstr",rpctype:true}}
 
     //写入RPC数据
     public static writerpc(bytesarr:KFByteArray, args:any[]) {
@@ -52,6 +60,9 @@ export class NetData
             else if(typename == "number"){
                 bytesarr.writeByte(KFDataType.OT_INT32);
                 bytesarr.writeInt(argobj);
+            }else if(typename == "boolean"){
+                bytesarr.writeByte(KFDataType.OT_BOOL);
+                bytesarr.writeBoolean(argobj);
             }
             else if(argobj.rpctype == true) {
                 KFDJson.write_value(bytesarr, argobj.value, argobj);
@@ -90,7 +101,7 @@ export class NetData
     //如果只想注册一个发送调用把handlers=null 即可
     public static registerpc(obj:any
                              , execSide:number
-                             , localid:number
+                             , localid:any // number[] | number
                              , objsid:number
                              , handlers:{[key:number]:{ func: Function; target: any } }
                              , wsconn:any, allnames?:any):void {

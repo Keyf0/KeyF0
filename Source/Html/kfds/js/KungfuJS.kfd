@@ -1,6 +1,30 @@
 [
     {
         "includes": [
+            "KFInternalDataTypes.ts"
+        ],
+        "class": "kfVector3",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "x",
+                "type": "num1"
+            },
+            {
+                "id": 2,
+                "name": "y",
+                "type": "num1"
+            },
+            {
+                "id": 3,
+                "name": "z",
+                "type": "num1"
+            }
+        ],
+        "clsid": 1390
+    },
+    {
+        "includes": [
             "Global/GlobalScripts.ts",
             "KFExpressionF.h"
         ],
@@ -36,6 +60,52 @@
             }
         ],
         "clsid": 1379
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts",
+            "KFScriptDataF.h"
+        ],
+        "class": "GSRemoteScriptData",
+        "cname": "远程脚本",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "data",
+                "cname": "脚本数据",
+                "type": "mixobject",
+                "otype": "KFScriptData"
+            },
+            {
+                "id": 2,
+                "name": "execSide",
+                "cname": "发送",
+                "default": "3",
+                "type": "uint8",
+                "enum": "BlkExecSide"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "GSRemoteScriptData",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "4",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1396
     },
     {
         "includes": [

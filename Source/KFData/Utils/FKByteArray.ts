@@ -542,9 +542,13 @@ export class KFByteArray
         this._writeUint8Array(utf8bytes, false);
     }
 
-    public writeUTFBytes(value: string): void
+    ///返回写入的长度
+    public writeUTFBytes(value: string): number
     {
-        this._writeUint8Array(this.encodeUTF8(value));
+        let strbuff = this.encodeUTF8(value);
+        let strlen = strbuff.length;
+        this._writeUint8Array(strbuff);
+        return strlen;
     }
 
     public writestring(value:string)

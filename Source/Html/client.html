@@ -35,6 +35,7 @@
             var app = new m1.AppLauncher(1);
             app.config.OnKFDLoaded.on(function (kfdtb) {
                 m3.initKFDTable(kfdtb);
+                m4.initKFDTable(kfdtb);
             })
             app.run("appnettest","kfds","PIXIApp.blk");
         });

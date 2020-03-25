@@ -1,31 +1,40 @@
 import {TypeEvent} from "../Core/Misc/TypeEvent";
+import {KFGlobalDefines} from "../ACTS/KFACTSDefines";
 
 export class KFGameTicker
 {
-    public static FixedTickTime:number = 16;
     public onTick:TypeEvent<number> = new TypeEvent<number>();
-    public onFixedTick:TypeEvent<void> = new TypeEvent<void>();
 
-    private m_dt:number = 0;
+    private m_dt:number = 16;
+    private _tickid:number = -1;
 
-    public Init(){}
+    public Init() {
+        ///用渲染TPF驱动游戏的TICK
+        this.m_dt = KFGlobalDefines.RENDER_TPF;
+    }
+
     public Shutdown()
     {
         this.onTick.clear();
-        this.onFixedTick.clear();
     }
 
-    public TickInput(dt:number)
-    {
-        this.onTick.emit(dt);
-        this.m_dt += dt;
+    public Start(){
 
-        let fixtime = KFGameTicker.FixedTickTime;
-
-        if (fixtime > 0 && this.m_dt >= fixtime)
+        if(this._tickid == -1)
         {
-            this.onFixedTick.emit();
-            this.m_dt -= fixtime;
+            let self = this;
+            this._tickid = setInterval(
+                function () {
+                    self.onTick.emit(self.m_dt);
+                }
+                , self.m_dt);
+        }
+    }
+
+    public Stop() {
+        if(this._tickid != -1) {
+            clearInterval(this._tickid);
+            this._tickid = -1;
         }
     }
 }

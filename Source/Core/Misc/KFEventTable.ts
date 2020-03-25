@@ -7,16 +7,25 @@ export class KFEvent
     public type:KFDName;
     public arg:any;
 
-    public constructor(evtname:KFDName = null)
+    ///evtname:KFDName|number
+    public constructor(evtname:any = null)
     {
         this.type = new KFDName();
-        this.type.value = evtname == null ? 0 : evtname.value;
+        if(isNaN(evtname)){
+            this.type.value = evtname == null ? 0 : evtname.value;
+        }else
+            this.type.value = evtname;
     }
+
 }
 
 export class KFEventTable
 {
     private _listenersMap :{[key:number]: {func:Listener<KFEvent>,target:any}[];} = {}
+
+    public Clear(){
+        this._listenersMap = {};
+    }
 
     public AddEventListener(type:KFDName, listener:Listener<KFEvent>,target:any = null)
     {

@@ -1,7 +1,8 @@
 import {KFDTable} from "../../KFData/Format/KFDTable";
-import {GSExpressionScript, GSPlayStateScript} from "../Script/Global/GlobalScripts";
+import {GSExpressionScript, GSPlayStateScript, GSRemoteScript} from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
+import {KFScriptData} from "../../KFScript/KFScriptDef";
 
 export class KFDataHelper
 {
@@ -20,12 +21,7 @@ export class KFDataHelper
         return mapvalues;
     }
 
-    public static InitAfterKFDTable(kfdtable:KFDTable)
-    {
-        ///注册所有脚本数据的初始化
-        let SMetas:Array<ScriptMeta> = [
-            GSPlayStateScript.Meta,
-            GSExpressionScript.Meta];
+    public static InitSD(SMetas:ScriptMeta[],kfdtable:KFDTable){
 
         for(let i = 0;i < SMetas.length;i ++)
         {
@@ -34,7 +30,18 @@ export class KFDataHelper
             if (kfd) {
                 kfd.__init__ = {func: meta.DataInit};
             }
+            KFScriptData.RFS[meta.name.value] = meta.RS;
         }
+    }
+
+    public static InitAfterKFDTable(kfdtable:KFDTable)
+    {
+        ///注册所有脚本数据的初始化
+        KFDataHelper.InitSD([
+            GSPlayStateScript.Meta
+            , GSExpressionScript.Meta
+            ,GSRemoteScript.Meta]
+            ,kfdtable);
 
         let KFExpressionKFD = kfdtable.get_kfddata("KFExpression");
         KFExpressionKFD.__new__ = function()

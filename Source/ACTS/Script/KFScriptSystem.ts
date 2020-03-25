@@ -2,29 +2,31 @@ import {KFScriptManagerBase} from "../../KFScript/KFScriptManagerBase";
 import {KFScript, KFScriptContext} from "../../KFScript/KFScriptDef";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFRuntime} from "../Context/IKFRuntime";
-import {Variable} from "../Data/Variable";
 import {KFScriptFactory} from "./KFScriptFactory";
+import {KFBlockTarget} from "../Context/KFBlockTarget";
 
-export interface KFACTSScriptContext extends KFScriptContext
+///绑定目标的脚本
+export class KFTargetScript extends KFScript
 {
-    ExecuteAt(scriptType:KFDName,scriptData:any,context:KFScriptContext,beginscope:boolean):void;
-    AddKeepScript(script:KFScript):number;
-    RemoveKeepScript(script:KFScript):void;
-    RemoveAllKeepScript():void;
-    BeginScope():void;
-    EndScope():void;
-    GetVariable(vID:number, create:boolean, varstr:string):Variable;
-}
+    protected m_c:KFScriptContext;
+    protected m_t:KFBlockTarget;
+    protected m_type:KFDName;
 
-export class KFACTSScript extends KFScript
-{
-    protected m_context:KFACTSScriptContext;
-    protected m_runtime:IKFRuntime;
+    public Execute(scriptdata: any
+                   , context: KFScriptContext = null): void {
+        this.m_c = context;
+        this.m_t = context.targetObject;
+        this.m_type = scriptdata.type;
+    }
 
-    public SetContext(context:KFACTSScriptContext):void
-    {
-        this.m_context = context;
-        this.m_runtime = context.runtime;
+    public Stop(): void {
+        this.isrunning = false;
+        if(this.m_c) {
+            this.m_c.ReturnScript(this,this.m_type);
+        }
+        this.m_type = null;
+        this.m_c = null;
+        this.m_t = null;
     }
 }
 

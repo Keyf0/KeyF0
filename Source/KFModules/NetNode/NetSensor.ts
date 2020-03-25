@@ -1,22 +1,19 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
-import {KFEventTable} from "../../Core/Misc/KFEventTable";
 import {NetData, RPCObject} from "./NetData";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {WSConnection} from "./WSConnection";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
-import {KFActor} from "../../ACTS/Actor/KFActor";
+import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
 import {KFGlobalDefines} from "../../ACTS/KFACTSDefines";
 import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFDTable} from "../../KFData/Format/KFDTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
 
-
 ///KFD(C,CLASS=NetSensor,EXTEND=KFBlockTarget)
-///KFD(P=1,NAME=tickable,CNAME=开启更新,DEFAULT=true,OR=1,TYPE=bool)
 ///KFD(*)
+
 
 export class NetSensor extends KFBlockTarget implements RPCObject {
 
@@ -25,78 +22,133 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
             return new NetSensor();
         });
 
+    public static TYPE_NORMAL:number = 0;
+    //角色感知器
+    public static TYPE_ROLE:number = 1;
+    //绑定的是自己
+    public static TYPE_SELF:number = 2;
+    //绑定自己的角色感知器
+    public static TYPE_ROLE_SELF:number = 3;
+
+    ///网络TICK的时间
+    public updatetime:number = 100;
+
     public children:{[key:number]:any;} = {};
     public execSide:number = BlkExecSide.UNKNOW;
     public isActived:boolean = false;
-    public isRole:boolean = false;
-    public connection:WSConnection = null;
+    public sensorType:number = NetSensor.TYPE_NORMAL;
+    public connection:WSConnection;
     public rpcmethods: { [key: number]: { func: Function; target: any } } = {};
 
     //绑定的ACTORSID
-    public actorsid:number = 0;
+    public actorsid:number;
     //绑定的actor
-    public actor:KFActor;
+    public actor:KFBlockTarget;
     public rpcparent:RPCObject;
+
 
     //运行在服务端有的属性
     public sKFNewBlkData:any;
     public sAttribFlags:any;
     public sInitFlags:any;
+    public sUpdateMeta:any;
+    //哪个人的关心你的状态
+    public sWhoCares:number[];
+
+    ///运行时间
+    protected  m_timeincr:number = 0;
 
     public Construct(metadata: any, runtime: IKFRuntime) {
         super.Construct(metadata, runtime);
         this.execSide = runtime.execSide;
-        this.etable = new KFEventTable();
+    }
+
+    protected BuildInternalRpc(){
+        let self = this;
+        if(this.execSide == BlkExecSide.SERVER)
+        {
+            ///服务端注册调用
+            self.cUpdateActor = function (...args:any[]) {
+            args.splice(0
+                ,0
+                , self.sWhoCares
+                , this.actorsid
+                , "cUpdateActor");
+            self.connection.clientCall.apply(self.connection, args);
+            };
+            ///通知自己子集有对象被删除了
+            ///TODO
+
+
+        } else {
+            ///客户端注册回调
+           this.rpcmethods[KFDName._Strs.GetNameID("cUpdateActor")]
+                = {func:this.cUpdateActor,target: this};
+        }
     }
 
     public ActivateBLK(KFBlockTargetData: any): void {
+
         super.ActivateBLK(KFBlockTargetData);
 
         let senosorname = NetSensor.Meta.name.value;
-        let parentactor = <any>this.parent;
 
-        //检测名称否则自动改名称
-        if(KFGlobalDefines.IS_Debug) {
+        if((this.sensorType & NetSensor.TYPE_SELF) == 0) {
+            let parentactor = <any>this.parent;
+            //如果是绑定型同步对象
+            //检测名称否则自动改名称
+            if (KFGlobalDefines.IS_Debug) {
 
-            let oldname = this.name.value;
-            if (senosorname != oldname) {
-                let namestr = this.name.toString();
-                this.name = NetSensor.Meta.name;
-                parentactor.ChildRename(oldname, this);
-                LOG_ERROR("同步对象的名称错误 NetSensor,{0} != NetSensor", namestr);
+                let oldname = this.name.value;
+                if (senosorname != oldname) {
+                    let namestr = this.name.toString();
+                    this.name = NetSensor.Meta.name;
+                    parentactor.ChildRename(oldname, this);
+                    LOG_ERROR("同步对象的名称错误 NetSensor,{0} != NetSensor", namestr);
+                }
+
+                //检测下父级的创建是否合法
+                let execSide = parentactor.execSide ? parentactor.execSide : BlkExecSide.BOTH;
+                if ((this.execSide & execSide) != this.execSide) {
+                    LOG_ERROR("具有同步对象的ACTOR execSide 必需为服务器");
+                    return;
+                }
             }
+            this.actor = parentactor;
+            this.actorsid = parentactor.sid;
+        }else {
 
-            //检测下父级的创建是否合法
-            if(     this.execSide == BlkExecSide.SERVER
-                && ( !parentactor.CreateTargetData
-                ||  parentactor.CreateTargetData.createOnClient != false)) {
-                LOG_ERROR("具有同步对象的ACTOR 创建属性createOnClient必需为false");
-                this.tickable = false;
-                return;
-            }
+            ///自己就是那个对象
+            this.actor = this;
+            this.actorsid = this.sid;
         }
 
-        this.actor = parentactor;
-        this.actorsid = parentactor.sid;
         //寻找父级的同步对象且注册
-        this.rpcparent = <RPCObject>parentactor.parent.FindChild(senosorname);
+        this.rpcparent = <RPCObject><any>this.actor.parent.FindChild(senosorname);
         if(this.rpcparent) {
-
             ///注册方法
             this.isActived  = true;
-            this.tickable = true;
             this.connection = this.rpcparent.connection;
             this.connection.rpcobjects[this.actorsid] = this;
-
             //在服务端创建的localid都为-1,客户端创建的localid=连接的ID
-            let localid = this.execSide == BlkExecSide.SERVER ? -1 : this.connection.localid;
+            let localid:any = this.connection.localid;
+            if(this.execSide == BlkExecSide.SERVER)
+            {
+                this.sWhoCares = [];
+                ///同步事件是向所有关注你的客户端发送的
+                localid = this.sWhoCares;
+            }
+
             //在服务端注册的对象只有调用事件，没有回调事件??后面处理
-            NetData.registerpc(parentactor
-                ,this.execSide
-                ,localid
-                ,this.actorsid
-            ,this.rpcmethods,this.connection);
+            NetData.registerpc(this.actor
+                , this.execSide
+                , localid
+                , this.actorsid
+            , this.rpcmethods,this.connection);
+
             //注册几个同步事件
+            this.BuildInternalRpc();
+
             //初始化数据
             if(this.execSide == BlkExecSide.SERVER) {
 
@@ -117,10 +169,12 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
                     , parentsid:this.rpcparent.actorsid
                 };
 
-                //构建好关注数据
-                let kfddata = KFDTable.kfdTB.get_kfddata(actormeta.type.toString());
 
-                this.sInitFlags = {};
+                //构建好关注数据
+                let clsname = actormeta.type.toString();
+                let kfddata = KFDTable.kfdTB.get_kfddata(clsname);
+
+                this.sInitFlags = {_isdirty_:false};
                 this.sAttribFlags = {_w_:true,_v_:this.actor};
 
                 KFDJson.buildattribflags(this.actor
@@ -141,7 +195,6 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
         } else {
 
             LOG_ERROR("NetSensor 对象不能独立存在");
-            this.tickable = false;
         }
     }
 
@@ -153,15 +206,28 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
         }
         this.rpcparent = null;
 
-        if(this.connection){
-           delete this.connection.rpcobjects[this.actorsid];
+        if (this.connection) {
+            delete this.connection.rpcobjects[this.actorsid];
         }
 
-        this.actor = null;
-        this.connection = null;
-        this.rpcmethods = null;
+        if(this.execSide == BlkExecSide.SERVER) {
+
+            if(this.sWhoCares) {
+                this.sClearWhoCares();
+            }
+
+            this.sWhoCares = null;
+            this.connection = null;
+            this.rpcmethods = null;
+
+            this.sKFNewBlkData = null;
+            this.sAttribFlags = null;
+            this.sInitFlags = null;
+
+        }
+
         this.isActived = false;
-        this.tickable = false;
+        this.actor = null;
 
         super.DeactiveBLK();
     }
@@ -174,26 +240,99 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
         let sensor = <NetSensor>obj;
         this.children[sensor.actorsid] = sensor;
     }
-
     public RemoveObject(obj:any) {
         let sensor = <NetSensor>obj;
         delete this.children[sensor.actorsid];
     }
 
+    //增加关注
+    public sSubscribe(localID:number) {
+
+        if(this.sWhoCares && this.sWhoCares.indexOf(localID) == -1){
+            this.sWhoCares.push(localID);
+        }
+    }
+
+    //取消关注
+    public sUnsubscribe(localID:number){
+        if(this.sWhoCares) {
+            let index = this.sWhoCares.indexOf(localID);
+            if (index != -1) {
+                this.sWhoCares.splice(index, 1);
+            }
+        }
+    }
+
+    public sClearWhoCares() {
+        ///此处需要把关注我的人物通知其消失吗？TODO？？
+        ///人物的定时TICK会关注到消失但会有延时，所以需要做一个反向通知吗？
+        ///暂时不处理
+    }
+
+
     public sCollectNewBlk(arr:any[])
     {
+        if(this.sInitFlags._isdirty_)
+        {
+            ///如果已经脏了，大其他人访问初始的时候就需要更新下
+            this.sInitFlags._isdirty_ = false;
+            let bytearr = this.sKFNewBlkData.metaData.data.bytes;
+            bytearr.length = 0;
+
+            KFDJson.write_value(bytearr
+                , this.actor
+                ,null
+                , this.sInitFlags);
+        }
+
         arr.push(this.sKFNewBlkData);
-        for(let sid in this.children) {
+
+        for(let sid in this.children)
+        {
             this.children[sid].sCollectNewBlk(arr);
         }
     }
 
     //同步客户端数据了
-    public rpcc_update(KFMetaData:any, init:boolean = false) {
-
+    public cUpdateActor(KFMetaData:any, init:boolean = false) {
         let kfbytes:KFBytes = KFMetaData.data;
         if(kfbytes && kfbytes.bytes) {
             KFDJson.read_value(kfbytes.bytes,false, this.actor);
+        }
+    }
+
+    ///网络更新
+    ///NETUPDATE更新不精确计时，与同步相关的更新尽量的物件自己的TICK中
+    public sUpdateNet(dt: number) {
+
+        this.m_timeincr += dt;
+        if(this.m_timeincr >= this.updatetime){
+            this.m_timeincr -= this.updatetime;
+
+            let _w_:boolean = this.sAttribFlags.update();
+            if(_w_){
+
+                this.sInitFlags._isdirty_ = true;
+
+                if(!this.sUpdateMeta) {
+                    let UpdateMeta = {
+                         __cls__:"KFMetaData"
+                        ,data: new KFBytes()
+                    };
+                    UpdateMeta.data.bytes = new KFByteArray();
+                    this.sUpdateMeta = UpdateMeta;
+                }
+
+                let bytesarr = this.sUpdateMeta.data.bytes;
+                bytesarr.length = 0;
+
+                KFDJson.write_value(bytesarr
+                    , this.actor
+                    ,null
+                    , this.sAttribFlags);
+
+                this.cUpdateActor(this.sUpdateMeta, false);
+            }
         }
     }
 }

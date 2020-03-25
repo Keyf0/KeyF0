@@ -19,8 +19,13 @@ export class PIXIGraphics extends KFBlockTarget
 
     public ActivateBLK(KFBlockTargetData: any): void {
         super.ActivateBLK(KFBlockTargetData);
-        this.target = new PIXI.Graphics();
 
+        if(this.target != null) {
+            LOG_ERROR("重复ActivateBLK");
+            return;
+        }
+
+        this.target = new PIXI.Graphics();
         let pixiParent = <any>this.parent;
         let container = (<PIXIObject>pixiParent).getPIXITarget();
 
@@ -32,7 +37,6 @@ export class PIXIGraphics extends KFBlockTarget
                 , pixiParent.name.toString());
         }
     }
-
 
     public DeactiveBLK(): void {
 

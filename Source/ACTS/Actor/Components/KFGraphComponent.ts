@@ -1,8 +1,6 @@
 import {KFComponentBase} from "./KFComponentBase";
-import {KFDName} from "../../../KFData/Format/KFDName";
 import {IKFGraphContext} from "../../Graph/IKFGraphContext";
-import {IKFBlockTargetContainer, KFBlockTarget} from "../../Context/KFBlockTarget";
-import {KFEventTable} from "../../../Core/Misc/KFEventTable";
+import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFScriptContext} from "../../../KFScript/KFScriptDef";
 import {KFGraph} from "../../Graph/KFGraph";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
