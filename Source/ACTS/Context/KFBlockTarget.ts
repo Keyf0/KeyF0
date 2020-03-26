@@ -29,6 +29,7 @@ export class BlkExecSide
     static CLIENT:number = 1;
     static SERVER:number = 2;
     static BOTH:number = 3;
+    static SELFCLIENT:number = 5;///自己的客户端
 };
 
 export class KFBlockTarget
@@ -37,6 +38,8 @@ export class KFBlockTarget
     public name:KFDName;
     public metadata:any;
     public sid:number;
+    ///是否属于主客户端
+    public owner:boolean;
     public parent:IKFBlockTargetContainer;
     public etable:KFEventTable;
     public runtime:IKFRuntime;

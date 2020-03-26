@@ -16,7 +16,7 @@ export class HKeyboard extends KFBlockTarget {
 
     public static KeyCode2Key:{[key:number]:string} = {
         8:"BackSpace",9:"Tab",13:"Enter",16:"Shift",17:"Ctrl",18:"Alt"
-        ,37:"LeftArrow",38:"UpArrow",39:"RightArrow",40:"DownArrow"
+        ,37:"ArrowLeft",38:"ArrowUp",39:"ArrowRight",40:"ArrowDown"
         ,45:"Insert",46:"Delete"
         ,48:"0",49:"1",50:"2",51:"3",52:"4",53:"5",54:"6",55:"7",56:"8",57:"9"
         ,112:"F1",113:"F2",114:"F3",115:"F4",116:"F5",117:"F6",118:"F7",119:"F8",120:"F9"
@@ -24,7 +24,7 @@ export class HKeyboard extends KFBlockTarget {
     };
 
     ///连续触发的间隔
-    public interval:number = 100;
+    public interval:number = 150;
     ///全局事件
     public global:boolean = true;
     ///以方向输出
@@ -58,26 +58,26 @@ export class HKeyboard extends KFBlockTarget {
 
         ///后面配置化
 
-        this.keyCodes["LeftArrow"] = {isDown:false,attr:"x",val:-1,oppo:"RightArrow"};
-        this.keyCodes["RightArrow"] = {isDown:false,attr:"x",val:1,oppo:"LeftArrow"};
-        this.keyCodes["UpArrow"] = {isDown:false,attr:"y",val:-1,oppo:"UpArrow"};
-        this.keyCodes["DownArrow"] = {isDown:false,attr:"y",val:1,oppo:"DownArrow"};
+        this.keyCodes["ArrowLeft"] = {isDown:false,attr:"x",val:-1,oppo:"ArrowRight"};
+        this.keyCodes["ArrowRight"] = {isDown:false,attr:"x",val:1,oppo:"ArrowLeft"};
+        this.keyCodes["ArrowUp"] = {isDown:false,attr:"y",val:-1,oppo:"ArrowUp"};
+        this.keyCodes["ArrowDown"] = {isDown:false,attr:"y",val:1,oppo:"ArrowDown"};
 
         let Strs = KFDName._Strs;
         this._ReleasAllEvt
             = new KFEvent(Strs.GetNameID("KeyReleasAll"));
         this._DirEvt
             = new KFEvent(Strs.GetNameID("KeyDirection"));
-        this._DirEvt.arg = {x:0,y:0};
+        this._DirEvt.arg = {x:0,y:0,toString:function(){return "x=" + this.x + ",y=" + this.y;}};
         this._Dir  = {x:0,y:0};
 
         this._Dir.N = function (outdir) {
             let len = Math.sqrt(this.x * this.x + this.y * this.y);
             if(len > 0){
                 let divlen = 1 / len;
-                outdir.x = outdir.x * divlen;
 
-                outdir.y = outdir.y * divlen;
+                outdir.x = this.x * divlen;
+                outdir.y = this.y * divlen;
 
             }else {
                     outdir.x = 0;
@@ -118,6 +118,9 @@ export class HKeyboard extends KFBlockTarget {
             }
         }
         if(allreleas) {
+            let dirarg = this._Dir;
+            dirarg.x = 0;
+            dirarg.y = 0;
             ///发送全部release事件
             this.etable.FireEvent(this._ReleasAllEvt);
         }
@@ -127,10 +130,12 @@ export class HKeyboard extends KFBlockTarget {
                 let oppo = this.keyCodes[keyobj.oppo];
                 if(oppo && oppo.isDown){
                     this._Dir[oppo.attr] = oppo.val;
-                    this._Dir.N(this._DirEvt.arg);
-                    this.etable.FireEvent(this._DirEvt);
-                    this._Firetime = this.runtime.realytime;
-                }
+                }else
+                    this._Dir[keyobj.attr] = 0;
+
+                this._Dir.N(this._DirEvt.arg);
+                this.etable.FireEvent(this._DirEvt);
+                this._Firetime = this.runtime.realytime;
             }
         }
     }

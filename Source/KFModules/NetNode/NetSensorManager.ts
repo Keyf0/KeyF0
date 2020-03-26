@@ -202,6 +202,8 @@ export class NetProxy {
     public name:KFDName;
     public proxys:{[key:number]:NetProxy;} = {};
     private _offlineid:number = 0;
+    private _ownersid:number = 0;
+
 
     public constructor(mgr:NetSensorManager) {
         this.mgr = mgr;
@@ -288,6 +290,7 @@ export class NetProxy {
     //客户端调用
     public rpcc_postlogin(actorsid:number,data?:string) {
         if(actorsid > 0) {
+            this._ownersid = actorsid;
             LOG("{0}[{1}]登录服务器成功", data, actorsid);
             //绑定一个退出调用
             if(this._offlineid != this.localid) {
@@ -341,10 +344,19 @@ export class NetProxy {
 
                     let newblk: KFBlockTarget = parent.FindChild(targetData.instname.value);
                     ///SID对不上的话还是需要删除的
-                    if(newblk && newblk.sid != targetData.instsid){newblk = null;}
+                    let nblksid = targetData.instsid;
+                    if(newblk && newblk.sid != nblksid){newblk = null;}
 
                     if (!newblk) {
-                        newblk = parent.CreateChild(targetData);
+                        if(nblksid == this._ownersid) {
+                            ///需要设置下owner
+                            newblk = parent.CreateChild(targetData,null
+                                ,function (newtarget:KFBlockTarget) {
+                                    newtarget.owner = true;
+                            });
+                        }
+                        else
+                            newblk = parent.CreateChild(targetData);
                     }
                     else if(init) {
                         ///寻找到了元素,需要从删除列表中去掉

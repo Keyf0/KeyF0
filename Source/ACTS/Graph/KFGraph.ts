@@ -50,6 +50,7 @@ export class KFGraph
         this.m_cfg = cfg;
 
         let CurrSide = this.m_ctx.runtime.execSide;
+        let owner = this.m_ctx.targetObject.owner;
 
         for ( let data of cfg.data.blocks)
         {
@@ -59,7 +60,10 @@ export class KFGraph
             let execSide = (tdata && tdata.execSide) ? tdata.execSide : BlkExecSide.BOTH;
             if((CurrSide & execSide) == 0)
                 continue;
-
+            ///如果是主客户端
+            if(execSide == BlkExecSide.SELFCLIENT && !owner){
+                continue;
+            }
 
             let block:KFGraphBlockBase = null;
             switch (data.type)

@@ -175,6 +175,13 @@
                 "name": "speed",
                 "cname": "速度",
                 "type": "num1"
+            },
+            {
+                "id": 4,
+                "name": "update",
+                "cname": "更新",
+                "type": "bool",
+                "default": "true"
             }
         ],
         "orprops": [
@@ -182,7 +189,7 @@
                 "id": 1,
                 "name": "type",
                 "cname": "脚本类型",
-                "default": "TSSmoothMove",
+                "default": "TSControlMoveData",
                 "OR": 1,
                 "type": "kfname"
             },

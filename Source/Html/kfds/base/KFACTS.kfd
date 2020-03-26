@@ -197,6 +197,13 @@
                 "default": "3",
                 "name": "BOTH",
                 "type": "uint8"
+            },
+            {
+                "id": 1,
+                "cname": "主客户端",
+                "default": "5",
+                "name": "SELFCLIENT",
+                "type": "uint8"
             }
         ],
         "clsid": 1366

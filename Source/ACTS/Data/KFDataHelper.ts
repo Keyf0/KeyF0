@@ -1,5 +1,5 @@
 import {KFDTable} from "../../KFData/Format/KFDTable";
-import {GSExpressionScript, GSPlayStateScript, GSRemoteScript} from "../Script/Global/GlobalScripts";
+import {GSExpressionScript, GSLogScript, GSPlayStateScript, GSRemoteScript} from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
 import {KFScriptData} from "../../KFScript/KFScriptDef";
@@ -39,10 +39,11 @@ export class KFDataHelper
         ///注册所有脚本数据的初始化
         KFDataHelper.InitSD([
             GSPlayStateScript.Meta
+            , GSLogScript.Meta
             , GSExpressionScript.Meta
             ,GSRemoteScript.Meta]
             ,kfdtable);
-
+        
         let KFExpressionKFD = kfdtable.get_kfddata("KFExpression");
         KFExpressionKFD.__new__ = function()
         {

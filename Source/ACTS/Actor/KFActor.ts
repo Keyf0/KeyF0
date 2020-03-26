@@ -1,12 +1,13 @@
 import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {IKFRuntime} from "../Context/IKFRuntime";
-import {KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFComponentBase} from "./Components/KFComponentBase";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {KFScript} from "../../KFScript/KFScriptDef";
+import {IKFDomain} from "../Context/IKFDomain";
 
 
 export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
@@ -19,6 +20,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 );
 
     public static PARENT:KFDName = new KFDName("parent");
+    public static BEGIN_PLAY:KFEvent = new KFEvent(KFDName._Strs.GetNameID("onBeginPlay"));
 
     public pause:boolean  = false;
     public timeline:KFTimelineComponent;
@@ -31,6 +33,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     protected m_removelist:Array<KFBlockTarget> = [];
     protected m_keepsts:KFScript[];
     protected m_keepstmap:{[key:number]:KFScript;};
+    protected m_bplay:boolean;
+    protected m_CDomain:IKFDomain;
 
     public constructor()
     {
@@ -42,6 +46,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     {
         super.Construct(metadata,runtime);
         this.etable = new KFEventTable();
+        this.m_CDomain = this.runtime.domain;
         this.Init(this.metadata.asseturl);
     }
 
@@ -115,6 +120,12 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     {
         if (this.pause) {return;}
 
+        ///实始化后一第一帧TICK
+        if(!this.m_bplay){
+            this.m_bplay = true;
+            this.etable.FireEvent(KFActor.BEGIN_PLAY);
+        }
+
         ///暂时都不需要
         ///this.graph.EnterFrame(frameindex);
         this.timeline.EnterFrame(frameindex);
@@ -130,28 +141,18 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         while (scripti >= 0){
             let sc = this.m_keepsts[scripti];
             sc.Update(frameindex);
-            if(!sc.isrunning){
+            if(!sc.isrunning) {
                 this.m_keepsts.splice(scripti,1);
-                let sTypes = sc.scriptTypes;
-                let count:number = sTypes ? sTypes.length : 0;
-                if(count > 0) {
-                    if(!this.m_keepsts){
-                        this.m_keepsts = [];
-                        this.m_keepstmap = {};
-                    }
-                    for (let i: number = 0; i < count; i++) {
-                        delete  this.m_keepstmap[sTypes[i].value];
-                    }
-                    sc.Stop();
-                }
+                sc.Stop(this.m_keepstmap);
             }
+
             scripti -= 1;
         }
 
         ///删除元素
         let removelen = this.m_removelist.length;
-        if(removelen > 0)
-        {
+        if(removelen > 0) {
+
             for(let i = 0; i < removelen; i ++)
             {
                 let t = this.m_removelist[i];
@@ -221,8 +222,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public CreateChild(targetdata:any,meta?:any,Init?:any):KFBlockTarget
     {
-        let newtarget = this.runtime.domain
-            .CreateBlockTarget(targetdata,meta);
+        let newtarget = this.m_CDomain.CreateBlockTarget(targetdata,meta);
         if (newtarget != null)
         {
             if(Init){
@@ -231,6 +231,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             this.AddChild(newtarget);
             newtarget.ActivateBLK(targetdata);
         }
+
         return newtarget;
     }
 
@@ -262,23 +263,16 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     }
 
     ///保持脚本
-    public KeepScript(script:KFScript):boolean {
+    public KeepScript(script:KFScript,type:KFDName):boolean {
 
-        let sTypes = script.scriptTypes;
-        let count:number = sTypes ? sTypes.length : 0;
-        if(count > 0)
-        {
-            if(!this.m_keepsts) {
-                this.m_keepsts = [];
-                this.m_keepstmap = {};
-            }
-            for (let i: number = 0; i < count; i++) {
-               this.m_keepstmap[sTypes[i].value] = script;
-            }
-            this.m_keepsts.push(script);
-            return true;
+        if(!this.m_keepsts) {
+            this.m_keepsts = [];
+            this.m_keepstmap = {};
         }
-        return false;
+        script.Keep(this.m_keepstmap, type);
+        this.m_keepsts.push(script);
+        return true;
+
     }
 
     public FindScript(type:KFDName):KFScript {
@@ -292,11 +286,10 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         if(this.m_keepsts) {
             let scripti = this.m_keepsts.length - 1;
             while (scripti >= 0) {
-                this.m_keepsts[scripti].Stop();
+                this.m_keepsts[scripti].Stop(this.m_keepstmap);
                 scripti -= 1;
             }
             this.m_keepsts.length = 0;
-            this.m_keepstmap = {};
         }
     }
 }

@@ -48,7 +48,7 @@ export class KFExpression
             }
 
             this._result = this._func();
-            LOG("执行:{0}",this.text);
+            //LOG("执行:{0}",this.text);
         }
 
         return this._result;

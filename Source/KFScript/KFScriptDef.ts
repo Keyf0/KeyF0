@@ -44,7 +44,8 @@ export class KFScript
      }
 
      public Update(frameindex:number) {}
-     public Stop():void {}
+     public Keep(tmap:any,ctype:KFDName) {}
+     public Stop(tmap:any) {}
 
      public scriptTypes:KFDName[];
 }

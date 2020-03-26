@@ -4,6 +4,7 @@ import {KFDName} from "../../../KFData/Format/KFDName";
 import {KFScriptGroupType} from "../../../KFScript/KFScriptGroupType";
 import {KFExpression} from "./KFExpression";
 import {BlkExecSide} from "../../Context/KFBlockTarget";
+import {LOG} from "../../../Core/Log/KFLog";
 
 export class GSPlayStateScript extends KFScript
 {
@@ -40,6 +41,20 @@ export class GSPlayStateScript extends KFScript
             context.targetObject.timeline.playing = false;
         }
     }
+}
+
+export class GSLogScript extends KFScript{
+
+    public static Meta:ScriptMeta = new ScriptMeta("GSLogScriptData"
+        ,():KFScript=>{return new GSLogScript();}
+        , KFScriptGroupType.Global
+        ,null
+        ,(sd:any,objs:any[],pints:number[])=>{
+            let plen = pints.length;
+            sd.text = objs[0].toString();
+        });
+
+    public Execute(sd: any, context: KFScriptContext = null): void {LOG(sd.text);}
 }
 
 
@@ -100,7 +115,7 @@ export class GSRemoteScript extends KFScript {
         if(pints && pints[0] == KFScriptData.WAITR_S) {
             ///等待读取stack
             let rfs = KFScriptData.RFS[rsd.type.value];
-            if(rfs) {rfs(sd,context._reg._OBJECTS,pints);}
+            if(rfs) {rfs(rsd,context._reg._OBJECTS,pints);}
         }
 
         let toj = context.targetObject;
@@ -108,7 +123,7 @@ export class GSRemoteScript extends KFScript {
         //public rpcs_exec:(scriptdata:any)=>any;
         if(toj.rpcc_exec) {
             ///调用服务器
-            let eside = sd.execSide;
+            let eside = sd.execSide ? sd.execSide : BlkExecSide.BOTH;
             switch (eside) {
                 case BlkExecSide.SERVER:
                     toj.rpcs_exec(rsd);

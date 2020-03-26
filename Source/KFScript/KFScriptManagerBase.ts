@@ -68,13 +68,18 @@ export class KFScriptManagerBase implements KFScriptContext
             if(target.FindScript) {
                 let targetscript = target.FindScript(type);
                 if(targetscript == null){
+
                     targetscript = this.BorrowScript(type);
+
+                    if(target.KeepScript(targetscript, type)) {
+                        targetscript.Execute(sd, this);
+                    }else {
+                        this.ReturnScript(targetscript, type);
+                        LOG_WARNING("{0}脚本保持失败",type.toString());
+                    }
                 }
-                if(target.KeepScript(targetscript)) {
+                else {
                     targetscript.Execute(sd, this);
-                }else {
-                    this.ReturnScript(targetscript, type);
-                    LOG_WARNING("{0}脚本保持失败",type.toString());
                 }
             }
             return;
@@ -159,7 +164,7 @@ export class KFScriptManagerBase implements KFScriptContext
 
     public BorrowScript(type:KFDName):KFScript {
         let arr = this._T_SCRIPT_POOL[type.value];
-        if(arr.length > 0) {
+        if(arr && arr.length > 0) {
             return arr.pop();
         }
         return this.NewScriptInstance(type);

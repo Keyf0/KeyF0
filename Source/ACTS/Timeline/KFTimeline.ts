@@ -5,6 +5,7 @@ import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFPool} from "../../Core/Misc/KFPool";
 import {BlkExecSide, KFBlockTarget} from "../Context/KFBlockTarget";
 import {KFScriptContext} from "../../KFScript/KFScriptDef";
+import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
 
 export class KFTimeline implements IKFTimelineContext
 {
@@ -55,9 +56,12 @@ export class KFTimeline implements IKFTimelineContext
         this.m_states = {};
         this.m_scripts = this.m_target.runtime.scripts;
 
-        for (let data of cfg.states)
-        {
-            this.m_states[data.id] = data;
+        let statesarr = cfg.states;
+        if(statesarr) {
+            for (let data of statesarr)
+            {
+                this.m_states[data.id] = data;
+            }
         }
     }
 
@@ -106,6 +110,7 @@ export class KFTimeline implements IKFTimelineContext
                 this.DestroyBlocks();
 
                 let CurrSide = this.m_target.runtime.execSide;
+                let owner = this.m_target.owner;
 
                 let m_pool = KFTimeline.TB_pool;
                 for (let layer of this.currstate.layers)
@@ -113,9 +118,18 @@ export class KFTimeline implements IKFTimelineContext
                     for (let data of layer.blocks)
                     {
                         let tdata = data.target;
+                        if(!tdata){
+                            tdata = {execSide:BlkExecSide.BOTH
+                                ,option:KFBlockTargetOption.Ignore};
+                            data.target = tdata;
+                        }
                         let execSide = tdata.execSide ? tdata.execSide : BlkExecSide.BOTH;
                         if((CurrSide & execSide) == 0)
                             continue;
+                        ///如果是主客户端
+                        if(execSide == BlkExecSide.SELFCLIENT && !owner){
+                            continue;
+                        }
 
                        let block = m_pool.Fetch();
                        block.Create(<any>this.m_target, this, data);
