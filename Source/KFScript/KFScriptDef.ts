@@ -18,6 +18,8 @@ export interface KFScriptContext
     ExecCodeLine(codeline:any, target:any):void;
 
     ReturnScript(script:KFScript,type:KFDName);
+
+    Get(i:number):any;
 }
 
 

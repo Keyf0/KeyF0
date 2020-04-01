@@ -5,16 +5,19 @@ import {KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFGlobalDefines} from "../KFACTSDefines";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 
 export interface IKFBlockTargetContainer
 {
     parent:IKFBlockTargetContainer;
     ChildRename(oldname:number, child:KFBlockTarget):void;
+    GetChildren():KFBlockTarget[];
     AddChild(child:KFBlockTarget):void;
     RemoveChild(child:KFBlockTarget):void;
     GetChildAt(index:number):KFBlockTarget;
     FindChildBySID(sid:number):KFBlockTarget;
     FindChild(name:number):KFBlockTarget;
+    StrChild(name:string):KFBlockTarget;
     GetRuntime():IKFRuntime;
     CreateChild(targetdata:any,meta?:any,Init?:any):KFBlockTarget;
     DeleteChild(child:KFBlockTarget):boolean;
@@ -44,7 +47,10 @@ export class KFBlockTarget
     public etable:KFEventTable;
     public runtime:IKFRuntime;
     ///是否需要TICK
-    public tickable:boolean  = false;
+    public tickable:boolean;
+
+    ///变量
+    public vars:{[key:number]:any};
 
     public Construct(metadata:any, runtime:IKFRuntime)
     {
@@ -79,4 +85,37 @@ export class KFBlockTarget
     public rotation:{x?:number,y?:number,z:number};
     public set_rotation(v3?:{x?:number,y?:number,z:number}):void{}
     public SetCustomArg(value:number,...args:number[]):void{}
+
+    public ReadVars(bytesarr:KFByteArray,len:number) {
+
+        if(this.vars == null) this.vars = {};
+        let varsize = bytesarr.readvaruint();
+        while (varsize > 0) {
+           let nameval = KFDName._Strs.GetNameID(bytesarr.readstring());
+           let data = KFDJson.read_value(bytesarr);
+           this.vars[nameval] = data;
+            varsize -= 1;
+        }
+    }
+
+    public WriteVars(bytesarr:KFByteArray) {
+
+        if(this.vars) {
+            let arr = [];
+            for(let key in this.vars){
+                arr.push({name:KFDName._Strs.GetNameStr(parseInt(key))
+                    ,value:this.vars[key]});
+            }
+            bytesarr.writevaruint(arr.length);
+
+            for(let itm of arr){
+                bytesarr.writestring(itm.name);
+                KFDJson.write_value(bytesarr, itm.value);
+            }
+
+        } else {
+            bytesarr.writevaruint(0);
+        }
+    }
+
 }

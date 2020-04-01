@@ -7,6 +7,8 @@ import {LOG} from "../../Core/Log/KFLog";
 
 export class KFDJson
 {
+    public static ClearUseBuff:KFByteArray = new KFByteArray();
+
     private static _read_base_value(bytearr:KFByteArray
                                     , valtype:number
                                     , skip:boolean=false
@@ -87,8 +89,11 @@ export class KFDJson
                     if(!retval){
                         retval = new KFBytes();
                         retval.bytes = new KFByteArray();
-                    }else
+                    }
+                    else
+                    {
                         retval.bytes.length = 0;
+                    }
 
                     bytearr.readkfbytes(retval.bytes);
                 }
@@ -206,16 +211,38 @@ export class KFDJson
                     let pinfo = KFDTable.find_prop_info(currKFDData, pid);
                     if(pinfo != null)
                     {
-                        let pname = pinfo["name"];
-                        let propobj = obj[pname];
+                        let read = pinfo.read;
+                        let readfunc:Function = obj[read];
 
-                        let retval = KFDJson.read_value(bytearr,false, propobj, pinfo);
-                        obj[pname] = retval;
-                        let rcall = pinfo.call;
-                        if(rcall){obj[rcall](retval);}
+                        if(readfunc){
+                            let vtype = bytearr.readByte();
+                            if(vtype == KFDataType.OT_BYTES){
+                                let bytesize = bytearr.readvaruint();
+                                let opos = bytearr.GetPosition();
+                                readfunc.call(obj,bytearr,bytesize);
+                                bytearr.SetPosition(opos + bytesize);
+                            } else {
+                                bytearr.Skip(-1);
+                                KFDJson.read_value(bytearr,true);
+                            }
+                        }
+                        else {
+
+                            let pname = pinfo["name"];
+                            let propobj = obj[pname];
+
+                            let retval = KFDJson.read_value(bytearr, false, propobj, pinfo);
+                            obj[pname] = retval;
+                            let rcall = pinfo.call;
+                            if (rcall) {
+                                let callfunc = obj[rcall];
+                                if (callfunc) {
+                                    callfunc.call(obj, retval);
+                                }
+                            }
+                        }
                     }
-                    else
-                    {
+                    else {
                         KFDJson.read_value(bytearr,true);
                     }
                 }
@@ -562,7 +589,13 @@ export class KFDJson
                             valObject.bytes = bytes;
                         }
                         bytes.length = 0;
-                        KFDJson.write_value(bytes, bytesobj);
+                        ///尝试自定义的写
+                        let write:Function = bytesobj.write;
+                        if(write) {
+                            write.call(bytesobj, bytes);
+                        }
+                        else
+                            KFDJson.write_value(bytes, bytesobj);
                         bytearr.writekfBytes(bytes);
                     }
                     else if(bytes == null)
@@ -715,10 +748,20 @@ export class KFDJson
 
                 if(objectval.hasOwnProperty(name) &&
                     pid != KFDataType.OBJ_PROP_ID_BEGIN &&
-                    pid != KFDataType.OBJ_PROP_ID_END)
-                {
+                    pid != KFDataType.OBJ_PROP_ID_END) {
+
                     bytearr.writevaruint(pid);
-                    KFDJson.write_value(bytearr, objectval[name], item, attribFlag);
+                    let write = item.write;
+                    let writefunc:Function = objectval[write];
+
+                    if(writefunc){
+                        KFDJson.ClearUseBuff.length = 0;
+                        bytearr.writeByte(KFDataType.OT_BYTES);
+                        writefunc.call(objectval, KFDJson.ClearUseBuff);
+                        bytearr.writekfBytes(KFDJson.ClearUseBuff);
+                    }
+                    else
+                        KFDJson.write_value(bytearr, objectval[name], item, attribFlag);
                 }
             }
         }

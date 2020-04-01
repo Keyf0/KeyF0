@@ -1,12 +1,86 @@
 [
     {
         "includes": [
+            "PIXIAnimatedSprite.ts"
+        ],
+        "class": "PIXIAnimatedSprite",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "ssurl",
+                "cname": "资源路径",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "animSpeed",
+                "cname": "播放速度",
+                "default": "1",
+                "type": "num1"
+            }
+        ],
+        "clsid": 1397
+    },
+    {
+        "includes": [
             "PIXIApplication.ts"
         ],
         "class": "PIXIApplication",
         "extend": "HElementActor",
         "propertys": [],
         "clsid": 1381
+    },
+    {
+        "includes": [
+            "PIXIAssetLoader.ts"
+        ],
+        "class": "PIXIAssetLoader",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "AssetURLs",
+                "cname": "资源路径",
+                "type": "arr",
+                "otype": "kfstr"
+            }
+        ],
+        "clsid": 1398
+    },
+    {
+        "includes": [
+            "PIXICamera.ts"
+        ],
+        "class": "PIXICamera",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "width",
+                "cname": "视野长",
+                "default": "800",
+                "type": "num1"
+            },
+            {
+                "id": 2,
+                "name": "height",
+                "cname": "视野宽",
+                "default": "800",
+                "type": "num1"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "tickable",
+                "cname": "开启更新",
+                "default": "true",
+                "OR": 1,
+                "type": "bool"
+            }
+        ],
+        "clsid": 1399
     },
     {
         "includes": [
@@ -97,6 +171,20 @@
                 "name": "maxAccelerate",
                 "cname": "最大加速度",
                 "type": "num1"
+            },
+            {
+                "id": 7,
+                "name": "eventDown",
+                "cname": "点击事件",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 8,
+                "name": "eventMove",
+                "cname": "移动事件",
+                "type": "bool",
+                "default": "false"
             }
         ],
         "clsid": 1383
@@ -109,6 +197,22 @@
         "extend": "PIXINetActor",
         "propertys": [],
         "clsid": 1384
+    },
+    {
+        "includes": [
+            "PIXISceneGrid.ts"
+        ],
+        "class": "PIXISceneGrid",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "txurl",
+                "cname": "贴图路径",
+                "type": "kfstr"
+            }
+        ],
+        "clsid": 1400
     },
     {
         "includes": [
@@ -179,7 +283,7 @@
             {
                 "id": 4,
                 "name": "update",
-                "cname": "更新",
+                "cname": "更新位置",
                 "type": "bool",
                 "default": "true"
             }

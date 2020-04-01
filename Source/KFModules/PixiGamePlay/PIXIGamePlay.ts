@@ -8,6 +8,10 @@ import {PIXIGraphics} from "./PIXIGraphics";
 import {ScriptMeta} from "../../ACTS/Script/KFScriptFactory";
 import {TSControlMove, TSSmoothMove} from "./Scripts/PIXIScripts";
 import {KFDataHelper} from "../../ACTS/Data/KFDataHelper";
+import {PIXIAnimatedSprite} from "./PIXIAnimatedSprite";
+import {PIXIAssetLoader} from "./PIXIAssetLoader";
+import {PIXICamera} from "./PIXICamera";
+import {PIXISceneGrid} from "./PIXISceneGrid";
 
 ///初始化
 export function init() {
@@ -16,6 +20,10 @@ export function init() {
     PIXINetActor;
     PIXIScene;
     PIXIGraphics;
+    PIXIAnimatedSprite;
+    PIXIAssetLoader;
+    PIXICamera;
+    PIXISceneGrid;
 }
 
 export function initKFDTable(kfdtb:KFDTable) {

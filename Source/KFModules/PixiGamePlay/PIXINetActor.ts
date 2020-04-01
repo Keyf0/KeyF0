@@ -3,6 +3,7 @@ import {BlkExecSide} from "../../ACTS/Context/KFBlockTarget";
 import {PIXIObject} from "./PIXIInterface";
 import {LOG_ERROR} from "../../Core/Log/KFLog";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
 
 
 ///KFD(C,CLASS=PIXINetActor,EXTEND=KFActor)
@@ -11,6 +12,11 @@ import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 
 export class PIXINetActor extends KFActor implements PIXIObject
 {
+    public static Down_Event:KFEvent = new KFEvent("onMouseDown");
+    public static UP_Event:KFEvent = new KFEvent("onMouseUp");
+    public static MOVE_Event:KFEvent = new KFEvent("onMouseMove");
+
+
     ///KFD(P=3,NAME=velocity,CNAME=当前速度,TYPE=object,OTYPE=kfVector3,NET=life)
     public velocity:{x:number,y:number,z:number};
 
@@ -23,7 +29,16 @@ export class PIXINetActor extends KFActor implements PIXIObject
     ///KFD(P=6,NAME=maxAccelerate,CNAME=最大加速度,TYPE=num1)
     public maxAccelerate:number;
 
+    ///KFD(P=7,NAME=eventDown,CNAME=点击事件,TYPE=bool,DEFAULT=false)
+    public eventDown:boolean;
+
+    ///KFD(P=8,NAME=eventMove,CNAME=移动事件,TYPE=bool,DEFAULT=false)
+    public eventMove:boolean;
+
     ///KFD(*)
+
+    protected _isdown:boolean;
+    protected _dragdata:any;
 
     public getPIXITarget(): PIXI.Container {return this._container;}
     public getPIXIApp(): PIXI.Application {return this._pixiapp;}
@@ -90,5 +105,86 @@ export class PIXINetActor extends KFActor implements PIXIObject
         }
     }
 
+
+    public ActivateBLK(KFBlockTargetData: any): void
+    {
+        super.ActivateBLK(KFBlockTargetData);
+
+        if(this._container && this.eventDown) {
+            this._container.interactive = true;
+            this._container.on('mousedown', this.onMouseDown, this)
+                .on('touchstart', this.onMouseDown, this);
+        }
+    }
+
+    public DeactiveBLK(): void {
+
+        if(this._container && this.eventDown) {
+            this._container.removeListener('mousedown', this.onMouseDown, this)
+                .on('touchstart', this.onMouseDown, this);
+            this.onMouseUp();
+        }
+
+        super.DeactiveBLK();
+    }
+
+
+    private onMouseDown(event) {
+
+        if(!this._isdown) {
+
+            this._dragdata = event.data;
+
+            this._isdown  = true;
+            this._container.on('mouseup', this.onMouseUp, this)
+                .on('mouseupoutside', this.onMouseUp, this)
+                .on('touchend', this.onMouseUp, this)
+                .on('touchendoutside', this.onMouseUp, this);
+
+            if (this.eventMove) {
+                // events for drag move
+                this._container.on('mousemove', this.onMouseMove, this)
+                    .on('touchmove', this.onMouseMove, this);
+            }
+
+            let newpos = this._dragdata.getLocalPosition(this._container);
+            let devent = PIXINetActor.Down_Event;
+            devent.arg = newpos;
+
+            this.etable.FireEvent(devent);
+        }
+    }
+
+    private onMouseMove(){
+        let newpos = this._dragdata.getLocalPosition(this._container);
+        let devent = PIXINetActor.MOVE_Event;
+        devent.arg = newpos;
+        this.etable.FireEvent(devent);
+    }
+
+    private onMouseUp() {
+
+        if( this._isdown) {
+
+            let newpos = this._dragdata.getLocalPosition(this._container);
+
+            this._isdown = false;
+            this._dragdata = null;
+            this._container.removeListener('mouseup', this.onMouseUp, this)
+                .removeListener('mouseupoutside', this.onMouseUp, this)
+                .removeListener('touchend', this.onMouseUp, this)
+                .removeListener('touchendoutside', this.onMouseUp, this);
+
+            if (this.eventMove) {
+                // events for drag move
+                this._container.removeListener('mousemove', this.onMouseMove, this)
+                    .removeListener('touchmove', this.onMouseMove, this);
+            }
+
+            let devent = PIXINetActor.UP_Event;
+            devent.arg = newpos;
+            this.etable.FireEvent(devent);
+        }
+    }
 
 }

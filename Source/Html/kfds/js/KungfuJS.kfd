@@ -25,6 +25,46 @@
     },
     {
         "includes": [
+            "KFInternalDataTypes.ts",
+            "KFScriptDataF.h"
+        ],
+        "class": "eAttribDef",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "name",
+                "cname": "名称",
+                "type": "kfname"
+            },
+            {
+                "id": 2,
+                "name": "value",
+                "cname": "值",
+                "type": "mixobject",
+                "otype": "KFScriptData"
+            }
+        ],
+        "clsid": 1402
+    },
+    {
+        "includes": [
+            "KFInternalDataTypes.ts",
+            "eAttribDefF.h"
+        ],
+        "class": "eAttribList",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "值",
+                "type": "arr",
+                "otype": "eAttribDef"
+            }
+        ],
+        "clsid": 1403
+    },
+    {
+        "includes": [
             "Global/GlobalScripts.ts",
             "KFExpressionF.h"
         ],

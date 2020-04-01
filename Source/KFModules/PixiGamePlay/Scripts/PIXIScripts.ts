@@ -2,6 +2,7 @@ import {KFTargetScript} from "../../../ACTS/Script/KFScriptSystem";
 import {KFScript, KFScriptContext} from "../../../KFScript/KFScriptDef";
 import {ScriptMeta} from "../../../ACTS/Script/KFScriptFactory";
 import {KFScriptGroupType} from "../../../KFScript/KFScriptGroupType";
+import {LOG_ERROR} from "../../../Core/Log/KFLog";
 
 ///KFD(C,CLASS=TSSmoothMoveData,CNAME=2D平滑移动,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=TSSmoothMove,OR=1,TYPE=kfname)
@@ -51,7 +52,7 @@ export class TSSmoothMove extends KFTargetScript {
 ///KFD(P=1,NAME=stop,CNAME=停止,TYPE=bool,DEFAULT=false)
 ///KFD(P=2,NAME=dir,CNAME=朝向,TYPE=object,OTYPE=kfVector3)
 ///KFD(P=3,NAME=speed,CNAME=速度,TYPE=num1)
-///KFD(P=4,NAME=update,CNAME=更新,TYPE=bool,DEFAULT=true)
+///KFD(P=4,NAME=update,CNAME=更新位置,TYPE=bool,DEFAULT=true)
 ///KFD(*)
 
 export class TSControlMove extends KFTargetScript {
@@ -85,6 +86,12 @@ export class TSControlMove extends KFTargetScript {
     private _keeptime:number;
 
     private ChgSpeed(sd:any) {
+
+        if(!sd.dir){
+
+            LOG_ERROR("sd.dir==null");
+        }
+
         ///重新设置速度
         let speed = sd.speed;
         let dir = sd.dir;
@@ -117,9 +124,12 @@ export class TSControlMove extends KFTargetScript {
             else {this.ChgSpeed(sd);}
         }
         else {
-
             super.Execute(sd, context);
-            this.ChgSpeed(sd);
+            if(!sd.stop) {
+                this.ChgSpeed(sd);
+            }else{
+                this.isrunning = false;
+            }
         }
     }
 

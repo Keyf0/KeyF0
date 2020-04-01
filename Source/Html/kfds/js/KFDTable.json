@@ -1603,6 +1603,50 @@
         {
             "class": "GSRemoteScriptData",
             "id": 1396
+        },
+        {
+            "class": "PIXIAnimatedSprite",
+            "id": 1397
+        },
+        {
+            "class": "PIXIAssetLoader",
+            "id": 1398
+        },
+        {
+            "class": "PIXICamera",
+            "id": 1399
+        },
+        {
+            "class": "PIXISceneGrid",
+            "id": 1400
+        },
+        {
+            "class": "SDVector3",
+            "id": 1367
+        },
+        {
+            "class": "SDFloat",
+            "id": 1368
+        },
+        {
+            "class": "SDInt32",
+            "id": 1369
+        },
+        {
+            "class": "SDString",
+            "id": 1370
+        },
+        {
+            "class": "kfAttribDef",
+            "id": 1401
+        },
+        {
+            "class": "eAttribDef",
+            "id": 1402
+        },
+        {
+            "class": "eAttribList",
+            "id": 1403
         }
     ]
 }

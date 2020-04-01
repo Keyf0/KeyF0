@@ -34,6 +34,14 @@
                 "default": "false",
                 "name": "tickable",
                 "type": "bool"
+            },
+            {
+                "id": 2,
+                "name": "vars",
+                "cname": "动态属性",
+                "type": "kfBytes",
+                "read": "ReadVars",
+                "write": "WriteVars"
             }
         ],
         "clsid": 1012
@@ -2214,6 +2222,121 @@
             }
         ],
         "clsid": 1363
+    },
+    {
+        "includes": [
+            "Script/Global/GSLogScript.h"
+        ],
+        "class": "SDVector3",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "x",
+                "type": "num1"
+            },
+            {
+                "id": 2,
+                "default": "0",
+                "name": "y",
+                "type": "num1"
+            },
+            {
+                "id": 3,
+                "default": "0",
+                "name": "z",
+                "type": "num1"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "SDVector3",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1367
+    },
+    {
+        "includes": [
+            "Script/Global/GSLogScript.h"
+        ],
+        "class": "SDFloat",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "value",
+                "type": "num1"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "SDFloat",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1368
+    },
+    {
+        "includes": [
+            "Script/Global/GSLogScript.h"
+        ],
+        "class": "SDInt32",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "default": "0",
+                "name": "value",
+                "type": "int32"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "SDInt32",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1369
+    },
+    {
+        "includes": [
+            "Script/Global/GSLogScript.h"
+        ],
+        "class": "SDString",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "type": "kfstr"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "SDString",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1370
     },
     {
         "includes": [

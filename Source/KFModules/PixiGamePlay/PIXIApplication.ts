@@ -19,6 +19,7 @@ export class PIXIApplication extends HElementActor implements PIXIObject{
     public antialias:boolean = true;    // default: false
     public transparent:boolean  = false; // default: false
     public resolution:number = 1 ;  // default: 1
+    public backgroundColor:number = 0x000000;
 
     public _target:PIXI.Application = null;
 

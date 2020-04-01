@@ -179,4 +179,8 @@ export class KFScriptManagerBase implements KFScriptContext
         }
         arr.push(script);
     }
+
+    public Get(i: number = 0): any {
+        return this._reg._OBJECTS[i];
+    }
 }

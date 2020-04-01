@@ -7,14 +7,19 @@ export class KFEvent
     public type:KFDName;
     public arg:any;
 
-    ///evtname:KFDName|number
+    ///evtname:KFDName|number|string
     public constructor(evtname:any = null)
     {
         this.type = new KFDName();
-        if(isNaN(evtname)){
-            this.type.value = evtname == null ? 0 : evtname.value;
-        }else
+        let typstr = typeof(evtname);
+
+        if(typstr == 'string') {
+            this.type.value =  KFDName._Strs.GetNameID(evtname);
+        }else if(typstr == "number"){
             this.type.value = evtname;
+        }
+        else
+            this.type.value = evtname == null ? 0 : evtname.value;
     }
 
 }

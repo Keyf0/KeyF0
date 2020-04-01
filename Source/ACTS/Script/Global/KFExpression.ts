@@ -24,7 +24,7 @@ export class KFExpression
     }
 
     ///全局脚本调用需要FORCE切记
-    public value(self:any,force:boolean = false):any
+    public value(self:any,force:boolean = false,context:any = null):any
     {
         if(this._exec && !force)
         {

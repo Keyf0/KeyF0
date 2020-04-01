@@ -1,7 +1,6 @@
 import {PIXINetActor} from "./PIXINetActor";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
-import {LOG} from "../../Core/Log/KFLog";
+import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 
 ///KFD(C,CLASS=PIXIMovieClip,EXTEND=PIXINetActor)
 ///KFD(*)

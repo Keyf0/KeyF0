@@ -77,7 +77,7 @@ export class GSExpressionScript extends KFScript
         /// 目标对象
         let expr:KFExpression = scriptdata.expression;
         ///后面所有还回值要存到一个堆栈中
-        expr.value(context.targetObject,true);
+        expr.value(context.targetObject,true, context);
     }
 }
 

@@ -69,4 +69,10 @@ export class KFDName
 
     public static _Strs:KFDNameStrings = new KFDNameStrings();
     public static _Param:KFDName = new KFDName();
+
+    public static Val(str:string):number{return KFDName._Strs.GetNameID(str);}
+}
+
+export function NVal(str:string) {
+    return KFDName._Strs.GetNameID(str);
 }

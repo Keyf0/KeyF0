@@ -2,6 +2,7 @@ import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFDName} from "../../KFData/Format/KFDName";
+import {LOG} from "../../Core/Log/KFLog";
 
 ///KFD(C,CLASS=HKeyboard,EXTEND=KFBlockTarget)
 ///KFD(*)
@@ -180,7 +181,6 @@ export class HKeyboard extends KFBlockTarget {
                 keyobj.isDown = true;
                 this.Press(keyobj);
             }
-
         }
     }
     private onKeyUp(event) {
