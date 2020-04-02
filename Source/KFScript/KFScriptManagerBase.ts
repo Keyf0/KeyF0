@@ -48,12 +48,14 @@ export class KFScriptManagerBase implements KFScriptContext
         /// 暂时不支持
     }
 
-    public Execute(sd: any , target: any): void
-    {
+    public Execute(sd: any , target: any): void {
         ///设置脚本参数
         let type = sd.type;
         let pints:number[] = sd.paramInts;
-        if(pints && pints[0] == KFScriptData.READ_S) {
+        let sflag = (pints ? pints[0] : KFScriptData.NONE_S);
+        let retval = null;
+
+        if(sflag == KFScriptData.READ_S) {
             ///c++每个脚本自己
             ///readfromstack
             let rfs = KFScriptData.RFS[type.value];
@@ -63,23 +65,31 @@ export class KFScriptManagerBase implements KFScriptContext
         this.targetObject = target;
 
         if (sd.group == KFScriptGroupType.Target) {
-
             ///判定是不是TARGET脚本
             if(target.FindScript) {
                 let targetscript = target.FindScript(type);
                 if(targetscript == null){
-
                     targetscript = this.BorrowScript(type);
-
                     if(target.KeepScript(targetscript, type)) {
-                        targetscript.Execute(sd, this);
+                        retval = targetscript.Execute(sd, this);
                     }else {
                         this.ReturnScript(targetscript, type);
                         LOG_WARNING("{0}脚本保持失败",type.toString());
                     }
                 }
                 else {
-                    targetscript.Execute(sd, this);
+                    retval = targetscript.Execute(sd, this);
+                }
+
+                ///如果是写有两个参数需要填写
+                if(sflag == KFScriptData.WRITE_S) {
+                    let wi = pints[1];
+                    let isreturn = (wi == -1);
+                    if(isreturn){
+                        this._reg.ReturnValue(retval,true);
+                    } else {
+                        this._reg._OBJECTS[wi] = retval;
+                    }
                 }
             }
             return;
@@ -87,31 +97,34 @@ export class KFScriptManagerBase implements KFScriptContext
 
         let script:KFScript = this._G_SCRIPT_INSTANCE[type.value];
 
-        if (script == null)
-        {
+        if (script == null) {
             script = this.NewScriptInstance(type);
-
-            if (script != null)
-            {
+            if (script != null) {
                 let sTypes:KFDName[] = script.scriptTypes;
                 let count:number = sTypes ? sTypes.length : 0;
-                if(count > 0)
-                {
-                    for (let i: number = 0; i < count; i++)
-                    {
+                if(count > 0) {
+                    for (let i: number = 0; i < count; i++) {
                         this._G_SCRIPT_INSTANCE[sTypes[i].value] = script;
                     }
                 }
-                else
-                {
+                else {
                     this._G_SCRIPT_INSTANCE[type.value] = script;
                 }
-
-                script.Execute(sd, this);
+                retval = script.Execute(sd, this);
             }
         }
         else {
-            script.Execute(sd, this);
+            retval = script.Execute(sd, this);
+        }
+        ///如果是写有两个参数需要填写
+        if(sflag == KFScriptData.WRITE_S) {
+            let wi = pints[1];
+            let isreturn = (wi == -1);
+            if(isreturn){
+                this._reg.ReturnValue(retval,true);
+            } else {
+                this._reg._OBJECTS[wi] = retval;
+            }
         }
     }
 

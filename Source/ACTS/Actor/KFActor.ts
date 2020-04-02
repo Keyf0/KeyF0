@@ -296,4 +296,17 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             this.m_keepsts.length = 0;
         }
     }
+
+    ///FOR SCRIPT
+    public StrBlock(name:string, op:number = 0){
+        let block = this.graph.m_graph.GetBlockID(KFDName._Strs.GetNameID(name));
+        if(block) {
+            if(op == 1) {
+                block.Input(null);
+            }else if(op == -1){
+                block.Deactive();
+            }
+        }
+        return block;
+    }
 }

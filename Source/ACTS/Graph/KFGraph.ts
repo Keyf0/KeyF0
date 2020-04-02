@@ -148,6 +148,11 @@ export class KFGraph
         return this.m_blocks[id.value];
     }
 
+    public GetBlockID(id:number):KFGraphBlockBase
+    {
+        return this.m_blocks[id];
+    }
+
     public Input(blockname:KFDName, arg:any)
     {
         let block = this.m_blocks[blockname.value];

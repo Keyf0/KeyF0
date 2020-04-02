@@ -34,4 +34,6 @@ export class PIXIMovieClip extends PIXINetActor
         }
     }
 
+   public get visible() {return this.target.visible;}
+   public set visible(v:boolean) {this.target.visible = v;}
 }

@@ -48,6 +48,7 @@ export class KFBlockTarget
     public runtime:IKFRuntime;
     ///是否需要TICK
     public tickable:boolean;
+    public visible:boolean;
 
     ///变量
     public vars:{[key:number]:any};
@@ -85,6 +86,11 @@ export class KFBlockTarget
     public rotation:{x?:number,y?:number,z:number};
     public set_rotation(v3?:{x?:number,y?:number,z:number}):void{}
     public SetCustomArg(value:number,...args:number[]):void{}
+
+
+    public StrVar(name:string){
+        return this.vars[KFDName._Strs.GetNameID(name)];
+    }
 
     public ReadVars(bytesarr:KFByteArray,len:number) {
 

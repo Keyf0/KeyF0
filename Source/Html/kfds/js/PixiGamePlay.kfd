@@ -28,7 +28,64 @@
         ],
         "class": "PIXIApplication",
         "extend": "HElementActor",
-        "propertys": [],
+        "propertys": [
+            {
+                "id": 1,
+                "name": "width",
+                "cname": "屏幕宽",
+                "type": "num1",
+                "default": "800"
+            },
+            {
+                "id": 2,
+                "name": "height",
+                "cname": "屏幕高",
+                "type": "num1",
+                "default": "600"
+            },
+            {
+                "id": 3,
+                "name": "antialias",
+                "cname": "抗锯齿",
+                "type": "bool",
+                "default": "true"
+            },
+            {
+                "id": 4,
+                "name": "transparent",
+                "cname": "透明",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 5,
+                "name": "resolution",
+                "cname": "分辨率",
+                "type": "num1",
+                "default": "1"
+            },
+            {
+                "id": 6,
+                "name": "backgroundColor",
+                "cname": "背景颜色",
+                "type": "uint32",
+                "default": "0"
+            },
+            {
+                "id": 7,
+                "name": "eventDown",
+                "cname": "点击事件",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 8,
+                "name": "eventMove",
+                "cname": "移动事件",
+                "type": "bool",
+                "default": "false"
+            }
+        ],
         "clsid": 1381
     },
     {
@@ -185,6 +242,13 @@
                 "cname": "移动事件",
                 "type": "bool",
                 "default": "false"
+            },
+            {
+                "id": 9,
+                "name": "eventTick",
+                "cname": "TICK事件",
+                "type": "int32",
+                "default": "-1"
             }
         ],
         "clsid": 1383

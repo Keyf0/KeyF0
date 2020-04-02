@@ -31,7 +31,7 @@ export class GSPlayStateScript extends KFScript
             }
         });
 
-    public Execute(scriptdata: any, context: KFScriptContext = null): void
+    public Execute(scriptdata: any, context: KFScriptContext = null): any
     {
         if(scriptdata.action == 0)
         {
@@ -54,7 +54,7 @@ export class GSLogScript extends KFScript{
             sd.text = objs[0].toString();
         });
 
-    public Execute(sd: any, context: KFScriptContext = null): void {LOG(sd.text);}
+    public Execute(sd: any, context: KFScriptContext = null): any {LOG(sd.text);}
 }
 
 
@@ -73,11 +73,11 @@ export class GSExpressionScript extends KFScript
             sd.expression = objs[0];
         });
 
-    public Execute(scriptdata: any, context: KFScriptContext = null): void {
+    public Execute(scriptdata: any, context: KFScriptContext = null): any {
         /// 目标对象
         let expr:KFExpression = scriptdata.expression;
         ///后面所有还回值要存到一个堆栈中
-        expr.value(context.targetObject,true, context);
+        return expr.value(context.targetObject,true, context);
     }
 }
 
@@ -108,7 +108,7 @@ export class GSRemoteScript extends KFScript {
             }
         });
 
-    public Execute(sd: any, context: KFScriptContext = null): void {
+    public Execute(sd: any, context: KFScriptContext = null): any {
         //是否从堆栈中获取数据
         let rsd = sd.data;
         let pints:number[] = rsd.paramInts;

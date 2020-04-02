@@ -25,6 +25,7 @@ export interface KFScriptContext
 
 export class KFScriptData {
 
+    public static NONE_S:number = -1;
     public static WRITE_S:number = 0;
     public static READ_S:number = 1;
     public static WAITR_S:number = 2;
@@ -37,7 +38,7 @@ export class KFScript
     ///是否在运行中
     public isrunning:boolean;
 
-     public Execute(scriptdata:any, context:KFScriptContext = null):void
+     public Execute(scriptdata:any, context:KFScriptContext = null):any
      {}
 
      public Destory():boolean

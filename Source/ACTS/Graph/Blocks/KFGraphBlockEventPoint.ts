@@ -57,6 +57,8 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
                 etable.AddEventListener(this.m_evtname
                 , this.m_evthandler);
             }
+
+
         }
     }
 
@@ -89,6 +91,7 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
 
             this.m_evthandler = null;
             this.m_evtname = null;
+            this.m_target = null;
         }
     }
 }
