@@ -12,6 +12,7 @@ import {PIXIAnimatedSprite} from "./PIXIAnimatedSprite";
 import {PIXIAssetLoader} from "./PIXIAssetLoader";
 import {PIXICamera} from "./PIXICamera";
 import {PIXISceneGrid} from "./PIXISceneGrid";
+import {PIXIShapes} from "./PIXIShapes";
 
 ///初始化
 export function init() {
@@ -21,6 +22,7 @@ export function init() {
     PIXIScene;
     PIXIGraphics;
     PIXIAnimatedSprite;
+    PIXIShapes;
     PIXIAssetLoader;
     PIXICamera;
     PIXISceneGrid;

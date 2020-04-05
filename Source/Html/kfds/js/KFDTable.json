@@ -1647,6 +1647,10 @@
         {
             "class": "eAttribList",
             "id": 1403
+        },
+        {
+            "class": "PIXIShapes",
+            "id": 1404
         }
     ]
 }

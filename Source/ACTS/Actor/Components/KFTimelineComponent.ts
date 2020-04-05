@@ -68,46 +68,49 @@ export class KFTimelineComponent extends KFComponentBase
         this.m_cfg = null;
     }
 
-    public EnterFrame(frameindex:number):void
-    {
-        this.m_timeline.Tick(frameindex);
+    public EnterFrame(frameindex:number):void {
+        if(this.playing)
+            this.m_timeline.Tick(frameindex);
     }
 
-    public Play(stateid:number, force:boolean = false)
-    {
-        if (!force)
-        {
-            if (this.stateid == stateid) return;
-        }
+    public Play(stateid:number, force:boolean = false) {
+        if (!force && this.stateid == stateid) return;
+
         this.playing = true;
         this.stateid = stateid;
         //this.ClearKeyFrame();
         this.m_timeline.Play(stateid, 0);
     }
 
+    public SetState(stateid:number) {
+        this.stateid = stateid;
+        //this.ClearKeyFrame();
+        this.m_timeline.SetState(stateid);
+    }
+
+    public DisplayFrame(frameindex:number, bJumpFrame:boolean = false) {
+        this.m_timeline.DisplayFrame(frameindex, bJumpFrame);
+    }
+
     //public ClearKeyFrame():void{}
 
-    public PlayFrame(stateid:number, startFrameIndex:number)
-    {
+    public PlayFrame(stateid:number, startFrameIndex:number) {
         this.playing = true;
         this.stateid = stateid;
         this.m_timeline.Play(stateid, startFrameIndex);
     }
 
-    public PlayTime(stateid:number, startTimeNormalized:number)
-    {
+    public PlayTime(stateid:number, startTimeNormalized:number) {
         this.playing = true;
         this.stateid = stateid;
         this.m_timeline.Play1(stateid, startTimeNormalized);
     }
 
-    public PlayOnly(stateid:number)
-    {
+    public PlayOnly(stateid:number) {
         this.m_timeline.Play(stateid, 0);
     }
 
-    public PlayRepeatFrame(startFrameIndex:number = 0)
-    {
+    public PlayRepeatFrame(startFrameIndex:number = 0) {
 
         this.m_timeline.Play(this.stateid, startFrameIndex);
     }
@@ -117,7 +120,9 @@ export class KFTimelineComponent extends KFComponentBase
         this.m_timeline.Play1(this.stateid, startTimeNormalized);
     }
 
-    //public Stop() {}
+    public Stop()
+    { this.playing = false;
+    }
 
     public StopAt(stopFrameIndex:number = 0)
     {

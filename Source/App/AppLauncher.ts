@@ -7,6 +7,7 @@ import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {DefaultAppConfig} from "./DefaultAppConfig";
 import {KFApp} from "../iSay/KFApp";
 import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
+import {KFGlobalDefines} from "../ACTS/KFACTSDefines";
 
 export class AppLauncher
 {
@@ -26,6 +27,10 @@ export class AppLauncher
             IKFFileIO_Type.meta = KFHttpFileIO.Meta;
         IKFFileIO_Type.new_default();
         this.config = IKFConfigs_Type.new_default();
+    }
+
+    public setFPS(v:number){
+        KFGlobalDefines.SetFPS(v);
     }
 
     public stop_tick()

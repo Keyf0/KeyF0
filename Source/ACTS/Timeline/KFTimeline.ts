@@ -24,7 +24,6 @@ export class KFTimeline implements IKFTimelineContext
         return new KFTimeBlock();
     });
 
-
     private m_length:number = 0;
     private m_loop:boolean = true;
     private m_tpf:number = 0;
@@ -40,8 +39,7 @@ export class KFTimeline implements IKFTimelineContext
     private m_listProcSize:number = 0;
     private m_scripts:KFScriptContext = null;
 
-    public constructor(target:KFBlockTarget)
-    {
+    public constructor(target:KFBlockTarget) {
         this.m_target = target;
         this.m_tpf = KFGlobalDefines.TPF / 1000.0;
     }
@@ -58,8 +56,7 @@ export class KFTimeline implements IKFTimelineContext
 
         let statesarr = cfg.states;
         if(statesarr) {
-            for (let data of statesarr)
-            {
+            for (let data of statesarr) {
                 this.m_states[data.id] = data;
             }
         }
@@ -75,22 +72,26 @@ export class KFTimeline implements IKFTimelineContext
         this.m_blocks.length = 0;
     }
 
-    private TickInternal(frameIndex:number, bJumpFrame:boolean = false)
-    {
+    public TickInternal(frameIndex:number, bJumpFrame:boolean = false) {
         if (this.currframeindex == frameIndex) return;
-
         this.currframeindex = frameIndex;
 
-        for (let block of this.m_blocks)
-        {
+        for (let block of this.m_blocks) {
             block.Tick(frameIndex, bJumpFrame);
         }
-
         ///帧的最后执行脚本逻辑
         this.ProcKeyFrame();
     }
 
-    private SetState(stateid:number):boolean
+    public DisplayFrame(frameIndex:number, bJumpFrame:boolean = false) {
+        if (this.currframeindex == frameIndex) return;
+        this.currframeindex = frameIndex;
+        for (let block of this.m_blocks) {
+            block.DisplayFrame(frameIndex, bJumpFrame);
+        }
+    }
+
+    public SetState(stateid:number):boolean
     {
         this.m_length = 1;
         this.m_loop = false;
@@ -113,8 +114,12 @@ export class KFTimeline implements IKFTimelineContext
                 let owner = this.m_target.owner;
 
                 let m_pool = KFTimeline.TB_pool;
-                for (let layer of this.currstate.layers)
+                let layers:any[] = this.currstate.layers;
+                let layeri = layers.length - 1;
+                while (layeri >= 0)
                 {
+                    let layer = layers[layeri];
+                    layeri -= 1;
                     for (let data of layer.blocks)
                     {
                         let tdata = data.target;
@@ -152,11 +157,9 @@ export class KFTimeline implements IKFTimelineContext
         }
     }
 
-    public Play(stateid:number, startFrameIndex:number)
-    {
+    public Play(stateid:number, startFrameIndex:number) {
         this.m_listProcSize = 0;
-        if(this.SetState(stateid))
-        {
+        if(this.SetState(stateid)) {
             this.onPlayBegin.emit(stateid);
             this.TickInternal(startFrameIndex, true);
         }
@@ -165,8 +168,7 @@ export class KFTimeline implements IKFTimelineContext
     public Play1(stateid:number, startTimeNormalized:number)
     {
         this.m_listProcSize = 0;
-        if (this.SetState(stateid))
-        {
+        if (this.SetState(stateid)) {
             this.onPlayBegin.emit(stateid);
             let startFrameIndex:number = startTimeNormalized * this.m_length;
             this.TickInternal(startFrameIndex, true);
@@ -183,8 +185,7 @@ export class KFTimeline implements IKFTimelineContext
         this.m_loop = false;
     }
 
-    public GetState(stateid:number):any
-    {
+    public GetState(stateid:number):any {
         return this.m_states[stateid];
     }
 
@@ -198,28 +199,23 @@ export class KFTimeline implements IKFTimelineContext
         if (this.currstate)
         {
             let nextFrameIndex = this.currframeindex + 1;
-            if (nextFrameIndex >= this.m_length)
-            {
-                if (this.m_loop)
-                {
+            if (nextFrameIndex >= this.m_length) {
+                if (this.m_loop) {
                     nextFrameIndex = 0;
                     this.TickInternal(nextFrameIndex, false);
                 }
-                else
-                {
+                else {
                     this.onPlayEnd.emit(this.currstate.id);
                 }
             }
-            else
-            {
+            else {
                 this.TickInternal(nextFrameIndex, false);
             }
         }
     }
 
 
-    public OnFrameBox(box: any): void
-    {
+    public OnFrameBox(box: any): void {
 
     }
 
@@ -239,8 +235,7 @@ export class KFTimeline implements IKFTimelineContext
         this.m_listProcSize += 1;
     }
 
-    public ProcKeyFrame()
-    {
+    public ProcKeyFrame() {
         if (this.m_listProcSize > 0)
         {
             let i = 0;
@@ -257,7 +252,8 @@ export class KFTimeline implements IKFTimelineContext
                     target = this.m_target;
                 }
                 let framedata = keyframe.data;
-                if(framedata.scripts.length > 0)
+                let scripts = framedata.scripts;
+                if(scripts && scripts.length > 0)
                 {
                     this.m_scripts.ExecuteFrameScript(keyframe.id, framedata, target);
                 }

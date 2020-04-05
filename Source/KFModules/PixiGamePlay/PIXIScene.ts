@@ -21,14 +21,4 @@ export class PIXIScene extends PIXINetActor
         this.position = {x:0,y:0};
         return this.target;
     }
-
-    public set_position(v3?: { x: number; y: number; z?: number }): void {
-
-        if(v3) {
-            this.position.x = v3.x;
-            this.position.y = v3.y;
-            this.target.x = v3.x;
-            this.target.y = v3.y;
-        }
-    }
 }

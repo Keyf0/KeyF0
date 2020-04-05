@@ -1798,13 +1798,14 @@
             },
             {
                 "id": 2,
+                "cname": "显示帧",
                 "default": "0",
-                "name": "evt",
+                "name": "display",
                 "type": "int32"
             },
             {
                 "id": 3,
-                "name": "args",
+                "name": "values",
                 "otype": "num1",
                 "type": "arr"
             },
@@ -1833,80 +1834,58 @@
         "propertys": [
             {
                 "id": 1,
-                "cname": "自定义参数1",
-                "unknowtags": [
-                    {
-                        "tag": "ARGCNT",
-                        "val": "1"
-                    }
-                ],
-                "default": "1",
-                "name": "CustomArg1",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "cname": "自定义参数2",
-                "unknowtags": [
-                    {
-                        "tag": "ARGCNT",
-                        "val": "2"
-                    }
-                ],
-                "default": "2",
-                "name": "CustomArg2",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "cname": "自定义参数3",
-                "unknowtags": [
-                    {
-                        "tag": "ARGCNT",
-                        "val": "3"
-                    }
-                ],
-                "default": "3",
-                "name": "CustomArg3",
-                "type": "int32"
-            },
-            {
-                "id": 1,
-                "cname": "自定义参数4",
-                "unknowtags": [
-                    {
-                        "tag": "ARGCNT",
-                        "val": "4"
-                    }
-                ],
-                "default": "4",
-                "name": "CustomArg4",
+                "cname": "无",
+                "default": "0",
+                "name": "None",
                 "type": "int32"
             },
             {
                 "id": 1,
                 "cname": "坐标",
-                "unknowtags": [
-                    {
-                        "tag": "ARGCNT",
-                        "val": "3"
-                    }
-                ],
-                "default": "5",
+                "default": "1",
                 "name": "Position",
                 "type": "int32"
             },
             {
                 "id": 1,
                 "cname": "旋转",
-                "unknowtags": [
-                    {
-                        "tag": "ARGCNT",
-                        "val": "3"
-                    }
-                ],
-                "default": "6",
+                "default": "2",
                 "name": "Rotation",
+                "type": "int32"
+            },
+            {
+                "id": 1,
+                "cname": "缩放",
+                "default": "4",
+                "name": "SCALE",
+                "type": "int32"
+            },
+            {
+                "id": 1,
+                "cname": "旋转3D",
+                "default": "8",
+                "name": "Rotation3D",
+                "type": "int32"
+            },
+            {
+                "id": 1,
+                "cname": "倾斜",
+                "default": "16",
+                "name": "SKEW",
+                "type": "int32"
+            },
+            {
+                "id": 1,
+                "cname": "2d综合",
+                "default": "23",
+                "name": "P3_R1_S3_SK2",
+                "type": "int32"
+            },
+            {
+                "id": 1,
+                "cname": "3d综合",
+                "default": "13",
+                "name": "P3_R3_S3",
                 "type": "int32"
             }
         ],
@@ -1938,7 +1917,6 @@
         "includes": [
             "Data/Timeline/KFTimelineData.h",
             "KFBlockTargetDataF.h",
-            "KFTimeBlockOpDataF.h",
             "KFKeyFrameF.h"
         ],
         "class": "KFTimeBlockData",
@@ -1980,9 +1958,11 @@
             },
             {
                 "id": 7,
-                "name": "ops",
-                "otype": "KFTimeBlockOpData",
-                "type": "arr"
+                "cname": "数据格式",
+                "enum": "KFTimeBlockOpOption",
+                "default": "KFTimeBlockOpOption::None",
+                "name": "opOption",
+                "type": "int32"
             },
             {
                 "id": 8,

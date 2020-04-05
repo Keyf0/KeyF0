@@ -49,6 +49,7 @@ export class KFBlockTarget
     ///是否需要TICK
     public tickable:boolean;
     public visible:boolean;
+    public display:number;
 
     ///变量
     public vars:{[key:number]:any};
@@ -81,12 +82,15 @@ export class KFBlockTarget
     }
 
     public DeactiveBLK():void{}
-    public position:{x:number,y:number,z?:number};
-    public set_position(v3?:{x:number,y:number,z?:number}):void{}
-    public rotation:{x?:number,y?:number,z:number};
-    public set_rotation(v3?:{x?:number,y?:number,z:number}):void{}
-    public SetCustomArg(value:number,...args:number[]):void{}
 
+    public position:{x:number,y:number,z?:number};
+    public rotation:{x?:number,y?:number,z:number};
+    public scale:{x:number,y:number,z?:number};
+
+    public set_position(v3?: { x: number; y: number; z?: number }){}
+    public set_rotation(v3?: { x?: number; y?: number; z: number }){}
+    public set_scale(v3?:{x:number,y:number,z?:number}){}
+    public set_datas(datas:number[]){}
 
     public StrVar(name:string){
         return this.vars[KFDName._Strs.GetNameID(name)];
@@ -103,7 +107,6 @@ export class KFBlockTarget
             varsize -= 1;
         }
     }
-
     public WriteVars(bytesarr:KFByteArray) {
 
         if(this.vars) {

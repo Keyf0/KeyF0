@@ -2,17 +2,18 @@ import {IKFTimelineContext} from "./IKFTimelineProc";
 import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
 
-
 export class KFTimeBlock
 {
     private m_ctx:IKFTimelineContext;
     private m_container:IKFBlockTargetContainer;
     private m_keyframes:{[key:number]:any};
+    private m_v:boolean;///显隐
 
     public m_target:KFBlockTarget;
     public data:any;
     public keep:boolean;
     public option:number;
+    public opoption:number;
 
     public Create(  container:IKFBlockTargetContainer
                   , ctx:IKFTimelineContext
@@ -36,6 +37,7 @@ export class KFTimeBlock
     {
         this.data = data;
         this.option = data.target.option;
+        this.opoption = data.opOption;
         this.m_keyframes = {};
 
         let keyframes = data.keyframes;
@@ -75,44 +77,90 @@ export class KFTimeBlock
         if(this.option == KFBlockTargetOption.Disabled)
             return;
 
-
         let endi = this.data.end;
-        if(     frameIndex >= this.data.begin
-            &&  frameIndex <= endi)
-        {
+        if( frameIndex >= this.data.begin &&  frameIndex < endi) {
             frameIndex -= this.data.begin;
-
-            if ( frameIndex == 0 &&  this.m_target == null)
-            {
+            if (this.m_target == null) {
                 this.Activate();
             }
 
             this.TickInternal(frameIndex, bJumpFrame);
         }
-        else if(frameIndex == endi + 1)
-        {
-            if(!this.keep)
+        else if(this.option == KFBlockTargetOption.Create) {
+            if(this.m_v) {
+                this.m_v =  false;
+                this.m_target.visible = false;
+            }
+        }
+    }
+
+    ///简单判定另开一个函数处理直接显示逻辑
+    public DisplayFrame(frameIndex:number, bJumpFrame:boolean) {
+
+        let bdata = this.data;
+        let endi = bdata.end;
+        let bgi = bdata.begin;
+
+        if( frameIndex >= bgi &&  frameIndex < endi) {
+            frameIndex -= bgi;
+            if (this.m_target == null)
             {
-                this.Deactive();
+                this.Activate();
+            }
+            if (!this.m_v) {
+                this.m_v = true;
+                this.m_target.visible = true;
+            }
+
+            let keyframe = this.m_keyframes[frameIndex];
+            if (keyframe) {
+                if (this.opoption != 0) {
+                    this.m_target.display = keyframe.display;
+                    this.m_target.set_datas(keyframe.values);
+                }
+            } else if (bJumpFrame) {
+
+                let prevFrameIndex = frameIndex - 1;
+                while (prevFrameIndex >= 0) {
+                    keyframe = this.m_keyframes[prevFrameIndex];
+                    if (keyframe) {
+                        if (this.opoption != 0) {
+                            this.m_target.display = keyframe.display;
+                            this.m_target.set_datas(keyframe.values);
+                        }
+                        break;
+                    }
+                    --prevFrameIndex;
+                }
             }
         }
     }
 
     private TickInternal(frameIndex:number, bJumpFrame:boolean)
     {
-        let keyframe = this.m_keyframes[frameIndex];
-        if (keyframe)
-        {
-            this.m_ctx.OnKeyFrame(this.m_target, keyframe);
+        if(!this.m_v) {
+            this.m_v =  true;
+            this.m_target.visible = true;
         }
-        else if (bJumpFrame)
-        {
+
+        let keyframe = this.m_keyframes[frameIndex];
+        if (keyframe) {
+            this.m_ctx.OnKeyFrame(this.m_target, keyframe);
+            if(this.opoption != 0) {
+                this.m_target.display = keyframe.display;
+                this.m_target.set_datas(keyframe.values);
+            }
+        }
+        else if (bJumpFrame) {
+
             let prevFrameIndex = frameIndex - 1;
-            while (prevFrameIndex >= 0)
-            {
+            while (prevFrameIndex >= 0) {
                 keyframe = this.m_keyframes[prevFrameIndex];
-                if (keyframe)
-                {
+                if (keyframe) {
+                    if(this.opoption != 0) {
+                        this.m_target.display = keyframe.display;
+                        this.m_target.set_datas(keyframe.values);
+                    }
                     break;
                 }
                 --prevFrameIndex;
@@ -124,14 +172,15 @@ export class KFTimeBlock
     {
         let targetdata = this.data.target;
 
-        if (this.option == KFBlockTargetOption.Create)
-        {
+        if (this.option == KFBlockTargetOption.Create) {
             this.m_target = this.m_container.CreateChild(targetdata);
+            this.m_v = true;
         }
-        else if (this.option == KFBlockTargetOption.Attach)
-        {
-            this.m_target = this.m_container
-                .FindChild(targetdata.instname);
+        else if (this.option == KFBlockTargetOption.Attach) {
+            this.m_target = this.m_container.FindChild(targetdata.instname);
+        } else {
+            ///是自己
+            this.m_target = <any>this.m_container;
         }
     }
 
@@ -145,8 +194,6 @@ export class KFTimeBlock
                 this.m_container.DeleteChild(this.m_target);
             }
         }
-
         this.m_target = null;
     }
-
 }

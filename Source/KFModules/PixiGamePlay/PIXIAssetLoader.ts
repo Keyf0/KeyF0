@@ -2,6 +2,7 @@ import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {IKFConfigs_Type} from "../../ACTS/Context/IKFConfigs";
 
 
 ///KFD(C,CLASS=PIXIAssetLoader,EXTEND=KFBlockTarget)
@@ -28,6 +29,9 @@ export class PIXIAssetLoader extends KFBlockTarget {
         super.ActivateBLK(KFBlockTargetData);
 
         let loader = PIXI.Loader.shared;
+        let basedir = IKFConfigs_Type.instance.basedir();
+        loader.baseUrl = basedir;
+
         for(let asseturl of this.AssetURLs){
             loader.add(asseturl);
         }

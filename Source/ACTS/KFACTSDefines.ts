@@ -10,4 +10,12 @@ export class KFGlobalDefines
     public static FPS:number = 60;
     ///是否调试模式
     public static IS_Debug:boolean = true;
+
+    public static SetFPS(v:number = 60){
+        KFGlobalDefines.FPS = v;
+        let tpf :number = Math.floor( 1000 / v);
+        KFGlobalDefines.RENDER_TPF = tpf;
+        KFGlobalDefines.TPF = tpf;
+        KFGlobalDefines.FIX_TPF = tpf;
+    }
 }

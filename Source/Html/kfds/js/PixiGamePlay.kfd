@@ -249,6 +249,20 @@
                 "cname": "TICK事件",
                 "type": "int32",
                 "default": "-1"
+            },
+            {
+                "id": 10,
+                "name": "autoStateID",
+                "cname": "进入状态",
+                "type": "int32",
+                "default": "-1"
+            },
+            {
+                "id": 11,
+                "name": "bGraphic",
+                "cname": "图形模式",
+                "type": "bool",
+                "default": "false"
             }
         ],
         "clsid": 1383
@@ -277,6 +291,22 @@
             }
         ],
         "clsid": 1400
+    },
+    {
+        "includes": [
+            "PIXIShapes.ts"
+        ],
+        "class": "PIXIShapes",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "ssurl",
+                "cname": "资源路径",
+                "type": "kfstr"
+            }
+        ],
+        "clsid": 1404
     },
     {
         "includes": [

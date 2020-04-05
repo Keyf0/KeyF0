@@ -2,6 +2,8 @@ import {PIXINetActor} from "./PIXINetActor";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 
+//此类意义已经不大了,用PIXINETACTOR
+
 ///KFD(C,CLASS=PIXIMovieClip,EXTEND=PIXINetActor)
 ///KFD(*)
 
@@ -19,21 +21,4 @@ export class PIXIMovieClip extends PIXINetActor
         this.target = new PIXI.Sprite();
         return this.target;
     }
-
-    public set_position(v3?: { x: number; y: number; z?: number }): void {
-        if(!v3)v3 = this.position;
-        if(this.target){
-            this.target.setTransform(v3.x,v3.y);
-        }
-    }
-
-    public set_rotation(v3?: { x?: number; y?: number; z: number }): void {
-        if(!v3)v3 = this.rotation;
-        if(this.target){
-            this.target.rotation = v3.z;
-        }
-    }
-
-   public get visible() {return this.target.visible;}
-   public set visible(v:boolean) {this.target.visible = v;}
 }
