@@ -127,4 +127,11 @@ export class KFBlockTarget
         }
     }
 
+
+    public Destory() {
+        if(this.parent) {
+            this.parent.DeleteChild(this);
+        }
+    }
+
 }

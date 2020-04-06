@@ -5,16 +5,15 @@
 ///KFD(P=2,NAME=once,CNAME=缓存结果,TYPE=bool)
 ///KFD(*)
 
-import {LOG} from "../../../Core/Log/KFLog";
 
 export class KFExpression
 {
     public text:string = "";
     public once:boolean = false;
 
-    private _result:any;
-    private _exec:boolean = false;
-    private _func:()=>any;
+    public _result:any;
+    public _exec:boolean = false;
+    public _func:(self:any,context:any)=>any;
 
     public constructor() {}
 
@@ -24,13 +23,13 @@ export class KFExpression
     }
 
     ///全局脚本调用需要FORCE切记
-    public value(self:any,force:boolean = false,context:any = null):any
+    public value(tgt:any,ctx:any = null):any
     {
-        if(this._exec && !force)
+        if(this._exec)
         {
             if(this.once)
                 return this._result;
-            return this._func();
+            return this._func(tgt,ctx);
         }
         this._exec = true;
 
@@ -42,12 +41,12 @@ export class KFExpression
             ///有分号就是多行了
             let multi = (this.text.indexOf(";") != -1);
             if (multi) {
-                this._func = eval("let __func__ = function(){" + this.text + "};__func__");
+                this._func = eval("var __func__ = function(self,context){" + this.text + "};__func__");
             } else {
-                this._func = eval("let __func__ = function(){return " + this.text + ";};__func__");
+                this._func = eval("var __func__ = function(self,context){return " + this.text + ";};__func__");
             }
 
-            this._result = this._func();
+            this._result = this._func(tgt,ctx);
             //LOG("执行:{0}",this.text);
         }
 

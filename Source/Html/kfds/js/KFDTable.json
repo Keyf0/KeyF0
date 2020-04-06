@@ -1651,6 +1651,10 @@
         {
             "class": "PIXIShapes",
             "id": 1404
+        },
+        {
+            "class": "GSCreateBLKData",
+            "id": 1405
         }
     ]
 }

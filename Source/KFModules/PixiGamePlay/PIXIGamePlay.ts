@@ -6,7 +6,7 @@ import {PIXINetActor} from "./PIXINetActor";
 import {PIXIScene} from "./PIXIScene";
 import {PIXIGraphics} from "./PIXIGraphics";
 import {ScriptMeta} from "../../ACTS/Script/KFScriptFactory";
-import {TSControlMove, TSSmoothMove} from "./Scripts/PIXIScripts";
+import {GSCreateBLK, TSControlMove, TSSmoothMove} from "./Scripts/PIXIScripts";
 import {KFDataHelper} from "../../ACTS/Data/KFDataHelper";
 import {PIXIAnimatedSprite} from "./PIXIAnimatedSprite";
 import {PIXIAssetLoader} from "./PIXIAssetLoader";
@@ -35,6 +35,7 @@ export function initKFDTable(kfdtb:KFDTable) {
         [
               TSSmoothMove.Meta
             , TSControlMove.Meta
+            , GSCreateBLK.Meta
         ]
         ,kfdtb
     );

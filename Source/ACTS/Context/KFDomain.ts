@@ -4,6 +4,7 @@ import {IKFRuntime} from "./IKFRuntime";
 import {KFMetaManager} from "../../Core/Meta/KFMetaManager";
 import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
 import {KFDName} from "../../KFData/Format/KFDName";
+import {IKFConfigs} from "./IKFConfigs";
 
 export class KFDomain implements IKFDomain
 {
@@ -11,10 +12,12 @@ export class KFDomain implements IKFDomain
     private m_incrsid:number;
     private m_execSide:number;
     private m_NoSideLog:string;
+    private m_configs:IKFConfigs;
 
     public constructor(runtime:IKFRuntime)
     {
         this.m_runtime = runtime;
+        this.m_configs = runtime.configs;
         this.m_execSide = runtime.execSide;
         let endstr = "服务端";
         ///客户端创建的ID从一个很大的数字开始
@@ -38,7 +41,7 @@ export class KFDomain implements IKFDomain
         }
 
         //let path = asseturl + ".meta";
-        let metadata = meta ? meta : this.m_runtime.configs.GetMetaData(asseturl, false);
+        let metadata = meta ? meta : this.m_configs.GetMetaData(asseturl, false);
         if(metadata)
         {
             let meta = KFMetaManager.GetMetaName(metadata.type);
@@ -89,6 +92,8 @@ export class KFDomain implements IKFDomain
     public DestroyBlockTarget(target: KFBlockTarget): void
     {
         ///kfgcRelease(target);
+
+        LOG("销毁 BlockTarget:{0}",target.metadata.asseturl);
     }
 
     public FindBlockTarget(instpath: string): KFBlockTarget

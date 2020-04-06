@@ -16,7 +16,7 @@ export class KFComponentBase
         this.runtime = target.runtime;
     }
     
-    public ActivateComponent():void{}
+    public ActivateComponent(inarg:any):void{}
     public DeactiveComponent():void{}
     public ReleaseComponent():void{}
     public ResetComponent():void {}

@@ -31,16 +31,16 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
         this.m_graph.Reset();
         this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl,false);
         this.m_graph.SetConfig(this.m_cfg);
-        this.m_graph.Play();
+        this.m_graph.Play(null);
     }
 
-    public ActivateComponent()
+    public ActivateComponent(inarg:any)
     {
         this.script = this.runtime.scripts;
         this.m_graph.Activate(this.targetObject.sid);
         this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl,false);
         this.m_graph.SetConfig(this.m_cfg);
-        this.m_graph.Play();
+        this.m_graph.Play(inarg);
     }
 
     public DeactiveComponent()
@@ -49,9 +49,9 @@ export class KFGraphComponent extends KFComponentBase implements IKFGraphContext
         this.m_graph.Deactive();
     }
 
-    public Play():void
+    public Play(inarg:any):void
     {
-        this.m_graph.Play();
+        this.m_graph.Play(inarg);
     }
 
     public Stop():void

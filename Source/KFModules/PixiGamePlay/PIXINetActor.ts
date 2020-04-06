@@ -51,6 +51,9 @@ export class PIXINetActor extends KFActor implements PIXIObject
     ///KFD(P=11,NAME=bGraphic,CNAME=图形模式,TYPE=bool,DEFAULT=false)
     public bGraphic:boolean;
 
+    ///KFD(P=12,NAME=lifeTime,CNAME=生命周期,TYPE=int32,DEFAULT=-1)
+    public lifeTime:number;
+
     ///KFD(*)
 
     protected _isdown:boolean;
@@ -101,7 +104,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
                 //let test = new PIXI.Graphics();
                 //test.beginFill(0x00ff00);
-                //test.drawCircle(0,0,50);
+                //test.drawCircle(0,0,5);
                 //test.endFill();
                 //this._container.addChild(test);
 
@@ -182,6 +185,13 @@ export class PIXINetActor extends KFActor implements PIXIObject
             if(this._ticktime <= 0) {
                 this._ticktime = this.eventTick;
                 this.etable.FireEvent(PIXINetActor.TICK_Event);
+            }
+        }
+
+        if(this.lifeTime != undefined && this.lifeTime > 0) {
+            this.lifeTime -= this.runtime.fixtpf;
+            if(this.lifeTime <= 0){
+                this.Destory();
             }
         }
     }
@@ -270,15 +280,20 @@ export class PIXINetActor extends KFActor implements PIXIObject
     }
 
     public get visible() {return this._container.visible;}
-    public set visible(v:boolean) {this._container.visible = v;}
+    public set visible(v:boolean)
+    {
+        this._container.visible = v;
+        ///不显示就不需要TICK了吧
+        this.tickable = v;
+    }
     public get display():number {return this._display;}
     public set display(v:number){
         if(this._display != v) {
 
             if(this._display == -1){
-                this._container.visible = true;
+                this.visible = true;
             }else if(v == -1){
-                this._container.visible = false;
+                this.visible = false;
             }
             this._display = v;
             if(this.bGraphic && v != -1) {

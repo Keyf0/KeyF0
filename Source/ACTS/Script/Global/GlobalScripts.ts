@@ -61,6 +61,7 @@ export class GSLogScript extends KFScript{
 ///KFD(C,CLASS=GSExpressionScriptData,CNAME=执行,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=GSExpressionScriptData,OR=1,TYPE=kfname)
 ///KFD(P=3,NAME=group,CNAME=脚本分组,DEFAULT=4,OR=1,ENUM=KFScriptGroupType,TYPE=int8)
+///KFD(P=2,NAME=des,CNAME=说明,TYPE=kfstr)
 ///KFD(P=1,NAME=expression,CNAME=表达式,TYPE=object,OTYPE=KFExpression)
 ///KFD(*)
 
@@ -77,7 +78,14 @@ export class GSExpressionScript extends KFScript
         /// 目标对象
         let expr:KFExpression = scriptdata.expression;
         ///后面所有还回值要存到一个堆栈中
-        return expr.value(context.targetObject,true, context);
+        if(expr._exec)
+        {
+            if(expr.once)
+                return expr._result;
+            return expr._func(context.targetObject,context);
+        }
+        else
+            return expr.value(context.targetObject, context);
     }
 }
 

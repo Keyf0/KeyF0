@@ -3,6 +3,7 @@ import {KFDName} from "../../../KFData/Format/KFDName";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
 import {KFGraphBlockType} from "../../Data/KFGraphBlockType";
+import {LOG} from "../../../Core/Log/KFLog";
 
 export class KFGraphBlockEventPoint extends KFGraphBlockBase
 {
@@ -50,8 +51,9 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
                 let self = this;
                 this.m_evthandler = function (evt:KFEvent)
                 {
-                    if(self.m_firenode)
+                    if(self.m_firenode) {
                         self.m_ctx.m_graph.Input(self.m_firenode, evt.arg);
+                    }
                 };
 
                 etable.AddEventListener(this.m_evtname

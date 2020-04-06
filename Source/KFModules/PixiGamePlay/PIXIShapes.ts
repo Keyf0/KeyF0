@@ -1,6 +1,6 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {LOG_ERROR} from "../../Core/Log/KFLog";
+import {LOG, LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
 import {PIXIObject} from "./PIXIInterface";
 
 ///KFD(C,CLASS=PIXIShapes,EXTEND=KFBlockTarget)
@@ -18,8 +18,10 @@ export class PIXIShapes extends KFBlockTarget
 
     public ssurl:string;
     public target:PIXI.Sprite;
+
     protected _display:number;
     protected _textures:any[];
+    private _manul_dir:any;
 
     public ActivateBLK(KFBlockTargetData: any): void {
         super.ActivateBLK(KFBlockTargetData);
@@ -74,6 +76,11 @@ export class PIXIShapes extends KFBlockTarget
         }
     }
 
+
+    public get position(){
+        return {x:this.target.x,y:this.target.y,z:0};
+    }
+
     public set_position(v3?: { x: number; y: number; z?: number }): void {
         if(!v3)v3 = this.position;
         this.target.setTransform(v3.x,v3.y);
@@ -101,9 +108,51 @@ export class PIXIShapes extends KFBlockTarget
         }
     }
 
+    public manual_dir(len:number){
+        let pos = this.target.position;
+        if(!this._manul_dir) {
+            this._manul_dir = {};
+            this._manul_dir.len = len;
+            let pvt = this.target.anchor;
+
+            let halfw = this.target.width / 2;
+            let halfh = this.target.height / 2;
+
+            pos.x +=  halfw;
+            pos.y +=  halfh;
+            this._manul_dir.x = pos.x;
+            this._manul_dir.y = pos.y;
+
+            pvt.x = 0.5;
+            pvt.y = 0.5;
+
+            pos.x = this._manul_dir.x + len;
+            pos.y = this._manul_dir.y;
+        }
+    }
+
+    public set_dir(dir:any) {
+        let manuldir = this._manul_dir;
+        if(dir) {
+            if(manuldir) {
+                if(dir.y == 0 && dir.x == 0)return;
+                let ret = Math.atan2(dir.y, dir.x);
+                if (!isNaN(ret)) {
+                    let pos = this.target.position;
+                    let len = manuldir.len;
+                    pos.x = manuldir.x + dir.x * len;
+                    pos.y = manuldir.y + dir.y * len;
+                    this.target.rotation = ret;
+                }
+            }else{
+                LOG_WARNING("调用set_dir之前请先设置下manuldir");
+            }
+        }
+    }
+
     public set_datas(datas:number[]){
 
-        if(!datas)return;
+        if(!datas || this._manul_dir)return;
         //P3_R1_S3_SK2
         this.target.setTransform(
                 datas[0]

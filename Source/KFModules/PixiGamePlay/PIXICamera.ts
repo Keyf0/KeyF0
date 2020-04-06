@@ -26,6 +26,7 @@ export class PIXICamera extends KFBlockTarget
     public follow:KFBlockTarget;
     private _sw:number;
     private _sh:number;
+    private _ditance:number;
 
     public ActivateBLK(KFBlockTargetData: any): void {
 
@@ -35,6 +36,7 @@ export class PIXICamera extends KFBlockTarget
         this.position = {x:0,y:0};
         this._sw = 800;
         this._sh = 600;
+        this._ditance = 100;
     }
 
     public DeactiveBLK(): void {

@@ -73,6 +73,12 @@
         "extend": "KFScriptData",
         "propertys": [
             {
+                "id": 2,
+                "name": "des",
+                "cname": "说明",
+                "type": "kfstr"
+            },
+            {
                 "id": 1,
                 "name": "expression",
                 "cname": "表达式",

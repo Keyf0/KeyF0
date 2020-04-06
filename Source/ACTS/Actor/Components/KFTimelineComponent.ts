@@ -9,12 +9,11 @@ export class KFTimelineComponent extends KFComponentBase
 {
     public static Meta:IKFMeta
         = new IKFMeta("KFTimelineComponent");
+    public playing:boolean;
 
     private m_cfg:any;
     private m_timeline:KFTimeline;
     private m_onbeginplay:Disposable;
-
-    private playing:boolean;
     private stateid:number = -1;
 
     public constructor(target:KFBlockTarget)
@@ -46,7 +45,7 @@ export class KFTimelineComponent extends KFComponentBase
 
         this.m_timeline.SetConfig(tconfig);
 
-        this.PlayFrame(tmp, currentFrameIndex);
+        this.PlayFrame(currentFrameIndex, tmp);
     }
 
     public ActivateComponent():void
@@ -94,11 +93,17 @@ export class KFTimelineComponent extends KFComponentBase
 
     //public ClearKeyFrame():void{}
 
-    public PlayFrame(stateid:number, startFrameIndex:number) {
+    public PlayFrame(frame:number, stateid:number = -1) {
         this.playing = true;
-        this.stateid = stateid;
-        this.m_timeline.Play(stateid, startFrameIndex);
+        if(stateid != -1) {
+            this.stateid = stateid;
+            this.m_timeline.Play(stateid, frame);
+        }else{
+            this.m_timeline.TickInternal(frame);
+        }
     }
+
+    public GetFrame():number{return this.m_timeline.currframeindex;}
 
     public PlayTime(stateid:number, startTimeNormalized:number) {
         this.playing = true;
@@ -121,19 +126,19 @@ export class KFTimelineComponent extends KFComponentBase
     }
 
     public Stop()
-    { this.playing = false;
+    {
+        this.playing = false;
     }
 
     public StopAt(stopFrameIndex:number = 0)
     {
-        this.m_timeline.Play(this.stateid, stopFrameIndex);
+        this.m_timeline.TickInternal(stopFrameIndex,true);
         this.playing = false;
     }
 
     public StopAtTime(stopTimeNormalized:number = 0.0)
     {
-        this.m_timeline.Play1(this.stateid, stopTimeNormalized);
-        this.playing = false;
+        
     }
 
 

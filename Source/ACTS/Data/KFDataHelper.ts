@@ -4,8 +4,6 @@ import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
 import {KFScript, KFScriptData} from "../../KFScript/KFScriptDef";
 import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
-import {KFDName} from "../../KFData/Format/KFDName";
-import {LOG} from "../../Core/Log/KFLog";
 
 export class KFDataHelper
 {
@@ -52,7 +50,10 @@ export class KFDataHelper
                     , KFScriptGroupType.Global
                     ,(data, kfd, kfdtb)=>{
                         data.x = 0;data.y = 0;data.z = 0;
-                        data.setValue = function (v3) {this.x = v3.x;this.y=v3.y;this.z=v3.z;};
+                        data.setValue = function (v3)
+                        {
+                            this.x = v3.x;this.y=v3.y;this.z=v3.z;
+                        };
                         data.getValue = function (copy) {
                             if(copy){ return {x:this.x,y:this.y,z:this.z} } else return this;
                         };

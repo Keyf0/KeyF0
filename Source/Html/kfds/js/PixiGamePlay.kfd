@@ -263,6 +263,13 @@
                 "cname": "图形模式",
                 "type": "bool",
                 "default": "false"
+            },
+            {
+                "id": 12,
+                "name": "lifeTime",
+                "cname": "生命周期",
+                "type": "int32",
+                "default": "-1"
             }
         ],
         "clsid": 1383
@@ -380,6 +387,20 @@
                 "cname": "更新位置",
                 "type": "bool",
                 "default": "true"
+            },
+            {
+                "id": 5,
+                "name": "event",
+                "cname": "发送事件",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 6,
+                "name": "time",
+                "cname": "持续时间",
+                "type": "int32",
+                "default": "500"
             }
         ],
         "orprops": [
@@ -402,5 +423,90 @@
             }
         ],
         "clsid": 1395
+    },
+    {
+        "includes": [
+            "Scripts/PIXIScripts.ts",
+            "kfVector3F.h",
+            "eAttribDefF.h"
+        ],
+        "class": "GSCreateBLKData",
+        "cname": "创建物件",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "c",
+                "cname": "容器",
+                "type": "null"
+            },
+            {
+                "id": 2,
+                "name": "url",
+                "cname": "路径",
+                "type": "kfstr"
+            },
+            {
+                "id": 3,
+                "name": "pos",
+                "cname": "坐标",
+                "type": "object",
+                "otype": "kfVector3"
+            },
+            {
+                "id": 4,
+                "name": "v",
+                "cname": "速度[含大小]",
+                "type": "object",
+                "otype": "kfVector3"
+            },
+            {
+                "id": 5,
+                "name": "r",
+                "cname": "朝向",
+                "type": "object",
+                "otype": "kfVector3"
+            },
+            {
+                "id": 6,
+                "name": "life",
+                "cname": "生命周期",
+                "type": "int32",
+                "default": "-1"
+            },
+            {
+                "id": 7,
+                "name": "n",
+                "cname": "实例名",
+                "type": "kfname"
+            },
+            {
+                "id": 8,
+                "name": "attrs",
+                "cname": "动态属性",
+                "type": "arr",
+                "otype": "eAttribDef"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "GSCreateBLKData",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "4",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1405
     }
 ]

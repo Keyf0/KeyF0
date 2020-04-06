@@ -13,8 +13,6 @@ export class KFGraph
     private m_cfg:any;
     private m_blocks:{[key:number]:KFGraphBlockBase} = {};
     private m_inputnames:Array<KFDName> = [];
-
-    public currblock:KFGraphBlockBase = null;
     public IsPlaying:boolean;
 
     public constructor(ctx:IKFGraphContext)
@@ -103,17 +101,17 @@ export class KFGraph
         }
     }
 
-    public Play()
+    public Play(inarg:any)
     {
         this.IsPlaying = true;
-
+        inarg = inarg==undefined?KF_GRAPHARG_NULL:inarg
         for (let it in this.m_inputnames)
         {
             let blockname:KFDName  = this.m_inputnames[it];
             let block = this.m_blocks[blockname.value];
             if(block)
             {
-                block.Input(KF_GRAPHARG_NULL);
+                block.Input(inarg);
             }
         }
     }
@@ -158,7 +156,7 @@ export class KFGraph
         let block = this.m_blocks[blockname.value];
         if (block != null)
         {
-            if(arg) block.Input(arg);
+            if(arg != undefined) block.Input(arg);
             else block.Input(KF_GRAPHARG_NULL);
         }
         else

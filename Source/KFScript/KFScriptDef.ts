@@ -20,6 +20,7 @@ export interface KFScriptContext
     ReturnScript(script:KFScript,type:KFDName);
 
     Get(i:number):any;
+    Set(i:number,v:any);
 }
 
 

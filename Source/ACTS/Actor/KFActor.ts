@@ -77,10 +77,10 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.graph.ReleaseComponent();
     }
 
-    public ActivateAllComponent():void
+    public ActivateAllComponent(inarg:any):void
     {
         this.timeline.ActivateComponent();
-        this.graph.ActivateComponent();
+        this.graph.ActivateComponent(inarg);
     }
 
     public DeactiveAllComponent():void
@@ -103,7 +103,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         //把父级映射上去
         this.m_childrenmap[KFActor.PARENT.value] = <any>this.parent;
         this.TargetNew(KFBlockTargetData);
-        this.ActivateAllComponent();
+        this.ActivateAllComponent(KFBlockTargetData.inputArg);
     }
 
     public DeactiveBLK():void
@@ -207,11 +207,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public RemoveChild(child: KFBlockTarget): void
     {
-        if(child.parent == this)
-        {
+        if(child.parent == this) {
             let i = this.m_children.indexOf(child);
-            if(i != -1)
-            {
+            if(i != -1) {
                 this.m_children.splice(i,1);
                 delete this.m_childrenmap[child.name.value];
                 child.parent = null;
