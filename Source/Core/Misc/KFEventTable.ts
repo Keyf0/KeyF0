@@ -5,7 +5,10 @@ import {Listener} from "./TypeEvent";
 export class KFEvent
 {
     public type:KFDName;
+    ///[0]
     public arg:any;
+    ///入栈的参数[1-n]，默认为空
+    public stacks:any[];
 
     ///evtname:KFDName|number|string
     public constructor(evtname:any = null)

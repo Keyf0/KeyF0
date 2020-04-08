@@ -1,0 +1,154 @@
+[
+    {
+        "includes": [
+            "PhysicsTypes.ts"
+        ],
+        "class": "PhyShapeType",
+        "cname": "图形类",
+        "nof": 1,
+        "propertys": [
+            {
+                "id": 1,
+                "name": "pCustom",
+                "cname": "导入",
+                "type": "int32",
+                "default": "-1"
+            },
+            {
+                "id": 1,
+                "name": "sCircle",
+                "cname": "圆形",
+                "type": "int32",
+                "default": "0"
+            },
+            {
+                "id": 1,
+                "name": "sBox",
+                "cname": "距形",
+                "type": "int32",
+                "default": "1"
+            }
+        ],
+        "clsid": 1406
+    },
+    {
+        "includes": [
+            "PhysicsTypes.ts"
+        ],
+        "class": "PhyObjectType",
+        "cname": "物理对象",
+        "nof": 1,
+        "propertys": [
+            {
+                "id": 1,
+                "name": "pStatic",
+                "cname": "静态物体",
+                "type": "int32",
+                "default": "0"
+            },
+            {
+                "id": 1,
+                "name": "pDynamics",
+                "cname": "动态物体",
+                "type": "int32",
+                "default": "1"
+            },
+            {
+                "id": 1,
+                "name": "pKinematic",
+                "cname": "运动学",
+                "type": "int32",
+                "default": "2"
+            },
+            {
+                "id": 1,
+                "name": "pCar",
+                "cname": "汽车",
+                "type": "int32",
+                "default": "3"
+            },
+            {
+                "id": 1,
+                "name": "pCar",
+                "cname": "子弹",
+                "type": "int32",
+                "default": "3"
+            }
+        ],
+        "clsid": 1407
+    },
+    {
+        "includes": [
+            "PhysicsTypes.ts"
+        ],
+        "class": "PhyDef",
+        "cname": "物理参数",
+        "nof": 1,
+        "propertys": [
+            {
+                "id": 1,
+                "name": "use",
+                "cname": "开启",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 2,
+                "name": "sim",
+                "cname": "模拟",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "分组",
+                "type": "int32",
+                "default": "0"
+            },
+            {
+                "id": 4,
+                "name": "shapeType",
+                "cname": "图形",
+                "type": "int32",
+                "default": "0",
+                "enum": "PhyShapeType"
+            },
+            {
+                "id": 5,
+                "name": "shapeDatas",
+                "cname": "图形数据",
+                "type": "arr",
+                "otype": "num1"
+            },
+            {
+                "id": 6,
+                "name": "phyType",
+                "cname": "对象",
+                "type": "int32",
+                "default": "0",
+                "enum": "PhyObjectType"
+            }
+        ],
+        "clsid": 1408
+    },
+    {
+        "includes": [
+            "PlanckWorld.ts"
+        ],
+        "class": "PlanckWorld",
+        "extend": "KFBlockTarget",
+        "propertys": [],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "tickable",
+                "cname": "开启更新",
+                "default": "true",
+                "OR": 1,
+                "type": "bool"
+            }
+        ],
+        "clsid": 1409
+    }
+]

@@ -3,7 +3,6 @@ import {KFDName} from "../../../KFData/Format/KFDName";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
 import {KFGraphBlockType} from "../../Data/KFGraphBlockType";
-import {LOG} from "../../../Core/Log/KFLog";
 
 export class KFGraphBlockEventPoint extends KFGraphBlockBase
 {
@@ -11,6 +10,7 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
     private m_evtname:KFDName;
     private m_target:KFBlockTarget = null;
     private m_firenode:KFDName = null;
+    private m_stacks:any[];
 
     public Input(arg: any)
     {
@@ -52,7 +52,37 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
                 this.m_evthandler = function (evt:KFEvent)
                 {
                     if(self.m_firenode) {
+
+                        let statcks = evt.stacks;
+                        let OBJS = null;
+                        let slen = 0;
+
+                        if(statcks) {
+                            slen = statcks.length;
+                            if(slen > 0) {
+                                ///压入堆栈
+                                if (!this.m_stacks)
+                                    this.m_stacks = [];
+                                let script = this.m_ctx.script;
+                                let i = 1;
+                                OBJS = script._reg._OBJECTS;
+                                for (let arg0 of statcks) {
+                                    this.m_stacks[i - 1] = OBJS[i];
+                                    OBJS[i] = arg0;
+                                    i += 1;
+                                }
+                            }
+                        }
+
                         self.m_ctx.m_graph.Input(self.m_firenode, evt.arg);
+
+                        if(OBJS){
+                            ///还原堆栈
+                            for (let i = 0;i < slen; i ++) {
+                                OBJS[i + 1] = this.m_stacks[i];
+                                i += 1;
+                            }
+                        }
                     }
                 };
 

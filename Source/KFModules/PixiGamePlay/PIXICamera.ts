@@ -1,6 +1,6 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {KFDName, NVal} from "../../KFData/Format/KFDName";
+import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 
 
 ///KFD(C,CLASS=PIXICamera,EXTEND=KFBlockTarget)
@@ -33,7 +33,7 @@ export class PIXICamera extends KFBlockTarget
         super.ActivateBLK(KFBlockTargetData);
 
         this.tickable = true;
-        this.position = {x:0,y:0};
+        this.position = new kfVector3();
         this._sw = 800;
         this._sh = 600;
         this._ditance = 100;

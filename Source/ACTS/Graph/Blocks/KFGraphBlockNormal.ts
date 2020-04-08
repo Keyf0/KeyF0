@@ -1,7 +1,6 @@
 import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
-import {LOG} from "../../../Core/Log/KFLog";
 
 
 export class KFGraphBlockNormal extends KFGraphBlockBase

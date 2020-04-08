@@ -11,11 +11,13 @@ export class GSPlayStateScript extends KFScript
     public static Meta:ScriptMeta = new ScriptMeta("GSPlayStateScriptData"
         ,():KFScript=>{return new GSPlayStateScript();}
         , KFScriptGroupType.Global
-        ,(data, kfd, kfdtb)=>{
+        ,()=>{
+        let data:any = {};
         data.type = new KFDName("GSPlayStateScriptData");
         data.group = KFScriptGroupType.Global;
         data.action = 0;
         data.stateid = 0;
+        return data;
     }
     ,(sd:any,objs:any[],pints:number[])=>{
             let plen = pints.length;
@@ -148,4 +150,163 @@ export class GSRemoteScript extends KFScript {
         }
     }
 
+}
+
+
+//extends scriptdata
+export class kfVector3 {
+
+    public x:number;
+    public y:number;
+    public z:number;
+
+    public constructor(x:number=0,y:number=0,z:number=0)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public setValue2(v2:any)
+    {
+        this.x = v2.x;
+        this.y = v2.y;
+    }
+
+    public setValue(v3:any)
+    {
+        this.x = v3.x;
+        this.y = v3.y;
+        this.z = v3.z;
+    }
+
+    public getValue(copy:boolean = false):kfVector3
+    {
+        if(copy){
+            return  new kfVector3(this.x,this.y,this.z);
+        }
+        else return this;
+    };
+
+    public add(v3) {
+        this.x += v3.x;
+        this.y += v3.y;
+        this.z += v3.z;
+    }
+
+    public sub(v3)
+    {
+        this.x -= v3.x;
+        this.y -= v3.y;
+        this.z -= v3.z;
+    }
+
+    public mul2(d):kfVector3
+    {
+        this.x *= d;
+        this.y *= d;
+        return this;
+    }
+
+    public mul(d):kfVector3
+    {
+        this.x *= d;
+        this.y *= d;
+        this.z *= d;
+
+        return this;
+    }
+
+    public nor()
+    {
+        let lens = this.x * this.x + this.y * this.y + this.z * this.z;
+        if(lens > 0){
+            let srate = 1 / Math.sqrt(lens);
+            this.x *= srate; this.y*= srate; this.z*=srate;
+        }else
+            {
+            this.x=0;this.y=0;this.z=0;
+        }
+    }
+}
+
+export class SDFloat {
+
+    public value:number = 0;
+
+    public setValue(v)
+    {
+        if(isNaN(v)) {
+            this.value = v.getValue();
+        }
+        else this.value = v;
+    };
+    public getValue() {return this.value;};
+    public add(vo)
+    {
+        let v = vo;
+        if(isNaN(vo)){v = vo.getValue();}
+        this.value += v;
+    }
+    public sub(vo) {
+        let v = vo;
+        if(isNaN(vo)){v = vo.getValue();}
+        this.value -= v;
+    }
+    public mul(vo)
+    {
+        let v = vo;
+        if(isNaN(vo)){v = vo.getValue();}
+        this.value *= v;
+    }
+}
+
+export class SDInt32 {
+
+    public value:number = 0;
+    public setValue(v)
+    {
+        if(isNaN(v)) {
+            this.value = v.getValue();
+        }
+        else this.value = v;
+    };
+    public getValue() {return this.value;};
+    public add(vo)
+    {
+        let v = vo;
+        if(isNaN(vo)){v = vo.getValue();}
+        this.value += v;
+    }
+    public sub(vo) {
+        let v = vo;
+        if(isNaN(vo)){v = vo.getValue();}
+        this.value -= v;
+    }
+    public mul(vo)
+    {
+        let v = vo;
+        if(isNaN(vo)){v = vo.getValue();}
+        this.value *= v;
+    }
+}
+
+export class SDString {
+
+    public value:string = "";
+    public setValue(v)
+    {   if(typeof(v) != "string") {
+        this.value = v.getValue();
+        }
+        else this.value = v;
+    }
+
+    public getValue() {return this.value;};
+
+    public add(vo)
+    {
+        let v = vo;
+        if(typeof(v) != "string"){v = vo.getValue();}
+        this.value += v;
+    }
 }

@@ -26,12 +26,14 @@
     <script src="js/FileSaver.js"></script>
     <script src="js/require.js"></script>
     <script type="text/javascript" src="js/pixi.min.js"></script>
-    <script>
+    <script type="text/javascript" src="js/planck.min.js"></script>
 
+    <script>
         require(["libs/App/AppLauncher"
                 ,"libs/KFModules/Web/Web"
                 ,"libs/KFModules/NetNode/NetNode"
-                ,"libs/KFModules/PixiGamePlay/PIXIGamePlay"]
+                ,"libs/KFModules/PixiGamePlay/PIXIGamePlay"
+                ,"libs/KFModules/Physics/PhysicsImport"]
             ,function(m1,m2,m3,m4){
             console.log("module loaded");
             var app = new m1.AppLauncher(1);

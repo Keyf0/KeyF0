@@ -56,6 +56,8 @@ export class PIXISceneGrid extends KFBlockTarget
         this._texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 
         this.target = new PIXI.Graphics();
+        this.target.zIndex = -100000000;
+
         let pixiParent = <any>this.parent;
         let container = (<PIXIObject>pixiParent).getPIXITarget();
 

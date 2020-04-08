@@ -64,5 +64,4 @@ export class PIXIGraphics extends KFBlockTarget
             this.target.rotation = v3.z;
         }
     }
-
 }

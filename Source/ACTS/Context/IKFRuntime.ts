@@ -1,9 +1,10 @@
-import {KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFRandom} from "./KFRandom";
 import {KFTimers} from "./KFTimers";
 import {IKFDomain} from "./IKFDomain";
 import {KFScriptSystem} from "../Script/KFScriptSystem";
 import {IKFConfigs} from "./IKFConfigs";
+import {KFDName} from "../../KFData/Format/KFDName";
 
 export interface IKFRuntime
 {
@@ -38,4 +39,15 @@ export interface IKFRuntime
 
      scripts:KFScriptSystem;
      configs:IKFConfigs;
+
+     //注册的系统
+     systems:{[key:number]:any;};
 }
+
+export const EventEnterFrame:KFDName = new KFDName("onEnterFrame");
+export const EventEndFrame:KFDName = new KFDName("onEndFrame");
+export const EventRenderFrame:KFDName = new KFDName("onRenderFrame");
+
+export const onEnterFrame:KFEvent = new KFEvent(EventEnterFrame);
+export const onEndFrame:KFEvent = new KFEvent(EventEndFrame);
+export const onRenderFrame:KFEvent = new KFEvent(EventRenderFrame);

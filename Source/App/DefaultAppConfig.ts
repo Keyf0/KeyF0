@@ -1,12 +1,13 @@
 import {IKFConfigs, IKFConfigs_Type, LoadConfigEnd} from "../ACTS/Context/IKFConfigs";
 import {IKFMeta} from "../Core/Meta/KFMetaManager";
 import {IKFFileIO_Type} from "../Core/FileIO/IKFFileIO";
-import {LOG, LOG_ERROR} from "../Core/Log/KFLog";
+import {LOG} from "../Core/Log/KFLog";
 import {KFDTable} from "../KFData/Format/KFDTable";
 import {KFByteArray} from "../KFData/Utils/FKByteArray";
 import {KFDJson} from "../KFData/Format/KFDJson";
 import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
 import {TypeEvent} from "../Core/Misc/TypeEvent";
+import {kfVector3} from "../ACTS/Script/Global/GlobalScripts";
 
 export class DefaultAppConfig implements IKFConfigs
 {
@@ -16,6 +17,9 @@ export class DefaultAppConfig implements IKFConfigs
         return new DefaultAppConfig();
         }
     );
+
+
+    public worldSize: kfVector3;
 
     private _appdatapath:string;
     private _kfdpath:string;
@@ -30,9 +34,10 @@ export class DefaultAppConfig implements IKFConfigs
     public static ADD_TIMELINE:string = "/timeline.data";
     public static ADD_GRAPH:string = "/graph.data";
 
-    public constructor(){
 
-
+    public constructor()
+    {
+        this.worldSize = new kfVector3(4096000,4096000);
     }
 
     public basedir(): string {return this._appdatapath;}
@@ -209,4 +214,5 @@ export class DefaultAppConfig implements IKFConfigs
     public start(): string {return this._start;}
 
     public OnKFDLoaded: TypeEvent<KFDTable> = new TypeEvent<KFDTable>();
+
 }

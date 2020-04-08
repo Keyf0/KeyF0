@@ -21,6 +21,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public static PARENT:KFDName = new KFDName("parent");
     public static BEGIN_PLAY:KFEvent = new KFEvent(KFDName._Strs.GetNameID("onBeginPlay"));
+    public static END_PLAY:KFEvent = new KFEvent(KFDName._Strs.GetNameID("onEndPlay"));
 
     public pause:boolean  = false;
     public timeline:KFTimelineComponent;
@@ -108,6 +109,12 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public DeactiveBLK():void
     {
+        if(this.etable) {
+            ///发送结束且清空etable
+            this.etable.FireEvent(KFActor.END_PLAY);
+            this.etable.Clear();
+        }
+
         this.StopKeepScripts();
         this.DeactiveAllComponent();
         this.DeleteChildren();

@@ -2,6 +2,7 @@ import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {LOG, LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
 import {PIXIObject} from "./PIXIInterface";
+import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 
 ///KFD(C,CLASS=PIXIShapes,EXTEND=KFBlockTarget)
 ///KFD(P=1,NAME=ssurl,CNAME=资源路径,TYPE=kfstr)
@@ -78,7 +79,7 @@ export class PIXIShapes extends KFBlockTarget
 
 
     public get position(){
-        return {x:this.target.x,y:this.target.y,z:0};
+        return new kfVector3(this.target.x,this.target.y);
     }
 
     public set_position(v3?: { x: number; y: number; z?: number }): void {

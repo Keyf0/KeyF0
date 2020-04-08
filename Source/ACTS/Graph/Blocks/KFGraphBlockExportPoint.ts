@@ -1,8 +1,6 @@
 import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFGraphBlockType} from "../../Data/KFGraphBlockType";
 import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
-import {LOG} from "../../../Core/Log/KFLog";
-
 
 export class KFGraphBlockExportPoint extends KFGraphBlockBase
 {

@@ -99,6 +99,7 @@ export class TSControlMove extends KFTargetScript {
     private _event:KFEvent;
     // 第一位表示左右 第二位表示上下 第三位表示是否有有速度
     private _speedType:number = 0;
+    private _fixTPF:number;
 
     private ChgSpeed(sd:any) {
 
@@ -108,7 +109,7 @@ export class TSControlMove extends KFTargetScript {
         }
 
         ///重新设置速度
-        let speed = sd.speed;
+        let speed = sd.speed / 100 * this._fixTPF;
         let dir = sd.dir;
         let v = this.v;
         if(!v) {
@@ -172,8 +173,11 @@ export class TSControlMove extends KFTargetScript {
         }
         else {
             super.Execute(sd, context);
+
             this.event = sd.event;
             this._speedType = -1;
+            this._fixTPF = context.runtime.fixtpf;
+
             if(!sd.stop) {
                 this.ChgSpeed(sd);
             }else{
@@ -185,21 +189,19 @@ export class TSControlMove extends KFTargetScript {
 
     public Update(frameindex: number) {
         if(this.isrunning) {
+
             let tp = this.m_t.position;
             let v = this.v;
             tp.x += v.x;
             tp.y += v.y;
 
-            ///有时候可能不需要更新渲染
-            if(this.update) {
-                this.m_t.set_position();
-            }
+            this.m_t.set_position();
 
             if(this._keeptime <= 0) {
+
                 let speed = v.speed;
 
                 speed -= 0.3;
-
 
                 if(speed <= 0) {
                     v.x = 0;

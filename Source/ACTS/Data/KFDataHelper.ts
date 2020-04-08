@@ -1,5 +1,11 @@
 import {KFDTable} from "../../KFData/Format/KFDTable";
-import {GSExpressionScript, GSLogScript, GSPlayStateScript, GSRemoteScript} from "../Script/Global/GlobalScripts";
+import {
+    GSExpressionScript,
+    GSLogScript,
+    GSPlayStateScript,
+    GSRemoteScript,
+    kfVector3, SDFloat, SDInt32, SDString
+} from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
 import {KFScript, KFScriptData} from "../../KFScript/KFScriptDef";
@@ -24,12 +30,11 @@ export class KFDataHelper
 
     public static InitSD(SMetas:ScriptMeta[],kfdtable:KFDTable){
 
-        for(let i = 0;i < SMetas.length;i ++)
-        {
+        for(let i = 0;i < SMetas.length;i ++) {
             let meta:ScriptMeta = SMetas[i];
             let kfd = kfdtable.get_kfddata(meta.name.toString());
             if (kfd) {
-                kfd.__init__ = {func: meta.DataInit};
+                kfd.__new__ = meta.DataNew;
             }
             KFScriptData.RFS[meta.name.value] = meta.RS;
         }
@@ -48,119 +53,39 @@ export class KFDataHelper
                 , new ScriptMeta("SDVector3"
                     ,():KFScript=>{return null;}
                     , KFScriptGroupType.Global
-                    ,(data, kfd, kfdtb)=>{
-                        data.x = 0;data.y = 0;data.z = 0;
-                        data.setValue = function (v3)
-                        {
-                            this.x = v3.x;this.y=v3.y;this.z=v3.z;
-                        };
-                        data.getValue = function (copy) {
-                            if(copy){ return {x:this.x,y:this.y,z:this.z} } else return this;
-                        };
-                        data.add = function (v3) {this.x+= v3.x;this.y+=v3.y;this.z+=v3.z;}
-                        data.sub = function (v3)
-                        {
-                            this.x-= v3.x;this.y-=v3.y;this.z-=v3.z;
-                        }
-                        data.mul = function (d) { this.x *= d;this.y *= d;this.z *= d;}
-                        data.nor = function () {
-                            let lens = this.x * this.x + this.y * this.y + this.z * this.z;
-                            if(lens > 0){
-                                let srate = 1 / Math.sqrt(lens);
-                                this.x *= srate; this.y*= srate; this.z*=srate;
-                            }else{
-                                this.x=0;this.y=0;this.z=0;
-                            }
-                        }
+                    ,()=>{
+                        return new kfVector3();
                     })
                 , new ScriptMeta("SDFloat"
                     ,():KFScript=>{return null;}
                     , KFScriptGroupType.Global
-                    ,(data, kfd, kfdtb)=>{
-                    data.value = 0;
-                    data.setValue = function (v)
-                    {
-                        if(isNaN(v)) {
-                            this.value = v.getValue();
-                        }
-                            else this.value = v;
-                    };
-                    data.getValue = function () {return this.value;};
-                    data.add = function (vo)
-                    {
-                        let v = vo;
-                        if(isNaN(vo)){v = vo.getValue();}
-                        this.value += v;
-                    }
-                    data.sub = function (vo) {
-                        let v = vo;
-                        if(isNaN(vo)){v = vo.getValue();}
-                        this.value -= v;
-                    }
-                    data.mul = function (vo)
-                    {
-                        let v = vo;
-                        if(isNaN(vo)){v = vo.getValue();}
-                        this.value *= v;
-                    }
+                    ,()=>{
+                    return new SDFloat();
                 })
 
                 , new ScriptMeta("SDInt32"
                 ,():KFScript=>{return null;}
                 , KFScriptGroupType.Global
-                ,(data, kfd, kfdtb)=>{
-                    data.value = 0;
-                    data.setValue = function (v)
-                    {
-                        if(isNaN(v)) {
-                            this.value = v.getValue();
-                        }
-                        else this.value = v;
-                    };
-                    data.getValue = function () {return this.value;};
-                    data.add = function (vo)
-                    {
-                        let v = vo;
-                        if(isNaN(vo)){v = vo.getValue();}
-                        this.value += v;
-                    }
-                    data.sub = function (vo) {
-                        let v = vo;
-                        if(isNaN(vo)){v = vo.getValue();}
-                        this.value -= v;
-                    }
-                    data.mul = function (vo)
-                    {
-                        let v = vo;
-                        if(isNaN(vo)){v = vo.getValue();}
-                        this.value *= v;
-                    }
+                ,()=>{
+                    return new SDInt32();
                 })
 
                 , new ScriptMeta("SDString"
                 ,():KFScript=>{return null;}
                 , KFScriptGroupType.Global
-                ,(data, kfd, kfdtb)=>{
-                    data.value = "";
-                    data.setValue = function (v)
-                    {   if(typeof(v) != "string") {
-                            this.value = v.getValue();
-                        }
-                        else this.value = v;};
-                    data.getValue = function () {return this.value;};
-                    data.add = function (vo)
-                    {let v = vo;
-                        if(typeof(v) != "string"){v = vo.getValue();}
-                        this.value += v;}
+                ,()=>{
+                    return new SDString();
                 })
             ]
             ,kfdtable);
 
         let KFExpressionKFD = kfdtable.get_kfddata("KFExpression");
-        KFExpressionKFD.__new__ = function()
-        {
+        KFExpressionKFD.__new__ = function() {
             return new KFExpression();
         }
+
+        let kfV3KFD = kfdtable.get_kfddata("kfVector3");
+        kfV3KFD.__new__ = function(){return new kfVector3();}
 
         ///默认初始化KFFrameData
         let KFFrameDataKFD = kfdtable.get_kfddata("KFFrameData");

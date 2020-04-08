@@ -5,6 +5,8 @@ import {LOG_ERROR} from "../../Core/Log/KFLog";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
+import {PhyDef, Phy_Name, PhyObject, PhyScene} from "../Physics/PhysicsTypes";
 
 
 ///KFD(C,CLASS=PIXINetActor,EXTEND=KFActor)
@@ -25,13 +27,13 @@ export class PIXINetActor extends KFActor implements PIXIObject
     public static TICK_Event:KFEvent = new KFEvent("onTick");
 
     ///KFD(P=3,NAME=velocity,CNAME=当前速度,TYPE=object,OTYPE=kfVector3,NET=life)
-    public velocity:{x:number,y:number,z:number};
+    public velocity:kfVector3;
 
     ///KFD(P=4,NAME=maxVelocity,CNAME=最大速度,TYPE=num1)
     public maxVelocity:number;
 
     ///KFD(P=5,NAME=accelerate,CNAME=加速度,TYPE=object,OTYPE=kfVector3,NET=life)
-    public accelerate:{x:number,y:number,z:number};
+    public accelerate:kfVector3;
 
     ///KFD(P=6,NAME=maxAccelerate,CNAME=最大加速度,TYPE=num1)
     public maxAccelerate:number;
@@ -54,6 +56,9 @@ export class PIXINetActor extends KFActor implements PIXIObject
     ///KFD(P=12,NAME=lifeTime,CNAME=生命周期,TYPE=int32,DEFAULT=-1)
     public lifeTime:number;
 
+    ///KFD(P=13,NAME=phydef,CNAME=物理设置,TYPE=object,OTYPE=PhyDef)
+    public phydef:PhyDef;
+
     ///KFD(*)
 
     protected _isdown:boolean;
@@ -65,6 +70,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
     public getPIXIApp(): PIXI.Application {return this._pixiapp;}
 
     public execSide:number;
+    public phyobj:PhyObject;
 
     public rpcc_exec:(scriptdata:any)=>any;
     public rpcs_exec:(scriptdata:any)=>any;
@@ -72,6 +78,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
     protected _container:PIXI.Container;
     protected _pixiapp:PIXI.Application;
     protected _display:number;
+
 
     protected newContainer():PIXI.Container
     {
@@ -83,11 +90,16 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
         this.execSide = runtime.execSide;
 
-        this.position = {x:0,y:0,z:0};
-        this.rotation = {z:0};
-        this.scale = {x:1,y:1,z:1};
-        this.velocity = {x:0,y:0,z:0};
-        this.accelerate = {x:0,y:0,z:0};
+        if(!this.position)
+            this.position = new kfVector3();
+        if(!this.rotation)
+            this.rotation = new kfVector3();
+        if(!this.scale)
+            this.scale = new kfVector3(1,1,1);
+        if(!this.velocity)
+            this.velocity = new kfVector3();
+        if(!this.accelerate)
+            this.accelerate = new kfVector3();
 
         this.rpcc_exec = this.Exec;
         this.rpcs_exec = this.Exec;
@@ -139,6 +151,35 @@ export class PIXINetActor extends KFActor implements PIXIObject
         }
     }
 
+    protected PhyNew()
+    {
+        let sys:PhyScene = this.runtime.systems[Phy_Name.value];
+        if(sys) {
+            let phydef:PhyDef = this.phydef;
+            let phyobj: PhyObject = sys.CreateObject(phydef,this.position);
+            phyobj.target = this;
+            if(phydef.sim) {
+                phydef.updateTF = this.phy_update.bind(this);
+                if(this.maxVelocity > 0) {
+                    phyobj.simulate(this.velocity.mul(this.maxVelocity));
+                }
+            }
+
+            this.phyobj = phyobj;
+        }
+    }
+
+    protected PhyDelete()
+    {
+        if(this.phydef.use) {
+            let sys: PhyScene = this.runtime.systems[Phy_Name.value];
+            if (sys && this.phyobj) {
+                sys.DeleteObject(this.phyobj);
+            }
+            this.phyobj = null;
+        }
+    }
+
     public ActivateBLK(KFBlockTargetData: any): void
     {
         super.ActivateBLK(KFBlockTargetData);
@@ -164,6 +205,11 @@ export class PIXINetActor extends KFActor implements PIXIObject
                this.timeline.Play(this.autoStateID);
            }
         }
+        ///有位置设置初始位置
+        let pos = this.position;
+        if(pos.x != 0 || pos.y != 0){this.set_position();}
+        if(this.phydef && this.phydef.use){this.PhyNew();}
+
     }
 
     public DeactiveBLK(): void {
@@ -174,6 +220,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
             this.onMouseUp();
         }
 
+        if(this.phydef){this.PhyDelete();}
         super.DeactiveBLK();
     }
 
@@ -256,15 +303,42 @@ export class PIXINetActor extends KFActor implements PIXIObject
         }
     }
 
+    public phy_update(phy:any){
+        ///如果是物理模拟则更新显示对象和逻辑位置
+        let p = this.position;
+        p.setValue(phy.get_position());
+        if(this._container) {
+            let py = p.y;
+            this._container.setTransform(p.x,py);
+            this._container.zIndex = py;
+        }
+    }
+
     public set_position(v3?: { x: number; y: number; z?: number }){
         if(!v3)v3 = this.position;
+        else {
+            this.position.setValue2(v3);
+        }
+
+        if(this.phyobj){
+            this.phyobj.set_position(v3);
+        }
+
         if(this._container){
-            this._container.setTransform(v3.x,v3.y);
+            let py = v3.y;
+            this._container.setTransform(v3.x, py);
+            this._container.zIndex = py;
         }
     }
 
     public set_rotation(v3?: { x?: number; y?: number; z: number }) {
         if(!v3)v3 = this.rotation;
+        else {
+            this.rotation.z = v3.z;
+        }
+
+
+
         if(this._container){
             this._container.rotation = v3.z;
         }
@@ -272,6 +346,9 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
     public set_scale(v3?: { x: number; y: number; z?: number }) {
         if(!v3)v3 = this.scale;
+        else
+            this.scale.setValue2(v3);
+
         if(this._container) {
             let scale = this._container.scale;
             scale.x = v3.x;
@@ -303,7 +380,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
     }
     public set_datas(datas: number[]) {
 
-        if(!datas)return;
+        if(!datas || this.phyobj) return;
 
         let pos = this.position;
 

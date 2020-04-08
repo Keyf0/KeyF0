@@ -13,6 +13,7 @@ import {PIXIAssetLoader} from "./PIXIAssetLoader";
 import {PIXICamera} from "./PIXICamera";
 import {PIXISceneGrid} from "./PIXISceneGrid";
 import {PIXIShapes} from "./PIXIShapes";
+import {PlanckDebugGraphics} from "./PlanckDebugGraphics";
 
 ///初始化
 export function init() {
@@ -26,6 +27,7 @@ export function init() {
     PIXIAssetLoader;
     PIXICamera;
     PIXISceneGrid;
+    PlanckDebugGraphics;
 }
 
 export function initKFDTable(kfdtb:KFDTable) {

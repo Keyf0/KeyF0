@@ -128,8 +128,7 @@ export class KFDJson
         if(kfddata)
         {
             ///构造函数
-            if(data == null)
-            {
+            if(data == null) {
                 if( kfddata.__new__)
                     data = kfddata.__new__();
                 else
@@ -137,8 +136,7 @@ export class KFDJson
             }
 
             let initparam = kfddata.__init__;
-            if (initparam)
-            {
+            if (initparam) {
                 initparam.func.call(initparam.thisobj, data, kfddata, KFDTable.kfdTB);
             }
         }

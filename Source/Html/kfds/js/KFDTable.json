@@ -1655,6 +1655,26 @@
         {
             "class": "GSCreateBLKData",
             "id": 1405
+        },
+        {
+            "class": "PhyShapeType",
+            "id": 1406
+        },
+        {
+            "class": "PhyObjectType",
+            "id": 1407
+        },
+        {
+            "class": "PhyDef",
+            "id": 1408
+        },
+        {
+            "class": "PlanckWorld",
+            "id": 1409
+        },
+        {
+            "class": "PlanckDebugGraphics",
+            "id": 1410
         }
     ]
 }

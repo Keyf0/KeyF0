@@ -1,6 +1,7 @@
 import {DefaultType, IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {TypeEvent} from "../../Core/Misc/TypeEvent";
 import {KFDTable} from "../../KFData/Format/KFDTable";
+import {kfVector3} from "../Script/Global/GlobalScripts";
 
 export interface LoadConfigEnd
 {
@@ -25,6 +26,7 @@ export interface IKFConfigs
     start():string;
 
     OnKFDLoaded:TypeEvent<KFDTable>;
+    worldSize:kfVector3;
 }
 
 export let IKFConfigs_Type:DefaultType<IKFConfigs> = new DefaultType<IKFConfigs>();

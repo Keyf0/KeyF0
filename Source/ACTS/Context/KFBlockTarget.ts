@@ -6,6 +6,7 @@ import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
+import {kfVector3} from "../Script/Global/GlobalScripts";
 
 export interface IKFBlockTargetContainer
 {
@@ -46,10 +47,15 @@ export class KFBlockTarget
     public parent:IKFBlockTargetContainer;
     public etable:KFEventTable;
     public runtime:IKFRuntime;
+
     ///是否需要TICK
     public tickable:boolean;
     public visible:boolean;
     public display:number;
+
+    public position:kfVector3;
+    public rotation:kfVector3;
+    public scale:kfVector3;
 
     ///变量
     public vars:{[key:number]:any};
@@ -83,19 +89,16 @@ export class KFBlockTarget
 
     public DeactiveBLK():void{}
 
-    public position:{x:number,y:number,z?:number};
-    public rotation:{x?:number,y?:number,z:number};
-    public scale:{x:number,y:number,z?:number};
-
+    ///更新显示对象
     public set_position(v3?: { x: number; y: number; z?: number }){}
+    ///更新显示对象
     public set_rotation(v3?: { x?: number; y?: number; z: number }){}
+    ///更新显示对象
     public set_scale(v3?:{x:number,y:number,z?:number}){}
+    ///更新显示对象
     public set_datas(datas:number[]){}
 
-    public StrVar(name:string){
-        return this.vars[KFDName._Strs.GetNameID(name)];
-    }
-
+    public StrVar(name:string){return this.vars[KFDName._Strs.GetNameID(name)];}
     public ReadVars(bytesarr:KFByteArray,len:number) {
 
         if(this.vars == null) this.vars = {};
@@ -126,7 +129,6 @@ export class KFBlockTarget
             bytesarr.writevaruint(0);
         }
     }
-
 
     public Destory() {
         if(this.parent) {

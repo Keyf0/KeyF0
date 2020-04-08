@@ -3,9 +3,9 @@ import {AMeta, InstantiateFunc, KFMetaManager} from "../../Core/Meta/KFMetaManag
 import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
 
 
-export interface ScriptDataInit
+export interface ScriptDataNew
 {
-    (data, kfd, kfdtb): any;
+    (): any;
 }
 
 export interface ReadStack {
@@ -14,13 +14,13 @@ export interface ReadStack {
 
 export class ScriptMeta extends AMeta
 {
-    public DataInit:ScriptDataInit;
+    public DataNew:ScriptDataNew;
     public RS:ReadStack;
 
     public constructor(name:string = ""
                        , func:InstantiateFunc = null
                        , group:number = KFScriptGroupType.Target
-                       , DataInit:ScriptDataInit = null
+                       , DataInit:ScriptDataNew = null
                        , RS:ReadStack = null
                        , execSide:number = 3)
     {
@@ -28,14 +28,16 @@ export class ScriptMeta extends AMeta
 
         if(DataInit == null)
         {
-            DataInit = (data, kfd, kfdtb)=>{
+            DataInit = ()=>{
+                let data:any = {};
                 data.type = new KFDName(name);
                 data.group = group;
+                return data;
             };
         }
 
         this.RS = RS;
-        this.DataInit = DataInit;
+        this.DataNew = DataInit;
     }
 
     public SetDefaultFactroy(name:string, func:InstantiateFunc = null)

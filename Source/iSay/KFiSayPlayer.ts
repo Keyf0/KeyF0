@@ -1,4 +1,4 @@
-import {IKFRuntime} from "../ACTS/Context/IKFRuntime";
+import {IKFRuntime, onEndFrame, onEnterFrame, onRenderFrame} from "../ACTS/Context/IKFRuntime";
 import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {IKFDomain} from "../ACTS/Context/IKFDomain";
 import {KFEvent, KFEventTable} from "../Core/Misc/KFEventTable";
@@ -6,7 +6,6 @@ import {KFRandom} from "../ACTS/Context/KFRandom";
 import {KFScriptSystem} from "../ACTS/Script/KFScriptSystem";
 import {KFTimers} from "../ACTS/Context/KFTimers";
 import {KFGlobalDefines} from "../ACTS/KFACTSDefines";
-import {TypeEvent} from "../Core/Misc/TypeEvent";
 import {KFDomain} from "../ACTS/Context/KFDomain";
 import {KFActor} from "../ACTS/Actor/KFActor";
 import {KFDName} from "../KFData/Format/KFDName";
@@ -36,9 +35,6 @@ export class KFiSayPlayer implements IKFRuntime
     private m_userdata:any;
     private m_root:KFActor;
 
-    private onEnterFrame:KFEvent = new KFEvent(KFDName._Param.setString("onEnterFrame"));
-    private onRenderFrame:KFEvent = new KFEvent(KFDName._Param.setString("onRenderFrame"));
-
     private m_lastTicks:number = 0;
     private m_startTicks:number = 0;
     private m_frameTicks:number = 0;
@@ -50,6 +46,7 @@ export class KFiSayPlayer implements IKFRuntime
 
     public Init(basedir:string)
     {
+        this.systems = {};
         //LOG_WARNING("%s", basedir.c_str());
         this.m_basedir = basedir;
 
@@ -101,6 +98,7 @@ export class KFiSayPlayer implements IKFRuntime
         this.frametime = ticks - this.m_lastTicks; //单帧的时间
         this.m_lastTicks = ticks;
 
+        let etb = this.etable;
         ///累计的帧时间
         while ((ticks - this.m_frameTicks) >= this.fixtpf) {
             this.m_frameTicks += this.fixtpf;
@@ -108,12 +106,15 @@ export class KFiSayPlayer implements IKFRuntime
             let currenti  = this.frameindex + 1;
             this.frameindex = currenti;
 
-            this.etable.FireEvent(this.onEnterFrame);
+            etb.FireEvent(onEnterFrame);
             if (this.m_root)
                 this.m_root.Tick(currenti);
+            etb.FireEvent(onEndFrame);
         }
         ///渲染的帧只要可更新的频率运行
-        this.etable.FireEvent(this.onRenderFrame);
+        this.etable.FireEvent(onRenderFrame);
     }
+
+    public systems: { [p: string]: any };
 
 }

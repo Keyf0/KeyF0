@@ -160,7 +160,8 @@
     {
         "includes": [
             "PIXINetActor.ts",
-            "kfVector3F.h"
+            "kfVector3F.h",
+            "PhyDefF.h"
         ],
         "class": "PIXINetActor",
         "extend": "KFActor",
@@ -270,6 +271,13 @@
                 "cname": "生命周期",
                 "type": "int32",
                 "default": "-1"
+            },
+            {
+                "id": 13,
+                "name": "phydef",
+                "cname": "物理设置",
+                "type": "object",
+                "otype": "PhyDef"
             }
         ],
         "clsid": 1383
@@ -314,6 +322,23 @@
             }
         ],
         "clsid": 1404
+    },
+    {
+        "includes": [
+            "PlanckDebugGraphics.ts"
+        ],
+        "class": "PlanckDebugGraphics",
+        "extend": "PIXIGraphics",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "closed",
+                "cname": "关闭",
+                "type": "bool",
+                "default": "false"
+            }
+        ],
+        "clsid": 1410
     },
     {
         "includes": [
