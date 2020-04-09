@@ -40,10 +40,9 @@ export class KFDNameStrings
     }
 
     ///找字符串的索引
-    private _Strings2ID:{[key: string]: number;} = {};
-
+    public _Strings2ID:{[key: string]: number;} = {};
     ///所有字符串的集合
-    private _ID2Strings:Array<string> = new Array<string>();
+    public _ID2Strings:Array<string> = new Array<string>();
 }
 
 export class KFDName

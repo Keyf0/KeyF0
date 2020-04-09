@@ -201,8 +201,24 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         return this.m_childrenmap[name];
     }
 
-    public StrChild(name:string):KFBlockTarget{
-        return this.m_childrenmap[NVal(name)];
+    public StrChild(name:string):KFBlockTarget {
+        if(name.indexOf(".") != -1){
+            let names:string[] = name.split(".");
+            let i  = 0;
+            let namelen = names.length;
+            let c:any = this;
+            let str2id = KFDName._Strs._Strings2ID;
+            while (i < namelen){
+                if(c == null)
+                    return null;
+                let chmap = c.m_childrenmap;
+                c = chmap[str2id[names[i]]];
+                i += 1;
+            }
+            return c;
+        }
+        else
+            return this.m_childrenmap[KFDName._Strs._Strings2ID[name]];
     }
 
     public GetChildAt(index: number): KFBlockTarget
