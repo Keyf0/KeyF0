@@ -150,11 +150,62 @@
     },
     {
         "includes": [
-            "PIXIMovieClip.ts"
+            "PIXIMovieClip.ts",
+            "kfVector3F.h"
         ],
         "class": "PIXIMovieClip",
-        "extend": "PIXINetActor",
-        "propertys": [],
+        "extend": "KFActor",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "position",
+                "cname": "位置",
+                "type": "object",
+                "otype": "kfVector3"
+            },
+            {
+                "id": 2,
+                "name": "rotation",
+                "cname": "朝向",
+                "type": "object",
+                "otype": "kfVector3"
+            },
+            {
+                "id": 1,
+                "name": "eventDown",
+                "cname": "点击事件",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 2,
+                "name": "eventMove",
+                "cname": "移动事件",
+                "type": "bool",
+                "default": "false"
+            },
+            {
+                "id": 3,
+                "name": "eventTick",
+                "cname": "TICK事件",
+                "type": "int32",
+                "default": "-1"
+            },
+            {
+                "id": 4,
+                "name": "autoStateID",
+                "cname": "进入状态",
+                "type": "int32",
+                "default": "-1"
+            },
+            {
+                "id": 5,
+                "name": "bGraphic",
+                "cname": "图形模式",
+                "type": "bool",
+                "default": "false"
+            }
+        ],
         "clsid": 1382
     },
     {
@@ -288,7 +339,15 @@
         ],
         "class": "PIXIScene",
         "extend": "PIXINetActor",
-        "propertys": [],
+        "propertys": [
+            {
+                "id": 1,
+                "name": "sortZTime",
+                "cname": "刷新Z时间",
+                "type": "num1",
+                "default": "0"
+            }
+        ],
         "clsid": 1384
     },
     {

@@ -139,16 +139,6 @@
         "class": "PlanckWorld",
         "extend": "KFBlockTarget",
         "propertys": [],
-        "orprops": [
-            {
-                "id": 1,
-                "name": "tickable",
-                "cname": "开启更新",
-                "default": "true",
-                "OR": 1,
-                "type": "bool"
-            }
-        ],
         "clsid": 1409
     }
 ]
