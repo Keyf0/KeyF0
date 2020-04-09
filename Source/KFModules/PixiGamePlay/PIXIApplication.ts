@@ -1,8 +1,7 @@
 import {HElementActor} from "../Web/HElementActor";
-import {PIXIObject} from "./PIXIInterface";
+import { PIXIMouseEventEmit, PIXIObject} from "./PIXIInterface";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
-import {PIXINetActor} from "./PIXINetActor";
 
 ///KFD(C,CLASS=PIXIApplication,EXTEND=HElementActor)
 
@@ -36,8 +35,7 @@ export class PIXIApplication extends HElementActor implements PIXIObject{
 
     public _target:PIXI.Application = null;
 
-    protected _isdown:boolean;
-    protected _dragdata:any;
+    protected _mEmit:PIXIMouseEventEmit;
 
 
     protected TargetNew(KFBlockTargetData: any): void
@@ -76,89 +74,17 @@ export class PIXIApplication extends HElementActor implements PIXIObject{
         super.ActivateBLK(KFBlockTargetData);
 
         let stage = this.getPIXITarget();
-        if(stage && this.eventDown) {
-            stage.interactive = true;
-            stage.on('mousedown', this.onMouseDown, this)
-                .on('touchstart', this.onMouseDown, this);
+        if(this.eventDown) {
+           this._mEmit = new PIXIMouseEventEmit(stage,this.etable,this.eventMove);
         }
     }
 
     public DeactiveBLK(): void {
 
-        let stage = this.getPIXITarget();
-        if(stage && this.eventDown) {
-            stage.removeListener('mousedown', this.onMouseDown, this)
-                .on('touchstart', this.onMouseDown, this);
-            this.onMouseUp();
+        if(this._mEmit) {
+            this._mEmit.dispose();
+            this._mEmit = null;
         }
-
         super.DeactiveBLK();
-    }
-
-
-    private onMouseDown(event) {
-
-        if(!this._isdown) {
-
-            this._dragdata = event.data;
-
-            this._isdown  = true;
-            let stage = this.getPIXITarget();
-
-            stage.on('mouseup', this.onMouseUp, this)
-                .on('mouseupoutside', this.onMouseUp, this)
-                .on('touchend', this.onMouseUp, this)
-                .on('touchendoutside', this.onMouseUp, this);
-
-            if (this.eventMove) {
-                // events for drag move
-                stage.on('mousemove', this.onMouseMove, this)
-                    .on('touchmove', this.onMouseMove, this);
-            }
-
-            let newpos = this._dragdata.getLocalPosition(stage);
-            newpos.z = 0;
-            let devent = PIXINetActor.Down_Event;
-            devent.arg = newpos;
-
-            this.etable.FireEvent(devent);
-        }
-    }
-
-    private onMouseMove(){
-        let stage = this.getPIXITarget();
-
-        let newpos = this._dragdata.getLocalPosition(stage);
-        newpos.z = 0;
-        let devent = PIXINetActor.MOVE_Event;
-        devent.arg = newpos;
-        this.etable.FireEvent(devent);
-    }
-
-    private onMouseUp() {
-
-        if( this._isdown) {
-
-            let stage = this.getPIXITarget();
-
-            let newpos = this._dragdata.getLocalPosition(stage);
-            newpos.z = 0;
-            this._isdown = false;
-            this._dragdata = null;
-            stage.removeListener('mouseup', this.onMouseUp, this)
-                .removeListener('mouseupoutside', this.onMouseUp, this)
-                .removeListener('touchend', this.onMouseUp, this)
-                .removeListener('touchendoutside', this.onMouseUp, this);
-
-            if (this.eventMove) {
-                // events for drag move
-                stage.removeListener('mousemove', this.onMouseMove, this)
-                    .removeListener('touchmove', this.onMouseMove, this);
-            }
-
-            let devent = PIXINetActor.UP_Event;
-            devent.arg = newpos;
-            this.etable.FireEvent(devent);
-        }
     }
 }

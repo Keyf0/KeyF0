@@ -1,9 +1,12 @@
 import {KFActor} from "../../ACTS/Actor/KFActor";
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
-import {PIXIObject} from "./PIXIInterface";
+import {
+    PIXIMouseEventEmit,
+    PIXIObject,
+    PIXITICK_Event
+} from "./PIXIInterface";
 import {LOG_ERROR} from "../../Core/Log/KFLog";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
-import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 import {PhyDef, Phy_Name, PhyObject, PhyScene} from "../Physics/PhysicsTypes";
@@ -20,11 +23,6 @@ export class PIXINetActor extends KFActor implements PIXIObject
             return new PIXINetActor();
         }
     );
-
-    public static Down_Event:KFEvent = new KFEvent("onMouseDown");
-    public static UP_Event:KFEvent = new KFEvent("onMouseUp");
-    public static MOVE_Event:KFEvent = new KFEvent("onMouseMove");
-    public static TICK_Event:KFEvent = new KFEvent("onTick");
 
     ///KFD(P=3,NAME=velocity,CNAME=当前速度,TYPE=object,OTYPE=kfVector3,NET=life)
     public velocity:kfVector3;
@@ -61,8 +59,6 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
     ///KFD(*)
 
-    protected _isdown:boolean;
-    protected _dragdata:any;
     protected _ticktime:number;
     protected _tickevt:boolean;
 
@@ -78,7 +74,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
     protected _container:PIXI.Container;
     protected _pixiapp:PIXI.Application;
     protected _display:number;
-
+    protected _mEmit:PIXIMouseEventEmit;
 
     protected newContainer():PIXI.Container
     {
@@ -184,11 +180,10 @@ export class PIXINetActor extends KFActor implements PIXIObject
     {
         super.ActivateBLK(KFBlockTargetData);
 
-        if(this._container && this.eventDown) {
-            this._container.interactive = true;
-            this._container.on('mousedown', this.onMouseDown, this)
-                .on('touchstart', this.onMouseDown, this);
-        }
+        if(this.eventDown)
+            this._mEmit =
+            new PIXIMouseEventEmit(this._container,this.etable
+                    ,this.eventMove);
 
         if(this.eventTick && this.eventTick >= 0) {
             this._ticktime = 0;
@@ -214,10 +209,9 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
     public DeactiveBLK(): void {
 
-        if(this._container && this.eventDown) {
-            this._container.removeListener('mousedown', this.onMouseDown, this)
-                .on('touchstart', this.onMouseDown, this);
-            this.onMouseUp();
+        if(this._mEmit) {
+            this._mEmit.dispose();
+            this._mEmit = null;
         }
 
         if(this.phydef){this.PhyDelete();}
@@ -231,7 +225,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
             this._ticktime -= this.runtime.fixtpf;
             if(this._ticktime <= 0) {
                 this._ticktime = this.eventTick;
-                this.etable.FireEvent(PIXINetActor.TICK_Event);
+                this.etable.FireEvent(PIXITICK_Event);
             }
         }
 
@@ -240,66 +234,6 @@ export class PIXINetActor extends KFActor implements PIXIObject
             if(this.lifeTime <= 0){
                 this.Destory();
             }
-        }
-    }
-
-    private onMouseDown(event) {
-
-        if(!this._isdown) {
-
-            this._dragdata = event.data;
-
-            this._isdown  = true;
-            this._container.on('mouseup', this.onMouseUp, this)
-                .on('mouseupoutside', this.onMouseUp, this)
-                .on('touchend', this.onMouseUp, this)
-                .on('touchendoutside', this.onMouseUp, this);
-
-            if (this.eventMove) {
-                // events for drag move
-                this._container.on('mousemove', this.onMouseMove, this)
-                    .on('touchmove', this.onMouseMove, this);
-            }
-
-            let newpos = this._dragdata.getLocalPosition(this._container);
-            newpos.z = 0;
-            let devent = PIXINetActor.Down_Event;
-            devent.arg = newpos;
-
-            this.etable.FireEvent(devent);
-        }
-    }
-
-    private onMouseMove(){
-        let newpos = this._dragdata.getLocalPosition(this._container);
-        newpos.z = 0;
-        let devent = PIXINetActor.MOVE_Event;
-        devent.arg = newpos;
-        this.etable.FireEvent(devent);
-    }
-
-    private onMouseUp() {
-
-        if( this._isdown) {
-
-            let newpos = this._dragdata.getLocalPosition(this._container);
-            newpos.z = 0;
-            this._isdown = false;
-            this._dragdata = null;
-            this._container.removeListener('mouseup', this.onMouseUp, this)
-                .removeListener('mouseupoutside', this.onMouseUp, this)
-                .removeListener('touchend', this.onMouseUp, this)
-                .removeListener('touchendoutside', this.onMouseUp, this);
-
-            if (this.eventMove) {
-                // events for drag move
-                this._container.removeListener('mousemove', this.onMouseMove, this)
-                    .removeListener('touchmove', this.onMouseMove, this);
-            }
-
-            let devent = PIXINetActor.UP_Event;
-            devent.arg = newpos;
-            this.etable.FireEvent(devent);
         }
     }
 
@@ -336,8 +270,6 @@ export class PIXINetActor extends KFActor implements PIXIObject
         else {
             this.rotation.z = v3.z;
         }
-
-
 
         if(this._container){
             this._container.rotation = v3.z;
