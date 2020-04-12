@@ -70,11 +70,19 @@ export class PlanckWorld extends KFBlockTarget implements PhyScene {
         let abd:PlanckBody = <PlanckBody>contact.m_fixtureA.m_userData;
         let bbd:PlanckBody = <PlanckBody>contact.m_fixtureB.m_userData;
 
-        let chg:boolean = false;
+        ///都不为空
         if(abd && bbd){
-            if(abd.def.group > bbd.def.group){
-                let t = abd;abd =bbd;bbd=t;
-            }
+            let da  = abd.def;
+            let db = bbd.def;
+            ///且有一个接受攻击事件
+            if(da.hitEvent || db.hitEvent) {
+                if (da.group > db.group) {
+                    let t = abd;
+                    abd = bbd;
+                    bbd = t;
+                }
+            } else
+                return;
         }else
             return;
 
@@ -82,7 +90,7 @@ export class PlanckWorld extends KFBlockTarget implements PhyScene {
         let etb = abd.target.etable;
         if(etb) {
             HitEvent.arg = bbd.target;
-            abd.target.etable.FireEvent(HitEvent);
+            etb.FireEvent(HitEvent);
         }
     }
 

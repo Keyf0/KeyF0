@@ -58,6 +58,8 @@ export class PhyDef {
     public shapeDatas:number[];
     ///KFD(P=6,NAME=phyType,CNAME=对象,TYPE=int32,DEFAULT=0,ENUM=PhyObjectType)
     public phyType:number;
+    ///KFD(P=7,NAME=hitEvent,CNAME=命中事件,TYPE=bool,DEFAULT=false)
+    public hitEvent:boolean;
     ///KFD(*)
     public updateTF:(phy:any)=>void;
 }

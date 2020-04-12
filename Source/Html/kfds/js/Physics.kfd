@@ -128,6 +128,13 @@
                 "type": "int32",
                 "default": "0",
                 "enum": "PhyObjectType"
+            },
+            {
+                "id": 7,
+                "name": "hitEvent",
+                "cname": "命中事件",
+                "type": "bool",
+                "default": "false"
             }
         ],
         "clsid": 1408

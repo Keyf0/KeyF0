@@ -5,7 +5,7 @@ import {KFComponentBase} from "./Components/KFComponentBase";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {KFDName, NVal} from "../../KFData/Format/KFDName";
+import {KFDName} from "../../KFData/Format/KFDName";
 import {KFScript} from "../../KFScript/KFScriptDef";
 import {IKFDomain} from "../Context/IKFDomain";
 
@@ -320,7 +320,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     ///FOR SCRIPT
     public StrBlock(name:string, op:number = 0){
-        let block = this.graph.m_graph.GetBlockID(KFDName._Strs.GetNameID(name));
+        let block = this.graph.m_graph.GetBlockID(KFDName._Strs._Strings2ID[name]);
         if(block) {
             if(op == 1) {
                 block.Input(null);
