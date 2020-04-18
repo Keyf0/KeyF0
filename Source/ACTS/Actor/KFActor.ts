@@ -1,7 +1,6 @@
 import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
-import {KFComponentBase} from "./Components/KFComponentBase";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
@@ -55,21 +54,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     {
         if(this.timeline == null)
         {
-            this.InitAllComponent();
+            this.timeline = new KFTimelineComponent(this);
+            this.graph = new KFGraphComponent(this);
         }
-    }
-
-    public InitAllComponent():void
-    {
-        this.timeline = this.AddComponent(KFTimelineComponent);
-        this.graph = this.AddComponent(KFGraphComponent);
-    }
-
-    public AddComponent(cls:any):any
-    {
-        let type:number = cls.Meta.value;///KFDName
-        let p:KFComponentBase = new cls(this, type);
-        return p;
     }
 
     public ResetAllComponent():void
@@ -320,7 +307,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     ///FOR SCRIPT
     public StrBlock(name:string, op:number = 0){
-        let block = this.graph.m_graph.GetBlockID(KFDName._Strs._Strings2ID[name]);
+        let block = this.graph.GetBlockID(KFDName._Strs._Strings2ID[name]);
         if(block) {
             if(op == 1) {
                 block.Input(null);

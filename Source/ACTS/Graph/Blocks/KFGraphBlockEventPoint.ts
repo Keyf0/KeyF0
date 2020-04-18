@@ -74,7 +74,7 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
                             }
                         }
 
-                        self.m_ctx.m_graph.Input(self.m_firenode, evt.arg);
+                        self.m_ctx.Input(self.m_firenode, evt.arg);
 
                         if(OBJS){
                             ///还原堆栈

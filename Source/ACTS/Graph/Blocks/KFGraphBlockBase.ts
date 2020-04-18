@@ -47,7 +47,7 @@ export class KFGraphBlockBase
     protected OutNext(arg:any)
     {
         if(this.nextname)
-            this.m_ctx.m_graph.Input(this.nextname, arg);
+            this.m_ctx.Input(this.nextname, arg);
     }
 
     protected GetAttachTarget():KFBlockTarget
