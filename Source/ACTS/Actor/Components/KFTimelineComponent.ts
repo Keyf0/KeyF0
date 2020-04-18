@@ -1,7 +1,5 @@
 import {KFComponentBase} from "./KFComponentBase";
-import {IKFTimelineEventListener} from "../../Timeline/IKFTimelineProc";
 import {KFTimeline} from "../../Timeline/KFTimeline";
-import {Disposable} from "../../../Core/Misc/TypeEvent";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 
@@ -13,7 +11,6 @@ export class KFTimelineComponent extends KFComponentBase
 
     private m_cfg:any;
     private m_timeline:KFTimeline;
-    private m_onbeginplay:Disposable;
     private stateid:number = -1;
 
     public constructor(target:KFBlockTarget)
@@ -56,12 +53,6 @@ export class KFTimelineComponent extends KFComponentBase
 
     public DeactiveComponent():void
     {
-        if(this.m_onbeginplay != null)
-        {
-            this.m_onbeginplay.dispose();
-            this.m_onbeginplay = null;
-        }
-
         this.stateid = 0;
         this.playing = true;
         this.m_cfg = null;
@@ -139,12 +130,6 @@ export class KFTimelineComponent extends KFComponentBase
     public StopAtTime(stopTimeNormalized:number = 0.0)
     {
         
-    }
-
-
-    public SetTimelineEventListener(listener:IKFTimelineEventListener)
-    {
-        this.m_timeline.listener = listener;
     }
 
     public HasState(stateid:number):boolean

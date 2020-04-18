@@ -1,6 +1,5 @@
-import {TypeEvent} from "../../Core/Misc/TypeEvent";
 import {KFTimeBlock} from "./KFTimeBlock";
-import {IKFTimelineContext, IKFTimelineEventListener} from "./IKFTimelineProc";
+import {IKFTimelineContext} from "./IKFTimelineProc";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFPool} from "../../Core/Misc/KFPool";
 import {BlkExecSide, KFBlockTarget} from "../Context/KFBlockTarget";
@@ -9,11 +8,8 @@ import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
 
 export class KFTimeline implements IKFTimelineContext
 {
-    public onPlayBegin:TypeEvent<number> = new TypeEvent<number>();
-    public onPlayEnd:TypeEvent<number> = new TypeEvent<number>();
     public currstate:any;
     public currframeindex:number = 0;
-    public listener:IKFTimelineEventListener;
 
     private m_cfg:any;
     private m_states:{[key:number]:any} = {};
@@ -160,7 +156,6 @@ export class KFTimeline implements IKFTimelineContext
     public Play(stateid:number, startFrameIndex:number) {
         this.m_listProcSize = 0;
         if(this.SetState(stateid)) {
-            this.onPlayBegin.emit(stateid);
             this.TickInternal(startFrameIndex, true);
         }
     }
@@ -169,7 +164,6 @@ export class KFTimeline implements IKFTimelineContext
     {
         this.m_listProcSize = 0;
         if (this.SetState(stateid)) {
-            this.onPlayBegin.emit(stateid);
             let startFrameIndex:number = startTimeNormalized * this.m_length;
             this.TickInternal(startFrameIndex, true);
         }
@@ -205,7 +199,7 @@ export class KFTimeline implements IKFTimelineContext
                     this.TickInternal(nextFrameIndex, false);
                 }
                 else {
-                    this.onPlayEnd.emit(this.currstate.id);
+                    //this.onPlayEnd.emit(this.currstate.id);
                 }
             }
             else {
@@ -253,18 +247,18 @@ export class KFTimeline implements IKFTimelineContext
                 }
                 let framedata = keyframe.data;
                 let scripts = framedata.scripts;
-                if(scripts && scripts.length > 0)
-                {
+                if(scripts && scripts.length > 0) {
                     this.m_scripts.ExecuteFrameScript(keyframe.id, framedata, target);
                 }
-                if (keyframe.evt > 0)
-                {
-                    if (this.listener)
-                    {
-                        this.listener
-                            .OnTimelineEvent(keyframe.id, keyframe.evt);
-                    }
-                }
+                //改变成etable事件?
+                //if (keyframe.evt > 0)
+                //{
+                //    if (this.listener)
+                //    {
+                //        this.listener
+                //            .OnTimelineEvent(keyframe.id, keyframe.evt);
+                //    }
+                //}
 
                 i += 1;
             }
