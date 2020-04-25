@@ -66,6 +66,7 @@ export class KFBlockTarget
         this.runtime = runtime;
         ///如果有MEATDATA数据则给对象赋值
         ///不考虑延时创建的对象了[不纯粹]，METADATA就是类初始化时赋值的
+        ///需要考虑下如果是频繁创建的对象的性能问题？
         let kfbytes:KFBytes = this.metadata.data;
         let buff = kfbytes ? kfbytes.bytes : null;
         if(buff)
