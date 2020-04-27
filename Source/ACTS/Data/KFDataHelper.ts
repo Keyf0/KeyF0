@@ -8,8 +8,7 @@ import {
 } from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
-import {KFScript, KFScriptData} from "../../KFScript/KFScriptDef";
-import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
+import {KFScriptData} from "../../KFScript/KFScriptDef";
 
 export class KFDataHelper
 {
@@ -47,36 +46,7 @@ export class KFDataHelper
             GSPlayStateScript.Meta
             , GSLogScript.Meta
             , GSExpressionScript.Meta
-            , GSRemoteScript.Meta
-
-            ///定义一些基本的数据结构
-                , new ScriptMeta("SDVector3"
-                    ,():KFScript=>{return null;}
-                    , KFScriptGroupType.Global
-                    ,()=>{
-                        return new kfVector3();
-                    })
-                , new ScriptMeta("SDFloat"
-                    ,():KFScript=>{return null;}
-                    , KFScriptGroupType.Global
-                    ,()=>{
-                    return new SDFloat();
-                })
-
-                , new ScriptMeta("SDInt32"
-                ,():KFScript=>{return null;}
-                , KFScriptGroupType.Global
-                ,()=>{
-                    return new SDInt32();
-                })
-
-                , new ScriptMeta("SDString"
-                ,():KFScript=>{return null;}
-                , KFScriptGroupType.Global
-                ,()=>{
-                    return new SDString();
-                })
-            ]
+            , GSRemoteScript.Meta]
             ,kfdtable);
 
         let KFExpressionKFD = kfdtable.get_kfddata("KFExpression");
@@ -84,8 +54,17 @@ export class KFDataHelper
             return new KFExpression();
         }
 
-        let kfV3KFD = kfdtable.get_kfddata("kfVector3");
-        kfV3KFD.__new__ = function(){return new kfVector3();}
+        let oneKFD = kfdtable.get_kfddata("kfVector3");
+
+        oneKFD.__new__ = function(){return new kfVector3();};
+        oneKFD = kfdtable.get_kfddata("SDVector3");
+        oneKFD.__new__ = function(){return new kfVector3();};
+        oneKFD = kfdtable.get_kfddata("SDFloat");
+        oneKFD.__new__ = function(){return new SDFloat();};
+        oneKFD = kfdtable.get_kfddata("SDInt32");
+        oneKFD.__new__ = function(){return new SDInt32();};
+        oneKFD = kfdtable.get_kfddata("SDString");
+        oneKFD.__new__ = function(){return new SDString();};
 
         ///默认初始化KFFrameData
         let KFFrameDataKFD = kfdtable.get_kfddata("KFFrameData");

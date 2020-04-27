@@ -2208,7 +2208,7 @@
             "Script/Global/GSLogScript.h"
         ],
         "class": "SDVector3",
-        "extend": "KFScriptData",
+        "extend": "KFGCObject",
         "propertys": [
             {
                 "id": 1,
@@ -2229,16 +2229,6 @@
                 "type": "num1"
             }
         ],
-        "orprops": [
-            {
-                "id": 1,
-                "name": "type",
-                "cname": "脚本类型",
-                "default": "SDVector3",
-                "OR": 1,
-                "type": "kfname"
-            }
-        ],
         "clsid": 1367
     },
     {
@@ -2246,23 +2236,13 @@
             "Script/Global/GSLogScript.h"
         ],
         "class": "SDFloat",
-        "extend": "KFScriptData",
+        "extend": "KFGCObject",
         "propertys": [
             {
                 "id": 1,
                 "default": "0",
                 "name": "value",
                 "type": "num1"
-            }
-        ],
-        "orprops": [
-            {
-                "id": 1,
-                "name": "type",
-                "cname": "脚本类型",
-                "default": "SDFloat",
-                "OR": 1,
-                "type": "kfname"
             }
         ],
         "clsid": 1368
@@ -2272,23 +2252,13 @@
             "Script/Global/GSLogScript.h"
         ],
         "class": "SDInt32",
-        "extend": "KFScriptData",
+        "extend": "KFGCObject",
         "propertys": [
             {
                 "id": 1,
                 "default": "0",
                 "name": "value",
                 "type": "int32"
-            }
-        ],
-        "orprops": [
-            {
-                "id": 1,
-                "name": "type",
-                "cname": "脚本类型",
-                "default": "SDInt32",
-                "OR": 1,
-                "type": "kfname"
             }
         ],
         "clsid": 1369
@@ -2298,22 +2268,12 @@
             "Script/Global/GSLogScript.h"
         ],
         "class": "SDString",
-        "extend": "KFScriptData",
+        "extend": "KFGCObject",
         "propertys": [
             {
                 "id": 1,
                 "name": "value",
                 "type": "kfstr"
-            }
-        ],
-        "orprops": [
-            {
-                "id": 1,
-                "name": "type",
-                "cname": "脚本类型",
-                "default": "SDString",
-                "OR": 1,
-                "type": "kfname"
             }
         ],
         "clsid": 1370
