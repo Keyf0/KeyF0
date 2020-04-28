@@ -93,7 +93,12 @@ export class KFDomain implements IKFDomain
     {
         ///kfgcRelease(target);
 
-        LOG("销毁 BlockTarget:{0}",target.metadata.asseturl);
+        let meta = target.metadata;
+        let asseturl = meta.asseturl;
+        if(asseturl == undefined)
+            asseturl = target.name.toString();
+
+        LOG("销毁 BlockTarget:{0}",asseturl);
     }
 
     public FindBlockTarget(instpath: string): KFBlockTarget
