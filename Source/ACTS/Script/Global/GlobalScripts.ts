@@ -153,7 +153,7 @@ export class GSRemoteScript extends KFScript {
 }
 
 
-//extends KFGCObject
+//extends scriptdata
 export class kfVector3 {
 
     public x:number;
