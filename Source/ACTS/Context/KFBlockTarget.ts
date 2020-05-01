@@ -7,6 +7,7 @@ import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {kfVector3} from "../Script/Global/GlobalScripts";
+import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
 
 export interface IKFBlockTargetContainer
 {
@@ -111,19 +112,49 @@ export class KFBlockTarget
             varsize -= 1;
         }
     }
-    public WriteVars(bytesarr:KFByteArray) {
+    public WriteVars(bytesarr:KFByteArray, attribFlags?:KFAttribflags) {
 
         if(this.vars) {
+
             let arr = [];
-            for(let key in this.vars){
-                arr.push({name:KFDName._Strs.GetNameStr(parseInt(key))
-                    ,value:this.vars[key]});
+
+            if(attribFlags){
+
+                //略过不需要写的属性
+                for (let key in attribFlags) {
+
+                    let attribFlag:KFAttribflags = attribFlags[key];
+                    if(attribFlag._w_ == false) {
+                        continue;
+                    }
+                    else if(attribFlag._w_){
+                        //_w_可写
+                        //已经写过就重置属性状态
+                        attribFlag._w_ = false;
+                    }
+
+                    arr.push({
+                            name: KFDName._Strs.GetNameStr(parseInt(key))
+                        ,   value: this.vars[key]
+                        ,   attrFlag: attribFlag
+                    });
+                }
+
+            } else {
+
+                for (let key in this.vars) {
+                    arr.push({
+                        name: KFDName._Strs.GetNameStr(parseInt(key))
+                        , value: this.vars[key]
+                    });
+                }
             }
+
             bytesarr.writevaruint(arr.length);
 
             for(let itm of arr){
                 bytesarr.writestring(itm.name);
-                KFDJson.write_value(bytesarr, itm.value);
+                KFDJson.write_value(bytesarr, itm.value, null, itm.attrFlag);
             }
 
         } else {

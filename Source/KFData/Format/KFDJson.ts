@@ -4,6 +4,7 @@ import {KFDTable} from "./KFDTable";
 import {KFDName} from "./KFDName";
 import {KFBytes} from "./KFBytes";
 import {LOG} from "../../Core/Log/KFLog";
+import {KFAttribflags} from "./KFAttribflags";
 
 export class KFDJson
 {
@@ -468,7 +469,7 @@ export class KFDJson
     public static write_value(bytearr:KFByteArray
                               , jsonobj:any
                               , propinfo:any = null
-                                , attribFlags:any = null)
+                                , attribFlags:KFAttribflags = null)
     {
         if(jsonobj != null)
         {
@@ -623,7 +624,7 @@ export class KFDJson
                                       , valtype:number
                                       , val:any
                                       , propinfo:any
-                                      , attribFlags:any = null)
+                                      , attribFlags:KFAttribflags = null)
     {
         let arrval = val
         let arrsize = arrval.length;
@@ -708,7 +709,7 @@ export class KFDJson
                                        , dataType:number
                                        , objectval:any
                                        , kfddata:any
-                                       , attribFlags:any = null)
+                                       , attribFlags:KFAttribflags = null)
     {
         bytearr.writevaruint(KFDataType.OBJ_PROP_ID_BEGIN);
         if(kfddata)
@@ -755,7 +756,7 @@ export class KFDJson
                     if(writefunc){
                         KFDJson.ClearUseBuff.length = 0;
                         bytearr.writeByte(KFDataType.OT_BYTES);
-                        writefunc.call(objectval, KFDJson.ClearUseBuff);
+                        writefunc.call(objectval, KFDJson.ClearUseBuff, attribFlag);
                         bytearr.writekfBytes(KFDJson.ClearUseBuff);
                     }
                     else
@@ -765,264 +766,4 @@ export class KFDJson
         }
         bytearr.writevaruint(KFDataType.OBJ_PROP_ID_END);
     }
-
-
-    ////////////////////////////////////////////////
-    ///如果数组或对象不为空后再置空可能会有问题[没有完善]
-    /////////////////////////////////////////////////
-
-
-    public static getpropertynet(item):string {
-        let unknowtags = item.unknowtags;
-        if(unknowtags) {
-            for (let tagitem of unknowtags) {
-                if (tagitem.tag == "NET")
-                    return tagitem.val;
-            }
-        }
-        return "";
-    }
-
-    ///会给对象增加__cls__属性方面读写数据
-    public static buildattribflags( obj:any
-                                   , kfddata:any
-                                   , attribflags:any = null
-                                   , creatupdate:boolean = true
-                                   , allprops:boolean = true
-                                   , initflags = null):any {
-
-
-        if(creatupdate && !obj.hasOwnProperty("__cls__")){
-            ///对象不包括__cls__属性需要增加
-            obj.__cls__ = kfddata["class"];
-        }
-
-        attribflags = attribflags ? attribflags : {_w_:true,_v_:obj};
-        let extendcls = kfddata["extend"];
-        if(extendcls) {
-            let extenddata = KFDTable.kfdTB.get_kfddata(extendcls);
-            if(extenddata != null) {
-                KFDJson.buildattribflags(obj, extenddata, attribflags,false, allprops, initflags);
-            }
-        }
-        let valarr = kfddata["propertys"];
-        for (let item of valarr)
-        {
-            let netvalue = (allprops == true ? "life" : KFDJson.getpropertynet(item));
-            if(netvalue != "")
-            {
-                let name = item.name;
-
-                if(allprops == false && initflags)
-                {
-                    ///增加_all_表示所有的子集
-                    initflags[name] = {_all_:true};
-                    LOG("收集初始化数据:{0}",name);
-                }
-
-                if (netvalue == "life") {
-
-
-                    let currval = obj ? obj[name] : null;
-
-                    let flag: any = {_w_: true, _t_: obj, _v_: currval, _n_: name};
-                    attribflags[name] = flag;
-                    if (!attribflags._flags_)
-                        attribflags._flags_ = [];
-                    attribflags._flags_.push(flag);
-
-                    let typeid = KFDataType.GetTypeID(item.type);
-                    if (typeid <= KFDataType.OT_UINT64) {
-                        ///普通属性的检测
-                        flag.update = function () {
-                            this._w_ = false;
-                            if (this._t_) {
-                                let curr = this._t_[this._n_];
-                                if (curr != this._v_) {
-                                    this._w_ = true;
-                                    this._v_ = curr;
-                                }
-                            }
-                            return this._w_;
-                        };
-                    } else if (typeid == KFDataType.OT_OBJECT) {
-                        let okfd = KFDTable.kfdTB.get_kfddata(item.otype);
-                        KFDJson.buildattribflags(currval, okfd, flag);
-                    } else if (typeid == KFDataType.OT_MIXOBJECT) {
-                        ///对象为空时先用一个空检测函数
-                        flag._null_ = function () {
-                            this._w_ = false;
-                            if (this._t_) {
-                                let curr = this._t_[this._n_];
-                                if (curr != null) {
-                                    this._w_ = true;
-                                    this._v_ = curr;
-                                    let mixkfd = KFDTable.kfdTB.get_kfddata(curr.__cls__);
-                                    KFDJson.buildattribflags(curr, mixkfd, this);
-                                }
-                            }
-                            return this._w_;
-                        };
-
-                        if (currval) {
-                            let mixkfd = KFDTable.kfdTB.get_kfddata(currval.__cls__);
-                            KFDJson.buildattribflags(currval, mixkfd, flag);
-                        } else {
-                            flag.update = flag._null_;
-                        }
-                    } else if (typeid == KFDataType.OT_ARRAY) {
-                        let okfd = KFDTable.kfdTB.get_kfddata(item.otype);
-                        if (okfd) {
-                            ///对象数组
-                            flag._flags_ = [];
-
-                            flag.update = function () {
-                                this._w_ = false;
-                                if (this._t_) {
-                                    let curr = this._t_[this._n_];
-                                    if (curr != this._v_) {
-                                        this._w_ = true;
-                                        this._v_ = curr;
-                                        //变成了空对象了
-                                        if (curr == null) {
-                                            this._flags_ = [];
-                                        }
-                                    }
-
-                                    if (curr) {
-                                        let vallen = curr.length;
-                                        for (let i = 0; i < vallen; i++) {
-
-                                            let arritemval = curr[i];
-                                            let arritemflag = this._flags_[i];
-
-                                            if (arritemflag && arritemflag._v_ != arritemval) {
-                                                //对象都已经变更了
-                                                arritemflag = null;
-                                            }
-
-                                            if (!arritemflag) {
-                                                arritemflag = {
-                                                    _w_: true
-                                                    , _t_: curr
-                                                    , _v_: arritemval
-                                                    , _n_: i
-                                                };
-                                                KFDJson.buildattribflags(arritemval, okfd, arritemflag);
-                                                this._flags_[i] = arritemflag;
-                                                this._w_ = true;
-                                            } else {
-                                                //还是原始对象可以调用更新检测
-                                                this._w_ = arritemflag.update() || this._w_;
-                                            }
-                                        }
-                                    }
-                                }
-                                return this._w_;
-                            }
-
-
-                        } else {
-                            ///普通的数组
-                            flag._v_ = currval ? currval.concat() : null;
-                            flag.update = function () {
-                                this._w_ = false;
-                                if (this._t_) {
-                                    let curr = this._t_[this._n_];
-                                    if (curr) {
-                                        if (!this._v_ || curr.length != this._v_.length) {
-                                            this._w_ = true;
-                                            this._v_ = curr.concat();
-                                        } else {
-                                            ///记录比较
-                                            for (let i = 0; i < this._v_.length; i++) {
-                                                let citemv = curr[i];
-                                                if (this._v_[i] != citemv) {
-                                                    this._v_[i] = citemv;
-                                                    this._w_ = true;
-                                                }
-                                            }
-                                        }
-                                    } else if (this._v_) {
-                                        this._v_ = null;
-                                        this._w_ = true;
-                                    }
-                                }
-                                return this._w_;
-                            }
-                        }
-                    } else if (typeid == KFDataType.OT_MIXARRAY) {
-                        flag._flags_ = [];
-                        flag.update = function () {
-                            this._w_ = false;
-                            if (this._t_) {
-                                let curr = this._t_[this._n_];
-                                if (curr != this._v_) {
-                                    this._w_ = true;
-                                    this._v_ = curr;
-                                    //变成了空对象了
-                                    if (curr == null) {
-                                        this._flags_ = [];
-                                    }
-                                }
-                                if (curr) {
-                                    let vallen = curr.length;
-                                    for (let i = 0; i < vallen; i++) {
-
-                                        let arritemval = curr[i];
-                                        let arritemflag = this._flags_[i];
-
-                                        if (arritemflag && arritemflag._v_ != arritemval) {
-                                            //对象都已经变更了
-                                            arritemflag = null;
-                                        }
-
-                                        if (!arritemflag) {
-                                            arritemflag = {
-                                                _w_: true
-                                                , _t_: curr
-                                                , _v_: arritemval
-                                                , _n_: i
-                                            };
-                                            let arritmkfd = KFDTable.kfdTB.get_kfddata(arritemval.__cls__);
-                                            KFDJson.buildattribflags(arritemval, arritmkfd, arritemflag);
-                                            this._flags_[i] = arritemflag;
-                                            this._w_ = true;
-
-                                        } else {
-                                            //还是原始对象可以调用更新检测
-                                            this._w_ =  arritemflag.update() || this._w_ ;
-                                        }
-                                    }
-                                }
-                            }
-                            return this._w_;
-                        };
-                    }
-
-                }
-            }
-        }
-
-        if(creatupdate != false) {
-            attribflags.update = function () {
-                this._w_ = false;
-                let cval = this._v_;
-                if(cval && this._flags_){
-                    let flaglen = this._flags_.length;
-                    for(let i = 0;i < flaglen;i ++) {
-                        let itemflag = this._flags_[i];
-                        if(itemflag._t_ != cval){
-                            itemflag._t_ = cval;
-                            this._w_ = true;
-                        }
-                        this._w_ = itemflag.update() || this._w_;
-                    }
-                }
-                return this._w_;
-            }
-        }
-        return attribflags;
-    }
-
 }

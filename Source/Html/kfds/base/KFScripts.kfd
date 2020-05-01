@@ -59,12 +59,24 @@
             {
                 "id": 1,
                 "KEY": "CUSTOM",
+                "unknowtags": [
+                    {
+                        "tag": "NET",
+                        "val": "never"
+                    }
+                ],
                 "name": "type",
                 "type": "kfname"
             },
             {
                 "id": 2,
                 "cname": "额外整形参数",
+                "unknowtags": [
+                    {
+                        "tag": "NET",
+                        "val": "never"
+                    }
+                ],
                 "name": "paramInts",
                 "otype": "int8",
                 "type": "arr"
@@ -73,6 +85,12 @@
                 "id": 3,
                 "cname": "脚本分组",
                 "enum": "KFScriptGroupType",
+                "unknowtags": [
+                    {
+                        "tag": "NET",
+                        "val": "never"
+                    }
+                ],
                 "default": "KFScriptGroupType::Global",
                 "name": "group",
                 "type": "int8"
@@ -134,6 +152,13 @@
                 "id": 1,
                 "default": "100",
                 "name": "LowLevel",
+                "type": "uint8"
+            },
+            {
+                "id": 1,
+                "cname": "网络变量",
+                "default": "101",
+                "name": "NetVar",
                 "type": "uint8"
             }
         ],

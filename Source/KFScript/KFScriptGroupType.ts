@@ -8,4 +8,5 @@ export class KFScriptGroupType
     static Global:number = 4;
     static GlobalRender:number = 6;
     static LowLevel:number = 100;
+    static NetVar:number = 101;
 };

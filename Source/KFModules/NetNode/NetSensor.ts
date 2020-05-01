@@ -10,6 +10,8 @@ import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFDTable} from "../../KFData/Format/KFDTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
+import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
+import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
 
 ///KFD(C,CLASS=NetSensor,EXTEND=KFBlockTarget)
 ///KFD(*)
@@ -21,6 +23,8 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
         ,():KFBlockTarget=>{
             return new NetSensor();
         });
+
+    public static VarPropsDef:any;
 
     public static TYPE_NORMAL:number = 0;
     //角色感知器
@@ -49,8 +53,8 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
 
     //运行在服务端有的属性
     public sKFNewBlkData:any;
-    public sAttribFlags:any;
-    public sInitFlags:any;
+    public sAttribFlags:KFAttribflags;
+    public sInitFlags:KFAttribflags;
     public sUpdateMeta:any;
     //哪个人的关心你的状态
     public sWhoCares:number[];
@@ -169,19 +173,55 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
                     , parentsid:this.rpcparent.actorsid
                 };
 
-
                 //构建好关注数据
                 let clsname = actormeta.type.toString();
                 let kfddata = KFDTable.kfdTB.get_kfddata(clsname);
 
-                this.sInitFlags = {_isdirty_:false};
-                this.sAttribFlags = {_w_:true,_v_:this.actor};
+                let InitFlags:KFAttribflags = new KFAttribflags();
+                InitFlags._isdirty_ = false;
+                this.sInitFlags = InitFlags;
+                let AttribFlags:KFAttribflags = new KFAttribflags(this.actor,undefined,true);
+                this.sAttribFlags = AttribFlags;
 
-                KFDJson.buildattribflags(this.actor
+                let extProps:any[];
+                let actorvars:{[key:number]:any} = this.actor.vars;
+                if(actorvars) {
+                    let has = false;
+                    let extprops = [];
+
+                    for (let vari in actorvars) {
+                        let varo =  actorvars[vari];
+                        if(varo.group == KFScriptGroupType.NetVar){
+                            has = true;
+                            //网络对象需要添加到同步数组中...
+                            if(NetSensor.VarPropsDef == null) {
+                               let varprop = {name: "vars"
+                                   , unknowtags: [{tag: "NET", val: "life"}]
+                                   , type:"object"
+                                   , kfd:{}};
+                                NetSensor.VarPropsDef = varprop;
+                            }
+                            
+                            let extp:any = {};
+                            extp.name = vari;
+                            extp.type = "mixobject";
+                            extp.otype = "KFScriptData";
+                            extprops.push(extp)
+                        }
+                    }
+
+                    if(has) {
+                        NetSensor.VarPropsDef.kfd.propertys = extprops;
+                        extProps = [NetSensor.VarPropsDef];
+                    }
+                }
+
+                KFAttribflags.buildattribflags(this.actor
                     , kfddata
-                    , this.sAttribFlags
+                    , AttribFlags
                     ,true,false
-                    , this.sInitFlags);
+                    , InitFlags
+                    , extProps);
 
                 //读取初始化数据
                 KFDJson.write_value(kfbytes.bytes
