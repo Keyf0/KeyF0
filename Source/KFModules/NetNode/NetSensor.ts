@@ -120,7 +120,7 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
             }
             this.actor = parentactor;
             this.actorsid = parentactor.sid;
-        }else {
+        } else {
 
             ///自己就是那个对象
             this.actor = this;
@@ -201,7 +201,7 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
                                    , kfd:{}};
                                 NetSensor.VarPropsDef = varprop;
                             }
-                            
+
                             let extp:any = {};
                             extp.name = vari;
                             extp.type = "mixobject";
