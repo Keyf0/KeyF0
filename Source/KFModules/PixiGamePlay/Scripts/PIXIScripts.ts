@@ -23,6 +23,8 @@ export class TSSmoothMove extends KFTargetScript {
         });
 
     public p:{x:number,y:number};
+    public aimx:number;
+    public aimy:number;
 
     public Execute(scriptdata: any, context: KFScriptContext = null): void {
         if(this.isrunning) {
@@ -40,8 +42,30 @@ export class TSSmoothMove extends KFTargetScript {
         if(this.isrunning) {
             let pos = this.p;
             let tp = this.m_t.position;
-            pos.x = pos.x + (tp.x - pos.x) / 4;
-            pos.y = pos.y + (tp.y - pos.y) / 4;
+            let target = <any>this.m_t;
+            let ve = target.velocity;
+            let speed = target.maxVelocity;
+
+            if(this.aimx != tp.x || this.aimy != tp.y) {
+                this.aimx = tp.x;
+                this.aimy = tp.y;
+
+                ve.x = this.aimx - pos.x;
+                ve.y = this.aimy - pos.y;
+                ve.nor();
+                ve.mul2(speed);
+            }
+
+            let dx = tp.x - pos.x;
+            let dy = tp.y - pos.y;
+            if(dx * dx + dy * dy < speed * speed){
+                pos.x = tp.x;
+                pos.y = tp.y;
+            }else {
+                pos.x = pos.x + ve.x;
+                pos.y = pos.y + ve.y;
+            }
+
             this.m_t.set_position(pos);
         }
     }
