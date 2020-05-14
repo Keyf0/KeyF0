@@ -24,14 +24,11 @@ export class PIXINetActor extends KFActor implements PIXIObject
         }
     );
 
-    ///KFD(P=3,NAME=velocity,CNAME=当前速度,TYPE=object,OTYPE=kfVector3,NET=life)
+    ///KFD(P=3,NAME=velocity,CNAME=当前速度,TYPE=object,OTYPE=kfVector3)
     public velocity:kfVector3;
 
-    ///KFD(P=4,NAME=maxVelocity,CNAME=最大速度,TYPE=num1)
+    ///KFD(P=4,NAME=maxVelocity,CNAME=最大速度,TYPE=num1,NET=life)
     public maxVelocity:number;
-
-    ///KFD(P=5,NAME=accelerate,CNAME=加速度,TYPE=object,OTYPE=kfVector3,NET=life)
-    public accelerate:kfVector3;
 
     ///KFD(P=6,NAME=maxAccelerate,CNAME=最大加速度,TYPE=num1)
     public maxAccelerate:number;
@@ -94,8 +91,6 @@ export class PIXINetActor extends KFActor implements PIXIObject
             this.scale = new kfVector3(1,1,1);
         if(!this.velocity)
             this.velocity = new kfVector3();
-        if(!this.accelerate)
-            this.accelerate = new kfVector3();
 
         this.rpcc_exec = this.Exec;
         this.rpcs_exec = this.Exec;

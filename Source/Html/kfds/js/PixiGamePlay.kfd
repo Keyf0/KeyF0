@@ -248,26 +248,13 @@
                 "name": "velocity",
                 "cname": "当前速度",
                 "type": "object",
-                "otype": "kfVector3",
-                "unknowtags": [
-                    {
-                        "tag": "NET",
-                        "val": "life"
-                    }
-                ]
+                "otype": "kfVector3"
             },
             {
                 "id": 4,
                 "name": "maxVelocity",
                 "cname": "最大速度",
-                "type": "num1"
-            },
-            {
-                "id": 5,
-                "name": "accelerate",
-                "cname": "加速度",
-                "type": "object",
-                "otype": "kfVector3",
+                "type": "num1",
                 "unknowtags": [
                     {
                         "tag": "NET",

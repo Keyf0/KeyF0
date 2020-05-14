@@ -10,6 +10,7 @@ require("./Build/KFNetwork/WS/IWebSocket").IWebSocket_Type.meta.instantiate = fu
 
 let AppLauncher = require("./Build/App/AppLauncher");
 let app = new AppLauncher.AppLauncher(2);
+app.setFPS(30);
 
 app.config.OnKFDLoaded.on(function (kfdtb) {});
 app.run("../Html/appnettest","../Html/kfds","PIXIScene.blk");
