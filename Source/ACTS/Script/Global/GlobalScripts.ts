@@ -131,9 +131,12 @@ export class GSRemoteScript extends KFScript {
         let toj = context.targetObject;
         //public rpcc_exec:(scriptdata:any)=>any;
         //public rpcs_exec:(scriptdata:any)=>any;
+        //此处的判定只是验证是否可远程执行的对象
         if(toj.rpcc_exec) {
             ///调用服务器
             let eside = sd.execSide ? sd.execSide : BlkExecSide.BOTH;
+            let currside = toj.execSide;
+
             switch (eside) {
                 case BlkExecSide.SERVER:
                     toj.rpcs_exec(rsd);
@@ -142,7 +145,15 @@ export class GSRemoteScript extends KFScript {
                     toj.rpcc_exec(rsd);
                     break;
                 case BlkExecSide.BOTH:
-                    toj.Exec(rsd);
+                    ///如果是BOTH则是所有客户端以及服务器都执行
+                    if(currside == BlkExecSide.CLIENT){
+                        ///如果在客户端，客户端的执行由回调产生
+                        toj.rpcs_broadcast(rsd);
+                    }else{
+                        toj.Exec(rsd);
+                        toj.rpcc_exec(rsd);
+                    }
+
                     break;
                 default:
                     break;

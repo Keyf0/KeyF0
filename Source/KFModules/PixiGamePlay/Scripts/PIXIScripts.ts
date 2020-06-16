@@ -362,7 +362,7 @@ export class GSCreateBLK extends KFScript {
                 arg = sd.r;
                 if(arg){blk.set_rotation(arg);}
 
-                return  blk.sid
+                return  blk.sid;
             }
 
         return 0;

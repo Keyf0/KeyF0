@@ -98,6 +98,12 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
     public Exec(sd:any) {this.runtime.scripts.Execute(sd,this);}
 
+    ///调用到服务器然后广播出去
+    public rpcs_broadcast(scriptdata:any){
+        this.runtime.scripts.Execute(scriptdata,this);
+        this.rpcc_exec(scriptdata);
+    }
+
     protected TargetNew(KFBlockTargetData: any): any
     {
         if(this.execSide != BlkExecSide.SERVER)
