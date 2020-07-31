@@ -5,9 +5,6 @@ import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElementActor} from "./HElementActor";
 
 ///KFD(C,CLASS=HDocument,EXTEND=HElementActor)
-///KFD(P=1,NAME=x,TYPE=num1)
-///KFD(P=2,NAME=y,TYPE=num1)
-///KFD(P=3,NAME=z,TYPE=num1)
 ///KFD(*)
 
 export class HDocument extends HElementActor implements IDocument

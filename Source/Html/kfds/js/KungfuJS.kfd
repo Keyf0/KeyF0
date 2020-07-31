@@ -163,7 +163,13 @@
                 "id": 1,
                 "name": "text",
                 "cname": "代码",
-                "type": "kfstr"
+                "type": "kfstr",
+                "unknowtags": [
+                    {
+                        "tag": "texttype",
+                        "val": "javascript"
+                    }
+                ]
             },
             {
                 "id": 2,

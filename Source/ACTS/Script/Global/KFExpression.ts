@@ -1,7 +1,7 @@
 //
 
 ///KFD(C,CLASS=KFExpression)
-///KFD(P=1,NAME=text,CNAME=代码,TYPE=kfstr)
+///KFD(P=1,NAME=text,CNAME=代码,TYPE=kfstr,texttype=javascript)
 ///KFD(P=2,NAME=once,CNAME=缓存结果,TYPE=bool)
 ///KFD(*)
 

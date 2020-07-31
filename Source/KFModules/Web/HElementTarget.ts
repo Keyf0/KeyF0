@@ -3,6 +3,8 @@ import {HElementCreator} from "./HElementCreator";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 
 ///KFD(C,CLASS=HElementTarget,EXTEND=KFBlockTarget)
+///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
+///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,texttype=html)
 ///KFD(*)
 
 export interface IDocument

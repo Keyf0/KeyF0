@@ -14,23 +14,7 @@
         ],
         "class": "HDocument",
         "extend": "HElementActor",
-        "propertys": [
-            {
-                "id": 1,
-                "name": "x",
-                "type": "num1"
-            },
-            {
-                "id": 2,
-                "name": "y",
-                "type": "num1"
-            },
-            {
-                "id": 3,
-                "name": "z",
-                "type": "num1"
-            }
-        ],
+        "propertys": [],
         "clsid": 1366
     },
     {
@@ -50,7 +34,13 @@
                 "id": 2,
                 "name": "html",
                 "cname": "HTML内容",
-                "type": "kfstr"
+                "type": "kfstr",
+                "unknowtags": [
+                    {
+                        "tag": "texttype",
+                        "val": "html"
+                    }
+                ]
             }
         ],
         "clsid": 1367
@@ -61,7 +51,26 @@
         ],
         "class": "HElementTarget",
         "extend": "KFBlockTarget",
-        "propertys": [],
+        "propertys": [
+            {
+                "id": 1,
+                "name": "attachId",
+                "cname": "绑定ID",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "html",
+                "cname": "HTML内容",
+                "type": "kfstr",
+                "unknowtags": [
+                    {
+                        "tag": "texttype",
+                        "val": "html"
+                    }
+                ]
+            }
+        ],
         "clsid": 1368
     },
     {

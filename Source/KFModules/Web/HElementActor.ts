@@ -6,7 +6,7 @@ import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 
 ///KFD(C,CLASS=HElementActor,EXTEND=KFActor)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
-///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr)
+///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,texttype=html)
 ///KFD(*)
 
 
