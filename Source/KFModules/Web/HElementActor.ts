@@ -3,6 +3,8 @@ import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElement, IDocument} from "./HElementTarget";
 import {HElementCreator} from "./HElementCreator";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
+import {KFDName} from "../../KFData/Format/KFDName";
 
 ///KFD(C,CLASS=HElementActor,EXTEND=KFActor)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
@@ -33,12 +35,33 @@ export class HElementActor extends KFActor implements HElement
               parent.target
             , this
             , this.document);
+
+        let etb = this.etable;
+        this.target["fireEvent"] = function (event) {
+            etb.FireEvent(new KFEvent(KFDName._Strs.GetNameID(event)));
+        };
     }
 
     protected TargetDelete(): void {
+
+        if(this.target)
+        {
+            this.target["fireEvent"] = null;
+        }
+
         if(this.parent) {
             let parent = <HElementActor>this.parent;
             HElementCreator.DefaultDestroyHtml(parent.target, this);
         }
+    }
+
+    public Value(id:string):string
+    {
+        if(this.document)
+        {
+            let ele:any = this.document.nativedom.getElementById(id);
+            if(ele)return ele.value;
+        }
+        return "";
     }
 }

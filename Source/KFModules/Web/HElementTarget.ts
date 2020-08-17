@@ -1,6 +1,8 @@
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElementCreator} from "./HElementCreator";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFDName} from "../../KFData/Format/KFDName";
 
 ///KFD(C,CLASS=HElementTarget,EXTEND=KFBlockTarget)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
@@ -44,6 +46,11 @@ export class HElementTarget extends KFBlockTarget implements HElement
         this.target = HElementCreator.DefaultCreateHtml(parent.target
             , this
             , this.document);
+        this.etable = new KFEventTable();
+        let etb = this.etable;
+        this.target["fireEvent"] = function (event) {
+            etb.FireEvent(new KFEvent(KFDName._Strs.GetNameID(event)));
+        };
     }
 
     public DeactiveBLK(): void {
@@ -52,6 +59,26 @@ export class HElementTarget extends KFBlockTarget implements HElement
 
         let parent = <HElementTarget><any>this.parent;
         HElementCreator.DefaultDestroyHtml(parent.target, this);
+
+        if( this.etable)
+        {
+            this.etable.Clear();
+            this.etable = null;
+        }
+
+        this.target["fireEvent"] = null;
         this.target = null;
     }
+
+    public Value(id:string):string
+    {
+        if(this.document)
+        {
+            let ele:any = this.document.nativedom.getElementById(id);
+            if(ele)
+                return ele.value;
+        }
+        return "";
+    }
+
 }

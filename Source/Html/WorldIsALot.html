@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>人间正道是沧桑</title>
+
+    <link rel="stylesheet" href="css/bootstrap.css" >
+    <link rel="stylesheet" href="css/bootstrap-grid.css" >
+    <link rel="stylesheet" href="css/bootstrap-reboot.css" >
+
+    <style>
+
+        html, body {
+            overflow: hidden;
+            width   : 100%;
+            height  : 100%;
+            margin  : 0;
+            padding : 0;
+            text-align: center;
+            background-color: white;
+        }
+
+        #myCanvas {
+            width   : 100%;
+            height  : 100%;
+            touch-action: none;
+        }
+    </style>
+
+    <script src="js/require.js"></script>
+    <script type="text/javascript" src="js/pixi.min.js"></script>
+
+    <script>
+        require(["libs/App/AppLauncher"
+                ,"libs/KFModules/Web/Web"
+                ,"libs/KFModules/NetNode/NetNode"
+                ,"libs/KFModules/PixiGamePlay/PIXIGamePlay"]
+            ,function(m1,m2,m3,m4){
+            console.log("module loaded");
+            var app = new m1.AppLauncher(1);
+                app.setFPS(30);
+            app.config.OnKFDLoaded.on(function (kfdtb) {
+                m3.initKFDTable(kfdtb);
+                m4.initKFDTable(kfdtb);
+            })
+
+            //app.run("appnettest","kfds","PIXIApp.blk");
+            app.run("appnettest","kfds","WorldIsALot/WorldIsALot.blk");
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>
