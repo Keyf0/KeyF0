@@ -26,6 +26,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public timeline:KFTimelineComponent;
     public graph:KFGraphComponent;
 
+    public rpcc_exec:(scriptdata:any)=>any;
+    public rpcs_exec:(scriptdata:any)=>any;
+
     public GetChildren():KFBlockTarget[]{return this.m_children;};
 
     protected m_children:KFBlockTarget[] = [];
@@ -47,8 +50,20 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         super.Construct(metadata,runtime);
         this.etable = new KFEventTable();
         this.m_CDomain = this.runtime.domain;
+        this.rpcc_exec = this.Exec;
+        this.rpcs_exec = this.Exec;
         this.Init(this.metadata.asseturl);
     }
+
+    public Exec(sd:any) {this.runtime.scripts.Execute(sd,this);}
+
+    ///调用到服务器然后广播出去
+    public rpcs_broadcast(scriptdata:any)
+    {
+        this.runtime.scripts.Execute(scriptdata,this);
+        this.rpcc_exec(scriptdata);
+    }
+
 
     public Init(asseturl:string):void
     {
@@ -230,6 +245,49 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public GetRuntime(): IKFRuntime
     {
         return this.runtime;
+    }
+
+    public CreateChildByData(NewBlkData:any,Init?:any):KFBlockTarget
+    {
+        if(NewBlkData)
+        {
+            let MetaData = NewBlkData.metaData;
+            MetaData = (MetaData && MetaData.data) ? MetaData : null;
+
+            let self:KFActor = this;
+            let newtarget = this.CreateChild(NewBlkData.targetData, MetaData
+                ,function (newtarget:KFBlockTarget) {
+                    ///
+                    if(newtarget)
+                    {
+                        let MetaData = NewBlkData.metaData;
+                        if(MetaData && MetaData.fields)
+                        {
+                            ///用数据对填充
+                            let items = MetaData.fields.items;
+                            if(items){
+                                for(let i = 0;i < items.length; i++){
+                                    let data = items[i];
+                                    let valueobj:any = self.vars[data.key];
+                                    if(valueobj) {
+                                        valueobj.setValue(data.value);
+                                    }
+                                    else
+                                        this.vars[data.key] = data.value;
+                                }
+                            }
+                        }
+                    }
+                    ///
+                    if(Init){
+                        Init(newtarget);
+                    }
+            });
+
+            return newtarget;
+        }
+
+        return null;
     }
 
     public CreateChild(targetdata:any,meta?:any,Init?:any):KFBlockTarget

@@ -62,11 +62,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
     public getPIXITarget(): PIXI.Container {return this._container;}
     public getPIXIApp(): PIXI.Application {return this._pixiapp;}
 
-    public execSide:number;
     public phyobj:PhyObject;
-
-    public rpcc_exec:(scriptdata:any)=>any;
-    public rpcs_exec:(scriptdata:any)=>any;
 
     protected _container:PIXI.Container;
     protected _pixiapp:PIXI.Application;
@@ -81,8 +77,6 @@ export class PIXINetActor extends KFActor implements PIXIObject
     public Construct(metadata: any, runtime: IKFRuntime) {
         super.Construct(metadata, runtime);
 
-        this.execSide = runtime.execSide;
-
         if(!this.position)
             this.position = new kfVector3();
         if(!this.rotation)
@@ -91,22 +85,12 @@ export class PIXINetActor extends KFActor implements PIXIObject
             this.scale = new kfVector3(1,1,1);
         if(!this.velocity)
             this.velocity = new kfVector3();
-
-        this.rpcc_exec = this.Exec;
-        this.rpcs_exec = this.Exec;
     }
 
-    public Exec(sd:any) {this.runtime.scripts.Execute(sd,this);}
-
-    ///调用到服务器然后广播出去
-    public rpcs_broadcast(scriptdata:any){
-        this.runtime.scripts.Execute(scriptdata,this);
-        this.rpcc_exec(scriptdata);
-    }
 
     protected TargetNew(KFBlockTargetData: any): any
     {
-        if(this.execSide != BlkExecSide.SERVER)
+        if(this.runtime.execSide != BlkExecSide.SERVER)
         {
              if(this._container == null) {
                 this._container = this.newContainer();
@@ -136,7 +120,7 @@ export class PIXINetActor extends KFActor implements PIXIObject
 
     protected TargetDelete()
     {
-          if(this.execSide != BlkExecSide.SERVER)
+          if(this.runtime.execSide != BlkExecSide.SERVER)
           {
             let pixiobject = <PIXIObject><any>this.parent;
             let container = pixiobject.getPIXITarget();

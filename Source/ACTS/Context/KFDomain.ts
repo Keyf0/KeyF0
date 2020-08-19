@@ -60,6 +60,10 @@ export class KFDomain implements IKFDomain
                     this.m_incrsid += 1;
                     currsid = this.m_incrsid;
                 }
+                else if(currsid > this.m_incrsid){
+                    ///需要更大的数据增量
+                    this.m_incrsid = currsid;
+                }
 
                 let instname = KFBlockTargetData.instname;
                 if(!instname || instname.value == 0)

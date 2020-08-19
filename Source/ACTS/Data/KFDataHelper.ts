@@ -4,7 +4,7 @@ import {
     GSLogScript,
     GSPlayStateScript,
     GSRemoteScript,
-    kfVector3, SDFloat, SDInt32, SDString
+    kfVector3, SDBlockTargetRef, SDFloat, SDInt32, SDNewBlkDataList, SDString
 } from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
@@ -75,6 +75,18 @@ export class KFDataHelper
                 , KFScriptGroupType.Global
                 ,()=>{
                     return new SDString();
+                })
+                , new ScriptMeta("SDNewBlkDataList"
+                ,():KFScript=>{return null;}
+                , KFScriptGroupType.Global
+                ,()=>{
+                    return new SDNewBlkDataList();
+                })
+                , new ScriptMeta("SDBlockTargetRef"
+                ,():KFScript=>{return null;}
+                , KFScriptGroupType.Global
+                ,()=>{
+                    return new SDBlockTargetRef();
                 })
             ]
             ,kfdtable);

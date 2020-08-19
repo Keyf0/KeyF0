@@ -4,6 +4,7 @@ import {NetSensor} from "./NetSensor";
 import {NetSensorManager} from "./NetSensorManager";
 import {RoleNetSensor} from "./RoleNetSensor";
 import {WSConnection} from "./WSConnection";
+import {Rebuilding} from "./Rebuilding";
 
 export function init() {
 
@@ -11,6 +12,7 @@ export function init() {
     NetSensor;
     NetSensorManager;
     RoleNetSensor;
+    Rebuilding;
 
 }
 

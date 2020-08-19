@@ -108,8 +108,13 @@ export class KFBlockTarget
         while (varsize > 0) {
            let nameval = KFDName._Strs.GetNameID(bytesarr.readstring());
            let data = KFDJson.read_value(bytesarr);
-           this.vars[nameval] = data;
-            varsize -= 1;
+
+           let valueobj:any = this.vars[nameval];
+           if(valueobj)
+               valueobj.setValue(data);
+           else
+               this.vars[nameval] = data;
+           varsize -= 1;
         }
     }
     public WriteVars(bytesarr:KFByteArray, attribFlags?:KFAttribflags) {

@@ -155,6 +155,35 @@
     },
     {
         "includes": [
+            "Global/GlobalScripts.ts",
+            "KFNewBlkDataF.h"
+        ],
+        "class": "SDNewBlkDataList",
+        "cname": "对象列表",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "对象数据",
+                "type": "arr",
+                "otype": "KFNewBlkData"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "SDNewBlkDataList",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1411
+    },
+    {
+        "includes": [
             "Global/KFExpression.ts"
         ],
         "class": "KFExpression",

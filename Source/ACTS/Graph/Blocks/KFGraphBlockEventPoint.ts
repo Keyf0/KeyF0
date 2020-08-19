@@ -10,7 +10,6 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
     private m_evtname:KFDName;
     private m_target:KFBlockTarget = null;
     private m_firenode:KFDName = null;
-    private m_stacks:any[];
 
     public Input(arg: any)
     {
@@ -56,18 +55,18 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
                         let statcks = evt.stacks;
                         let OBJS = null;
                         let slen = 0;
+                        let m_stacks:any[];
 
                         if(statcks) {
                             slen = statcks.length;
                             if(slen > 0) {
-                                ///压入堆栈
-                                if (!this.m_stacks)
-                                    this.m_stacks = [];
+                                ///压入堆栈 此
+                                m_stacks = [];
                                 let script = this.m_ctx.script;
                                 let i = 1;
                                 OBJS = script._reg._OBJECTS;
                                 for (let arg0 of statcks) {
-                                    this.m_stacks[i - 1] = OBJS[i];
+                                    m_stacks[i - 1] = OBJS[i];
                                     OBJS[i] = arg0;
                                     i += 1;
                                 }
@@ -79,7 +78,7 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
                         if(OBJS){
                             ///还原堆栈
                             for (let i = 0;i < slen; i ++) {
-                                OBJS[i + 1] = this.m_stacks[i];
+                                OBJS[i + 1] = m_stacks[i];
                                 i += 1;
                             }
                         }

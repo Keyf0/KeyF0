@@ -3,7 +3,7 @@ import {ScriptMeta} from "../KFScriptFactory";
 import {KFDName} from "../../../KFData/Format/KFDName";
 import {KFScriptGroupType} from "../../../KFScript/KFScriptGroupType";
 import {KFExpression} from "./KFExpression";
-import {BlkExecSide} from "../../Context/KFBlockTarget";
+import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {LOG} from "../../../Core/Log/KFLog";
 
 export class GSPlayStateScript extends KFScript
@@ -320,4 +320,71 @@ export class SDString {
         if(typeof(v) != "string"){v = vo.getValue();}
         this.value += v;
     }
+}
+
+
+///定义一个对象数据结构体和一个列表
+
+///KFD(C,CLASS=SDNewBlkDataList,CNAME=对象数据列表,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=SDNewBlkDataList,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=value,CNAME=对象数据,TYPE=arr,OTYPE=KFNewBlkData)
+///KFD(*)
+
+export class SDNewBlkDataList{
+
+    public value:any[] = [];
+
+    public getValue() {return this.value;}
+    public setValue(data:any){
+        if(!data)return;
+        this.value.length = 0;
+        if(data.getValue){
+            this.value.push.apply(this.value, data.getValue());
+        }else{
+            this.value.push.apply(this.value, data);
+        }
+    }
+}
+
+
+///定义一个对象的引用
+
+///KFD(C,CLASS=SDBlockTargetRef,CNAME=对象引用,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=SDBlockTargetRef,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=name,CNAME=实例名,TYPE=kfname)
+///KFD(P=2,NAME=sid,CNAME=实例SID,TYPE=int32)
+///KFD(*)
+
+export class SDBlockTargetRef {
+
+    public name:KFDName;
+    public sid:number = 0;
+
+    public value:KFBlockTarget = null;
+
+    public getValue(){return this.value;}
+    public setValue(data:any){
+        if(data == null){
+            this.value = null;
+            this.sid = 0;
+            this.name = null;
+
+            return;
+        }
+        if(data.getValue){
+            this.value = data.getValue();
+        } else
+        {
+            this.value = data;
+        }
+
+        if(this.value){
+            this.name = this.value.name;
+            this.sid = this.value.sid;
+        }else{
+            this.sid = 0;
+            this.name = null;
+        }
+    }
+
 }
