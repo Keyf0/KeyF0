@@ -89,7 +89,8 @@ export class KFBlockTarget
         }
     }
 
-    public DeactiveBLK():void{}
+    public DeactiveBLK():void { }
+    public AsActor():any{return null;}
 
     ///更新显示对象
     public set_position(v3?: { x: number; y: number; z?: number }){}

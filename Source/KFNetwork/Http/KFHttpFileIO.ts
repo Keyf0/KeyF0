@@ -51,6 +51,10 @@ export class KFHttpFileIO implements IKFFileIO
                          , async: FileOperationEnd
                          , params:any): boolean
     {
+        if(path.indexOf("db://") == 0){
+            return this.asyncLoadLocalFile(path, async, params);
+        }
+
         let dataft = params;
         let basedir = "";
         if(params && typeof (params) != 'string')
@@ -149,7 +153,71 @@ export class KFHttpFileIO implements IKFFileIO
 
     public asyncSaveFile(path: string, bytesArr: KFByteArray, async: FileOperationEnd): boolean
     {
-        return false;
+        if(path.indexOf("db://") != 0) {
+
+            if(async)async(false, null, path);
+            return false;
+        }
+
+        //path=db://xxxx
+       let request = indexedDB.open("htmlDB");
+        request.onsuccess = function (event) {
+            let db = request.result;
+
+            if(db.objectStoreNames.contains("localbytes")) {
+                //db.createObjectStore(path);
+                let transaction = db.transaction(["localbytes"], "readwrite");
+                let objectStore = transaction.objectStore("localbytes");
+
+                let putreq = objectStore.put(bytesArr.buffer, path);
+
+                putreq.onsuccess = function (evt) {
+                    if(async)async(true, null, path);
+                }
+                putreq.onerror = function (evt) {
+                    if(async)async(false, null, path);
+                }
+            }else{
+                if(async)async(false, null, path);
+            }
+        };
+
+        request.onupgradeneeded = function (event) {
+            let db = request.result;
+            db.createObjectStore('localbytes');
+        }
+
+        return true;
+    }
+
+
+    public asyncLoadLocalFile(path: string
+        , async: FileOperationEnd
+        , params:any): boolean
+    {
+        let request = indexedDB.open("htmlDB");
+        request.onsuccess = function (event) {
+            let db = request.result;
+
+            if(db.objectStoreNames.contains("localbytes")) {
+                //db.createObjectStore(path);
+                let transaction = db.transaction(["localbytes"], "readwrite");
+                let objectStore = transaction.objectStore("localbytes");
+
+                let getreq = objectStore.get(path);
+
+                getreq.onsuccess = function (evt) {
+                    if(async)async(true, getreq.result, path);
+                }
+                getreq.onerror = function (evt) {
+                    if(async)async(false, null, path);
+                }
+            }else{
+                if(async)async(false, null, path);
+            }
+        };
+
+        return true;
     }
 
 }

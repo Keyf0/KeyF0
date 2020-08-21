@@ -28,6 +28,35 @@
     },
     {
         "includes": [
+            "Rebuilding.ts"
+        ],
+        "class": "Rebuilding",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "rebuildInst",
+                "cname": "实例名",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "rebuildPath",
+                "cname": "路径",
+                "type": "kfstr"
+            },
+            {
+                "id": 3,
+                "name": "autoload",
+                "cname": "自动加载",
+                "type": "bool",
+                "default": "true"
+            }
+        ],
+        "clsid": 1412
+    },
+    {
+        "includes": [
             "RoleNetSensor.ts"
         ],
         "class": "RoleNetSensor",

@@ -159,7 +159,7 @@
             "KFNewBlkDataF.h"
         ],
         "class": "SDNewBlkDataList",
-        "cname": "对象列表",
+        "cname": "对象数据列表",
         "extend": "KFScriptData",
         "propertys": [
             {
@@ -174,13 +174,83 @@
             {
                 "id": 1,
                 "name": "type",
-                "cname": "脚本类型",
+                "cname": "数据类型",
                 "default": "SDNewBlkDataList",
                 "OR": 1,
                 "type": "kfname"
             }
         ],
         "clsid": 1411
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts",
+            "KFNewBlkDataF.h",
+            "SDBlockTargetF.h"
+        ],
+        "class": "SDBlockTarget",
+        "cname": "对象数据列表",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "data",
+                "cname": "数据",
+                "type": "object",
+                "otype": "KFNewBlkData"
+            },
+            {
+                "id": 2,
+                "name": "children",
+                "cname": "子集",
+                "type": "arr",
+                "otype": "SDBlockTarget"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDBlockTarget",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1413
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "SDBlockTargetRef",
+        "cname": "对象引用",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "name",
+                "cname": "实例名",
+                "type": "kfname"
+            },
+            {
+                "id": 2,
+                "name": "sid",
+                "cname": "实例SID",
+                "type": "int32"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDBlockTargetRef",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1414
     },
     {
         "includes": [

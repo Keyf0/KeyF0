@@ -29,6 +29,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public rpcc_exec:(scriptdata:any)=>any;
     public rpcs_exec:(scriptdata:any)=>any;
 
+
+    public AsActor():any{return this;}
     public GetChildren():KFBlockTarget[]{return this.m_children;};
 
     protected m_children:KFBlockTarget[] = [];
@@ -292,7 +294,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public CreateChild(targetdata:any,meta?:any,Init?:any):KFBlockTarget
     {
-        let newtarget = this.m_CDomain.CreateBlockTarget(targetdata,meta);
+        let newtarget = this.m_CDomain.CreateBlockTarget(targetdata, meta);
         if (newtarget != null)
         {
             if(Init){

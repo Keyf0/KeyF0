@@ -326,7 +326,7 @@ export class SDString {
 ///定义一个对象数据结构体和一个列表
 
 ///KFD(C,CLASS=SDNewBlkDataList,CNAME=对象数据列表,EXTEND=KFScriptData)
-///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=SDNewBlkDataList,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDNewBlkDataList,OR=1,TYPE=kfname)
 ///KFD(P=1,NAME=value,CNAME=对象数据,TYPE=arr,OTYPE=KFNewBlkData)
 ///KFD(*)
 
@@ -346,11 +346,39 @@ export class SDNewBlkDataList{
     }
 }
 
+///定义一个BlockTarget数据格式
+
+///KFD(C,CLASS=SDBlockTarget,CNAME=对象数据列表,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDBlockTarget,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=data,CNAME=数据,TYPE=object,OTYPE=KFNewBlkData)
+///KFD(P=2,NAME=children,CNAME=子集,TYPE=arr,OTYPE=SDBlockTarget)
+///KFD(*)
+
+export class SDBlockTarget{
+
+    public data:any;
+    public children:any[] = [];
+
+    public getValue() {return this.data;}
+    public setValue(val:any){
+        if(!val) {
+            this.children.length = 0;
+            this.data = null;
+            return;
+        }
+        this.children.length = 0;
+        this.data = val.data;
+        this.children.push.apply(this.children, val.children);
+    }
+}
+
+
+
 
 ///定义一个对象的引用
 
 ///KFD(C,CLASS=SDBlockTargetRef,CNAME=对象引用,EXTEND=KFScriptData)
-///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=SDBlockTargetRef,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDBlockTargetRef,OR=1,TYPE=kfname)
 ///KFD(P=1,NAME=name,CNAME=实例名,TYPE=kfname)
 ///KFD(P=2,NAME=sid,CNAME=实例SID,TYPE=int32)
 ///KFD(*)

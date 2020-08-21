@@ -1679,6 +1679,18 @@
         {
             "class": "SDNewBlkDataList",
             "id": 1411
+        },
+        {
+            "class": "Rebuilding",
+            "id": 1412
+        },
+        {
+            "class": "SDBlockTarget",
+            "id": 1413
+        },
+        {
+            "class": "SDBlockTargetRef",
+            "id": 1414
         }
     ]
 }
