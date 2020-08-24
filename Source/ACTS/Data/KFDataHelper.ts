@@ -1,9 +1,9 @@
 import {KFDTable} from "../../KFData/Format/KFDTable";
 import {
-    GSExpressionScript,
+    GSExpressionScript, GSLoadBLKDataScript,
     GSLogScript,
     GSPlayStateScript,
-    GSRemoteScript,
+    GSRemoteScript, GSSaveBLKDataScript,
     kfVector3, SDBlockTarget, SDBlockTargetRef, SDFloat, SDInt32, SDNewBlkDataList, SDString
 } from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
@@ -48,6 +48,8 @@ export class KFDataHelper
             , GSLogScript.Meta
             , GSExpressionScript.Meta
             , GSRemoteScript.Meta
+            , GSSaveBLKDataScript.Meta
+            , GSLoadBLKDataScript.Meta
 
             ///定义一些基本的数据结构
                 , new ScriptMeta("SDVector3"

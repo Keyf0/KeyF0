@@ -155,6 +155,90 @@
     },
     {
         "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "GSLoadBLKDataScriptData",
+        "cname": "加载BLK数据",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "rebuildInst",
+                "cname": "实例名",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "rebuildPath",
+                "cname": "路径",
+                "type": "kfstr"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "GSLoadBLKDataScriptData",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "4",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1415
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "GSSaveBLKDataScriptData",
+        "cname": "保存BLK数据",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "rebuildInst",
+                "cname": "实例名",
+                "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "rebuildPath",
+                "cname": "路径",
+                "type": "kfstr"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "GSLoadBLKDataScriptData",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "4",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1416
+    },
+    {
+        "includes": [
             "Global/GlobalScripts.ts",
             "KFNewBlkDataF.h"
         ],
@@ -189,7 +273,7 @@
             "SDBlockTargetF.h"
         ],
         "class": "SDBlockTarget",
-        "cname": "对象数据列表",
+        "cname": "对象数据",
         "extend": "KFScriptData",
         "propertys": [
             {

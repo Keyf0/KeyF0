@@ -5,8 +5,8 @@ import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFActor} from "../../ACTS/Actor/KFActor";
-import {IKFFileIO, IKFFileIO_Type} from "../../Core/FileIO/IKFFileIO";
-import {KFDName} from "../../KFData/Format/KFDName";
+import {IKFFileIO_Type} from "../../Core/FileIO/IKFFileIO";
+import {GSLoadBLKDataScript, GSSaveBLKDataScript} from "../../ACTS/Script/Global/GlobalScripts";
 
 
 //保存或重建指定的实例
@@ -44,73 +44,6 @@ export class Rebuilding extends KFBlockTarget{
         super.DeactiveBLK();
     }
 
-    public static Serialize(blk:KFBlockTarget):any {
-
-        let actormeta = blk.metadata;
-        let blkData:any = {"__cls__":"SDBlockTarget"};
-
-        let KFNewBlkData:any = {"__cls__":"KFNewBlkData"};
-        blkData.data = KFNewBlkData;
-        let KFBlockTargetData:any = {"__cls__":"KFBlockTargetData"
-            , asseturl: actormeta.asseturl
-            , instname: blk.name
-            , instsid: blk.sid
-        };
-
-        let KFMetaData:any = {"__cls__":"KFMetaData"};
-
-        //KFMetaData.name = "";
-        //KFMetaData.type =;
-
-        let kfbytes = new KFBytes();
-        kfbytes.bytes = new KFByteArray();
-        KFMetaData.data = kfbytes;
-
-        KFNewBlkData.targetData = KFBlockTargetData;
-        KFNewBlkData.metaData = KFMetaData;
-        ///写入了全量数据
-        KFDJson.write_value(kfbytes.bytes, blk);
-
-        ///查看子集
-        let Actor:KFActor = blk.AsActor();
-        if(Actor){
-            blkData.children = [];
-
-           let ActorChildren: KFBlockTarget[] = Actor.GetChildren();
-           for(let i = 0;i < ActorChildren.length; i ++){
-               blkData.children.push(Rebuilding.Serialize(ActorChildren[i]));
-           }
-
-        }
-
-        return blkData;
-    }
-
-    public static Deserialize(blk:KFBlockTarget, InData:any){
-
-        //let metaData:any = InData.data.metaData;
-        //if(metaData && metaData.data){
-        //   KFDJson.read_value(metaData.data, false, blk);
-        //}
-
-        let childrenData = InData.children;
-        if(childrenData){
-            let blkActor:KFActor = blk.AsActor();
-            for(let i = 0;i < childrenData.length; i++){
-
-                let childdata = childrenData[i];
-                let targetData = childdata.data.targetData;
-                let child: KFBlockTarget = blkActor.FindChild(targetData.instname.value);
-
-                if(child == null){
-                    child = blkActor.CreateChildByData(childdata);
-                }
-
-                Rebuilding.Deserialize(child, childdata);
-            }
-        }
-    }
-
     public SaveData():boolean
     {
         if(this.parent)
@@ -118,7 +51,7 @@ export class Rebuilding extends KFBlockTarget{
             ///获取需要序列化的对象
            let Instance:KFBlockTarget = this.parent.StrChild(this.rebuildInst);
            if(Instance){
-             let blkData = Rebuilding.Serialize(Instance);
+             let blkData = GSSaveBLKDataScript.Serialize(Instance);
              let bytearr:KFByteArray = new KFByteArray();
              KFDJson.write_value(bytearr,blkData);
              IKFFileIO_Type.instance.asyncSaveFile(this.rebuildPath
@@ -139,7 +72,7 @@ export class Rebuilding extends KFBlockTarget{
 
                     if (ret) {
                         let bytes: KFByteArray = new KFByteArray(data);
-                       Rebuilding.Deserialize(Instance, KFDJson.read_value(bytes));
+                        GSLoadBLKDataScript.Deserialize(Instance, KFDJson.read_value(bytes));
                     }
 
                 }, null);

@@ -5,6 +5,11 @@ import {KFScriptGroupType} from "../../../KFScript/KFScriptGroupType";
 import {KFExpression} from "./KFExpression";
 import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {LOG} from "../../../Core/Log/KFLog";
+import {KFActor} from "../../Actor/KFActor";
+import {KFBytes} from "../../../KFData/Format/KFBytes";
+import {KFByteArray} from "../../../KFData/Utils/FKByteArray";
+import {KFDJson} from "../../../KFData/Format/KFDJson";
+import {IKFFileIO_Type} from "../../../Core/FileIO/IKFFileIO";
 
 export class GSPlayStateScript extends KFScript
 {
@@ -161,6 +166,165 @@ export class GSRemoteScript extends KFScript {
         }
     }
 
+}
+
+
+///KFD(C,CLASS=GSLoadBLKDataScriptData,CNAME=加载BLK数据,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=GSLoadBLKDataScriptData,OR=1,TYPE=kfname)
+///KFD(P=3,NAME=group,CNAME=脚本分组,DEFAULT=4,OR=1,ENUM=KFScriptGroupType,TYPE=int8)
+///KFD(P=1,NAME=rebuildInst,CNAME=实例名,TYPE=kfstr)
+///KFD(P=2,NAME=rebuildPath,CNAME=路径,TYPE=kfstr)
+///KFD(*)
+
+export class GSLoadBLKDataScript extends KFScript
+{
+    public static Meta:ScriptMeta = new ScriptMeta("GSLoadBLKDataScriptData"
+        ,():KFScript=>{return new GSLoadBLKDataScript();}
+        , KFScriptGroupType.Global, null
+        ,(sd:any,objs:any[],pints:number[])=>{
+            let plen = pints.length;
+            for(let i = 1; i < plen; i ++){
+                switch (pints[i]) {
+                    case 0:
+                        sd.rebuildInst = objs[i - 1];
+                        break;
+                    case 1:
+                        sd.rebuildPath = objs[i - 1];
+                        break;
+                }
+            }
+        });
+
+    public static Deserialize(blk:KFBlockTarget, InData:any)
+    {
+        //let metaData:any = InData.data.metaData;
+        //if(metaData && metaData.data){
+        //   KFDJson.read_value(metaData.data, false, blk);
+        //}
+
+        let childrenData = InData.children;
+        if(childrenData){
+            let blkActor:KFActor = blk.AsActor();
+            for(let i = 0;i < childrenData.length; i++){
+
+                let childdata = childrenData[i];
+                let targetData = childdata.data.targetData;
+                let child: KFBlockTarget = blkActor.FindChild(targetData.instname.value);
+
+                if(child == null){
+                    child = blkActor.CreateChildByData(childdata);
+                }
+
+                GSLoadBLKDataScript.Deserialize(child, childdata);
+            }
+        }
+    }
+
+    public Execute(scriptdata: any, context: KFScriptContext = null): any {
+
+        if(context.targetObject.StrChild) {
+            let Instance: KFBlockTarget = context.targetObject.StrChild(scriptdata.rebuildInst);
+            if (Instance) {
+                IKFFileIO_Type.instance.asyncLoadFile(scriptdata.rebuildPath
+                    , function (ret: any, data: any, path: string) {
+
+                        if (ret) {
+                            let bytes: KFByteArray = new KFByteArray(data);
+                            GSLoadBLKDataScript.Deserialize(Instance, KFDJson.read_value(bytes));
+                        }
+
+                    }, null);
+
+            }
+        }
+    }
+}
+
+
+///KFD(C,CLASS=GSSaveBLKDataScriptData,CNAME=保存BLK数据,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=GSLoadBLKDataScriptData,OR=1,TYPE=kfname)
+///KFD(P=3,NAME=group,CNAME=脚本分组,DEFAULT=4,OR=1,ENUM=KFScriptGroupType,TYPE=int8)
+///KFD(P=1,NAME=rebuildInst,CNAME=实例名,TYPE=kfstr)
+///KFD(P=2,NAME=rebuildPath,CNAME=路径,TYPE=kfstr)
+///KFD(*)
+
+export class GSSaveBLKDataScript extends KFScript{
+
+    public static Meta:ScriptMeta = new ScriptMeta("GSSaveBLKDataScriptData"
+        ,():KFScript=>{return new GSLoadBLKDataScript();}
+        , KFScriptGroupType.Global, null
+        ,(sd:any,objs:any[],pints:number[])=>{
+            let plen = pints.length;
+            for(let i = 1; i < plen; i ++){
+                switch (pints[i]) {
+                    case 0:
+                        sd.rebuildInst = objs[i - 1];
+                        break;
+                    case 1:
+                        sd.rebuildPath = objs[i - 1];
+                        break;
+                }
+            }
+        });
+
+    public static Serialize(blk:KFBlockTarget):any {
+
+        let actormeta = blk.metadata;
+        let blkData:any = {"__cls__":"SDBlockTarget"};
+
+        let KFNewBlkData:any = {"__cls__":"KFNewBlkData"};
+        blkData.data = KFNewBlkData;
+        let KFBlockTargetData:any = {"__cls__":"KFBlockTargetData"
+            , asseturl: actormeta.asseturl
+            , instname: blk.name
+            , instsid: blk.sid
+        };
+
+        let KFMetaData:any = {"__cls__":"KFMetaData"};
+
+        //KFMetaData.name = "";
+        //KFMetaData.type =;
+
+        let kfbytes = new KFBytes();
+        kfbytes.bytes = new KFByteArray();
+        KFMetaData.data = kfbytes;
+
+        KFNewBlkData.targetData = KFBlockTargetData;
+        KFNewBlkData.metaData = KFMetaData;
+        ///写入了全量数据
+        KFDJson.write_value(kfbytes.bytes, blk);
+
+        ///查看子集
+        let Actor:KFActor = blk.AsActor();
+        if(Actor){
+            blkData.children = [];
+
+            let ActorChildren: KFBlockTarget[] = Actor.GetChildren();
+            for(let i = 0;i < ActorChildren.length; i ++){
+                blkData.children.push(GSSaveBLKDataScript.Serialize(ActorChildren[i]));
+            }
+
+        }
+
+        return blkData;
+    }
+
+    public Execute(scriptdata: any, context: KFScriptContext = null): any
+    {
+        if(context.targetObject.StrChild)
+        {
+            ///获取需要序列化的对象
+            let Instance:KFBlockTarget = context.targetObject.StrChild(scriptdata.rebuildInst);
+            if(Instance)
+            {
+                let blkData = GSSaveBLKDataScript.Serialize(Instance);
+                let bytearr:KFByteArray = new KFByteArray();
+                KFDJson.write_value(bytearr,blkData);
+                IKFFileIO_Type.instance.asyncSaveFile(scriptdata.rebuildPath
+                    , bytearr, null);
+            }
+        }
+    }
 }
 
 
@@ -348,7 +512,7 @@ export class SDNewBlkDataList{
 
 ///定义一个BlockTarget数据格式
 
-///KFD(C,CLASS=SDBlockTarget,CNAME=对象数据列表,EXTEND=KFScriptData)
+///KFD(C,CLASS=SDBlockTarget,CNAME=对象数据,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDBlockTarget,OR=1,TYPE=kfname)
 ///KFD(P=1,NAME=data,CNAME=数据,TYPE=object,OTYPE=KFNewBlkData)
 ///KFD(P=2,NAME=children,CNAME=子集,TYPE=arr,OTYPE=SDBlockTarget)

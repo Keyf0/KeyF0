@@ -1691,6 +1691,14 @@
         {
             "class": "SDBlockTargetRef",
             "id": 1414
+        },
+        {
+            "class": "GSLoadBLKDataScriptData",
+            "id": 1415
+        },
+        {
+            "class": "GSSaveBLKDataScriptData",
+            "id": 1416
         }
     ]
 }
