@@ -1,0 +1,21 @@
+{
+    "name": "Citizen of Rome - Dynasty Ascendant",
+    "short_name": "Citizen of Rome - Dynasty Ascendant",
+    "description": "Play as a Roman family in the Ancient Republic and help it Ascend to the top",
+    "icons": [
+        {
+            "src": "android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#66023c",
+    "background_color": "#66023c",
+    "display": "fullscreen",
+    "start_url": "index.html"
+}

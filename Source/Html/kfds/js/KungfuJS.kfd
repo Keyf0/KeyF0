@@ -305,6 +305,67 @@
     },
     {
         "includes": [
+            "Global/GlobalScripts.ts",
+            "KFScriptDataF.h"
+        ],
+        "class": "BLKVar",
+        "cname": "参数定义",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "name",
+                "cname": "参数名",
+                "type": "kfname"
+            },
+            {
+                "id": 2,
+                "name": "value",
+                "cname": "参数值",
+                "type": "mixobject",
+                "otype": "KFScriptData"
+            }
+        ],
+        "clsid": 1417
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts",
+            "BLKVarF.h",
+            "SDBLKVarsF.h"
+        ],
+        "class": "SDBLKVars",
+        "cname": "对象参数",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "参数集",
+                "type": "arr",
+                "otype": "BLKVar"
+            },
+            {
+                "id": 2,
+                "name": "children",
+                "cname": "子集",
+                "type": "arr",
+                "otype": "SDBLKVars"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDBLKVars",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1418
+    },
+    {
+        "includes": [
             "Global/GlobalScripts.ts"
         ],
         "class": "SDBlockTargetRef",

@@ -377,4 +377,11 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
         return block;
     }
+    ///FOR SCRIPT
+    public InputBlock(name:string, arg:any = null):void{
+        let block = this.graph.GetBlockID(KFDName._Strs._Strings2ID[name]);
+        if(block) {
+            block.Input(arg);
+        }
+    }
 }

@@ -21,6 +21,7 @@ export interface HElement
     html:string;
     target:Element;
     document:IDocument;
+    sid:number;
 }
 
 export class HElementTarget extends KFBlockTarget implements HElement
@@ -49,7 +50,9 @@ export class HElementTarget extends KFBlockTarget implements HElement
         this.etable = new KFEventTable();
         let etb = this.etable;
         this.target["fireEvent"] = function (event) {
-            etb.FireEvent(new KFEvent(KFDName._Strs.GetNameID(event)));
+            let ShareEvent:KFEvent = KFEvent.ShareEvent;
+            ShareEvent.type.value = KFDName._Strs.GetNameID(event);
+            etb.FireEvent(ShareEvent);
         };
     }
 

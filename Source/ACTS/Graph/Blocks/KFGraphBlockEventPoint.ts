@@ -4,6 +4,7 @@ import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
 import {KFGraphBlockType} from "../../Data/KFGraphBlockType";
 
+///事件不执行脚本是为了保持堆栈不被破坏
 export class KFGraphBlockEventPoint extends KFGraphBlockBase
 {
     private m_evthandler:any = null;

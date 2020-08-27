@@ -15,7 +15,7 @@ export class HElementCreator {
         else {
                 let htmlstr = element.html;
                 if(htmlstr && htmlstr != "") {
-
+                    htmlstr = htmlstr.replace(/\%sid\%/g,element.sid + "");
                     parent.insertAdjacentHTML("beforeend", htmlstr);
                     element.target = parent.lastElementChild;
                 }

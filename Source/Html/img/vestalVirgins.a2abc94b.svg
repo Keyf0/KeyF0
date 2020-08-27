@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="vestalVirgins.svg"
+   inkscape:version="1.0alpha (9dee831, 2019-01-15)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 210 297"
+   height="297mm"
+   width="210mm">
+  <defs
+     id="defs2">
+    <path
+       d="M9.32 329.32C9.32 158.45 149.13 18.64 320 18.64C490.87 18.64 630.68 158.45 630.68 329.32C630.68 500.19 490.87 640 320 640C149.13 640 9.32 500.19 9.32 329.32Z"
+       id="a5DBibfZci" />
+    <path
+       d="M320 19.68C159.28 19.68 29 149.96 29 310.68C29 471.4 159.28 601.68 320 601.68C480.72 601.68 611 471.4 611 310.68C611 149.96 480.72 19.68 320 19.68Z"
+       id="b417r8Xq6s" />
+    <path
+       d="M354.17 54.89C425.63 54.89 490.87 80.78 541.62 123.24C488.8 60.06 409.06 19.68 320 19.68C159.48 19.68 29 150.16 29 310.68C29 399.74 69.39 479.48 132.56 533.33C89.06 482.59 63.17 417.35 63.17 345.89C63.17 185.37 193.66 54.89 354.17 54.89Z"
+       id="c81uMFdlyG" />
+    <path
+       d="M526.08 105.63C640 219.55 640 403.88 526.08 517.8C412.17 631.72 227.83 631.72 113.92 517.8"
+       id="b17KHgnVVt" />
+    <path
+       d="M345.38 1.03L357.88 2.31L370.22 4.09L382.41 6.34L394.43 9.07L406.27 12.26L417.93 15.91L429.38 19.99L440.63 24.51L451.66 29.46L462.46 34.81L473.02 40.57L483.34 46.72L493.39 53.25L503.18 60.15L512.68 67.41L521.9 75.02L530.81 82.98L539.42 91.26L547.7 99.87L555.66 108.78L563.27 118L570.53 127.5L577.43 137.29L583.96 147.34L590.11 157.66L595.87 168.22L601.22 179.02L606.17 190.05L610.69 201.3L614.77 212.75L618.42 224.41L621.61 236.25L624.34 248.27L626.59 260.46L628.37 272.8L629.64 285.3L630.42 297.92L630.68 310.68L630.42 323.44L629.64 336.06L628.37 348.56L626.59 360.9L624.34 373.09L621.61 385.11L618.42 396.95L614.77 408.61L610.69 420.06L606.17 431.31L601.22 442.34L595.87 453.14L590.11 463.7L583.96 474.02L577.43 484.07L570.53 493.86L563.27 503.36L555.66 512.58L547.7 521.49L539.42 530.1L530.81 538.38L521.9 546.34L512.68 553.95L503.18 561.21L493.39 568.11L483.34 574.64L473.02 580.79L462.46 586.55L451.66 591.9L440.63 596.84L429.38 601.36L417.93 605.45L406.27 609.1L394.43 612.29L382.41 615.02L370.22 617.27L357.88 619.05L345.38 620.32L332.76 621.1L320 621.36L307.24 621.1L294.62 620.32L282.12 619.05L269.78 617.27L257.59 615.02L245.57 612.29L233.73 609.1L222.07 605.45L210.62 601.36L199.37 596.84L188.34 591.9L177.54 586.55L166.98 580.79L156.66 574.64L146.61 568.11L136.82 561.21L127.32 553.95L118.1 546.34L109.19 538.38L100.58 530.1L92.3 521.49L84.34 512.58L76.73 503.36L69.47 493.86L62.57 484.07L56.04 474.02L49.89 463.7L44.13 453.14L38.78 442.34L33.83 431.31L29.31 420.06L25.23 408.61L21.58 396.95L18.39 385.11L15.66 373.09L13.41 360.9L11.63 348.56L10.36 336.06L9.58 323.44L9.32 310.68L9.58 297.92L10.36 285.3L11.63 272.8L13.41 260.46L15.66 248.27L18.39 236.25L21.58 224.41L25.23 212.75L29.31 201.3L33.83 190.05L38.78 179.02L44.13 168.22L49.89 157.66L56.04 147.34L62.57 137.29L69.47 127.5L76.73 118L84.34 108.78L92.3 99.87L100.58 91.26L109.19 82.98L118.1 75.02L127.32 67.41L136.82 60.15L146.61 53.25L156.66 46.72L166.98 40.57L177.54 34.81L188.34 29.46L199.37 24.51L210.62 19.99L222.07 15.91L233.73 12.26L245.57 9.07L257.59 6.34L269.78 4.09L282.12 2.31L294.62 1.03L307.24 0.26L320 0L332.76 0.26L345.38 1.03ZM297.7 40.26L286.74 41.37L275.91 42.92L265.23 44.89L254.7 47.28L244.32 50.07L234.12 53.25L224.09 56.83L214.26 60.78L204.61 65.1L195.17 69.77L185.94 74.8L176.94 80.18L168.16 85.88L159.62 91.91L151.33 98.26L143.3 104.91L135.52 111.86L128.03 119.09L120.81 126.61L113.88 134.4L107.25 142.45L100.93 150.75L94.93 159.3L89.25 168.08L83.9 177.08L78.9 186.31L74.25 195.74L69.95 205.37L66.03 215.19L62.48 225.2L59.31 235.37L56.54 245.71L54.17 256.21L52.22 266.84L50.68 277.62L49.57 288.52L48.9 299.55L48.67 310.68L48.9 321.89L49.58 332.97L50.7 343.94L52.24 354.77L54.22 365.45L56.6 375.98L59.39 386.36L62.58 396.56L66.15 406.59L70.1 416.42L74.42 426.07L79.09 435.51L84.12 444.74L89.5 453.74L95.2 462.52L101.23 471.06L107.58 479.35L114.23 487.38L121.18 495.16L128.41 502.65L135.93 509.87L143.72 516.8L151.77 523.43L160.07 529.75L168.62 535.75L177.4 541.43L186.4 546.78L195.63 551.78L205.06 556.43L214.69 560.73L224.51 564.65L234.52 568.2L244.69 571.37L255.03 574.14L265.53 576.51L276.17 578.46L286.94 580L297.84 581.11L308.87 581.78L320 582.01L331.13 581.78L342.16 581.1L353.06 579.98L363.83 578.44L374.47 576.46L384.97 574.08L395.31 571.29L405.48 568.1L415.49 564.53L425.31 560.58L434.94 556.26L444.37 551.58L453.6 546.55L462.6 541.18L471.38 535.48L479.93 529.45L488.23 523.1L496.28 516.45L504.07 509.5L511.59 502.27L518.82 494.75L525.77 486.96L532.42 478.91L538.77 470.61L544.8 462.06L550.5 453.28L555.88 444.28L560.91 435.05L565.58 425.62L569.9 415.99L573.85 406.17L577.42 396.16L580.61 385.99L583.4 375.65L585.78 365.15L587.76 354.51L589.3 343.74L590.42 332.83L591.1 321.81L591.33 310.68L591.1 299.55L590.43 288.52L589.32 277.62L587.78 266.84L585.83 256.21L583.46 245.71L580.69 235.37L577.52 225.2L573.97 215.19L570.05 205.37L565.75 195.74L561.1 186.31L556.1 177.08L550.75 168.08L545.07 159.3L539.07 150.75L532.75 142.45L526.12 134.4L519.19 126.61L511.97 119.09L504.48 111.86L496.7 104.91L488.67 98.26L480.38 91.91L471.84 85.88L463.06 80.18L454.06 74.8L444.83 69.77L435.39 65.1L425.74 60.78L415.91 56.83L405.88 53.25L395.68 50.07L385.3 47.28L374.77 44.89L364.09 42.92L353.26 41.37L342.3 40.26L331.21 39.58L320 39.35L308.79 39.58L297.7 40.26Z"
+       id="b3LIawz3iA" />
+    <path
+       d="M554.05 106.67C499.16 59.03 427.7 30.03 349 30.03C296.18 30.03 247.51 43.5 204.01 66.28C239.22 48.67 278.58 39.35 320 39.35C401.81 39.35 476.38 76.63 526.08 134.63C584.08 184.34 620.32 257.86 620.32 340.71C620.32 382.14 611 421.49 594.43 456.7C617.22 413.2 630.68 363.5 630.68 310.68C630.68 231.97 601.68 160.52 554.05 106.67Z"
+       id="a2EQk6NQp4" />
+    <path
+       d="M114.95 544.72C169.84 592.36 241.29 621.36 318.96 621.36C371.78 621.36 420.45 607.9 463.95 585.11C428.74 601.68 389.39 611 347.96 611C266.15 611 191.59 573.72 141.88 515.73C83.88 466.02 46.6 392.49 46.6 309.64C46.6 268.22 55.92 228.87 72.49 193.66C51.78 238.19 38.32 287.9 38.32 340.71C38.32 419.42 67.31 490.87 114.95 544.72Z"
+       id="inUQVdlFL" />
+    <path
+       d="M298.91 526.3L298.91 448.48L312.97 448.48L312.97 526.3L298.91 526.3Z"
+       id="aWE6E06Pc" />
+    <path
+       d="M305.94 526.3L305.94 448.48L312.97 448.48L312.97 526.3L305.94 526.3Z"
+       id="aLEXh7dw4" />
+    <path
+       d="M327.03 526.3L327.03 448.48L341.09 448.48L341.09 526.3L327.03 526.3Z"
+       id="b3ltTORvtf" />
+    <path
+       d="M334.06 526.3L334.06 448.48L341.09 448.48L341.09 526.3L334.06 526.3Z"
+       id="b8QvmBdc7v" />
+    <path
+       d="M355.39 526.3L355.39 448.48L369.45 448.48L369.45 526.3L355.39 526.3Z"
+       id="a34euV47hL" />
+    <path
+       d="M362.42 526.3L362.42 448.48L369.45 448.48L369.45 526.3L362.42 526.3Z"
+       id="b3kBDcTJUX" />
+    <path
+       d="M270.55 526.3L270.55 448.48L284.61 448.48L284.61 526.3L270.55 526.3Z"
+       id="lmBdAiL3c" />
+    <path
+       d="M277.58 526.3L277.58 448.48L284.61 448.48L284.61 526.3L277.58 526.3Z"
+       id="a2oCx35Ij0" />
+    <path
+       d="M380 455.52L260 455.52L260 442.79L320 412.9L380 442.79L380 455.52Z"
+       id="d3v9gQnZA" />
+    <path
+       d="M380 455.52L320 455.52L320 412.9L380 442.79L380 455.52Z"
+       id="ejEjOsPe8" />
+    <path
+       d="M260 533.33L260 519.27L380 519.27L380 533.33L260 533.33Z"
+       id="c4cMJtWpma" />
+    <path
+       d="M320 533.33L320 519.27L380 519.27L380 533.33L320 533.33Z"
+       id="a6uIOSCL" />
+    <path
+       d="M322.6 427.71L323.82 428.1L324.96 428.62L326.03 429.28L327.01 430.05L327.89 430.93L328.66 431.91L329.31 432.97L329.84 434.12L330.23 435.34L330.46 436.61L330.55 437.94L330.46 439.26L330.23 440.54L329.84 441.75L329.31 442.9L328.66 443.97L327.89 444.95L327.01 445.83L326.03 446.6L324.96 447.25L323.82 447.78L322.6 448.16L321.32 448.4L320 448.48L318.67 448.4L317.4 448.16L316.18 447.78L315.04 447.25L313.97 446.6L312.99 445.83L312.11 444.95L311.34 443.97L310.69 442.9L310.16 441.75L309.77 440.54L309.54 439.26L309.45 437.94L309.54 436.61L309.77 435.34L310.16 434.12L310.69 432.97L311.34 431.91L312.11 430.93L312.99 430.05L313.97 429.28L315.04 428.62L316.18 428.1L317.4 427.71L318.67 427.47L320 427.39L321.32 427.47L322.6 427.71Z"
+       id="f55legmfPb" />
+    <path
+       d="M323.34 427.93L324.85 428.56L326.23 429.42L327.46 430.47L328.51 431.7L329.37 433.08L330.01 434.6L330.41 436.22L330.55 437.94L330.41 439.65L330.01 441.27L329.37 442.79L328.52 444.17L327.46 445.4L326.23 446.45L324.85 447.31L323.34 447.95L321.71 448.35L320 448.48L320 427.39L321.71 427.53L323.34 427.93Z"
+       id="c1LAIAWf7b" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-maximized="1"
+     inkscape:window-y="34"
+     inkscape:window-x="57"
+     inkscape:window-height="702"
+     inkscape:window-width="1309"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="g1026"
+     inkscape:document-units="mm"
+     inkscape:cy="557.90786"
+     inkscape:cx="301.33091"
+     inkscape:zoom="0.49497475"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <g
+       transform="matrix(0.26458333,0,0,0.26458333,21.166668,63.500015)"
+       style="opacity:1;stop-opacity:1"
+       id="g1026">
+      <g
+         id="g862">
+        <use
+           style="fill:#630653;fill-opacity:1"
+           height="100%"
+           width="100%"
+           y="0"
+           x="0"
+           id="use856"
+           fill-opacity="1"
+           fill="#5d3373"
+           opacity="1"
+           xlink:href="#a5DBibfZci" />
+        <g
+           id="g860">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use858"
+             stroke-opacity="0"
+             stroke-width="1"
+             stroke="#000000"
+             fill-opacity="0"
+             opacity="1"
+             xlink:href="#a5DBibfZci" />
+        </g>
+      </g>
+      <g
+         id="g870">
+        <use
+           style="fill:#b71071;fill-opacity:1"
+           height="100%"
+           width="100%"
+           y="0"
+           x="0"
+           id="use864"
+           fill-opacity="1"
+           fill="#a556be"
+           opacity="1"
+           xlink:href="#b417r8Xq6s" />
+        <g
+           id="g868">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use866"
+             stroke-opacity="0"
+             stroke-width="1"
+             stroke="#000000"
+             fill-opacity="0"
+             opacity="1"
+             xlink:href="#b417r8Xq6s" />
+        </g>
+      </g>
+      <g
+         id="g878">
+        <use
+           style="fill:#66023c;fill-opacity:1"
+           height="100%"
+           width="100%"
+           y="0"
+           x="0"
+           id="use872"
+           fill-opacity="1"
+           fill="#551f67"
+           opacity="1"
+           xlink:href="#c81uMFdlyG" />
+        <g
+           id="g876">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use874"
+             stroke-opacity="0"
+             stroke-width="1"
+             stroke="#000000"
+             fill-opacity="0"
+             opacity="1"
+             xlink:href="#c81uMFdlyG" />
+        </g>
+      </g>
+      <g
+         id="g886">
+        <use
+           style="fill:#66023c;fill-opacity:1"
+           height="100%"
+           width="100%"
+           y="0"
+           x="0"
+           id="use880"
+           fill-opacity="1"
+           fill="#551f67"
+           opacity="1"
+           xlink:href="#b17KHgnVVt" />
+        <g
+           id="g884">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use882"
+             stroke-opacity="0"
+             stroke-width="1"
+             stroke="#000000"
+             fill-opacity="0"
+             opacity="1"
+             xlink:href="#b17KHgnVVt" />
+        </g>
+      </g>
+      <g
+         id="g894">
+        <use
+           style="opacity:1;fill:#96097e;fill-opacity:1"
+           height="100%"
+           width="100%"
+           y="0"
+           x="0"
+           id="use888"
+           fill-opacity="1"
+           fill="#8122b6"
+           opacity="1"
+           xlink:href="#b3LIawz3iA" />
+        <g
+           id="g892">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use890"
+             stroke-opacity="0"
+             stroke-width="1"
+             stroke="#000000"
+             fill-opacity="0"
+             opacity="1"
+             xlink:href="#b3LIawz3iA" />
+        </g>
+      </g>
+      <g
+         id="g902">
+        <use
+           style="fill:#d642bc;fill-opacity:1"
+           height="100%"
+           width="100%"
+           y="0"
+           x="0"
+           id="use896"
+           fill-opacity="1"
+           fill="#ac65d4"
+           opacity="1"
+           xlink:href="#a2EQk6NQp4" />
+        <g
+           id="g900">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use898"
+             stroke-opacity="0"
+             stroke-width="1"
+             stroke="#000000"
+             fill-opacity="0"
+             opacity="1"
+             xlink:href="#a2EQk6NQp4" />
+        </g>
+      </g>
+      <g
+         transform="translate(-5.0545846,1.8803487)"
+         id="g910">
+        <use
+           style="fill:#d642bc;fill-opacity:1"
+           height="100%"
+           width="100%"
+           y="0"
+           x="0"
+           id="use904"
+           fill-opacity="1"
+           fill="#ac65d4"
+           opacity="1"
+           xlink:href="#inUQVdlFL" />
+        <g
+           id="g908">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use906"
+             stroke-opacity="0"
+             stroke-width="1"
+             stroke="#000000"
+             fill-opacity="0"
+             opacity="1"
+             xlink:href="#inUQVdlFL" />
+        </g>
+        <text
+           id="text1249"
+           y="363.34561"
+           x="236.94717"
+           style="font-style:normal;font-weight:normal;font-size:373.334px;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
+           xml:space="preserve"><tspan
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:373.334px;font-family:'URW Palladio L';-inkscape-font-specification:'URW Palladio L';fill:#ffffff;fill-opacity:1"
+             y="693.65869"
+             x="236.94717"
+             id="tspan1247"
+             sodipodi:role="line" /></text>
+      </g>
+      <g
+         transform="matrix(0.87582139,0,0,0.87582139,41.682325,75.829557)"
+         id="g1024">
+        <g
+           id="g918">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use912"
+             fill-opacity="1"
+             fill="#d3d3d8"
+             opacity="1"
+             xlink:href="#aWE6E06Pc" />
+          <g
+             id="g916">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use914"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#aWE6E06Pc" />
+          </g>
+        </g>
+        <g
+           id="g926">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use920"
+             fill-opacity="1"
+             fill="#babac0"
+             opacity="1"
+             xlink:href="#aLEXh7dw4" />
+          <g
+             id="g924">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use922"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#aLEXh7dw4" />
+          </g>
+        </g>
+        <g
+           id="g934">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use928"
+             fill-opacity="1"
+             fill="#d3d3d8"
+             opacity="1"
+             xlink:href="#b3ltTORvtf" />
+          <g
+             id="g932">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use930"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#b3ltTORvtf" />
+          </g>
+        </g>
+        <g
+           id="g942">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use936"
+             fill-opacity="1"
+             fill="#babac0"
+             opacity="1"
+             xlink:href="#b8QvmBdc7v" />
+          <g
+             id="g940">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use938"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#b8QvmBdc7v" />
+          </g>
+        </g>
+        <g
+           id="g950">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use944"
+             fill-opacity="1"
+             fill="#d3d3d8"
+             opacity="1"
+             xlink:href="#a34euV47hL" />
+          <g
+             id="g948">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use946"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#a34euV47hL" />
+          </g>
+        </g>
+        <g
+           id="g958">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use952"
+             fill-opacity="1"
+             fill="#babac0"
+             opacity="1"
+             xlink:href="#b3kBDcTJUX" />
+          <g
+             id="g956">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use954"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#b3kBDcTJUX" />
+          </g>
+        </g>
+        <g
+           id="g966">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use960"
+             fill-opacity="1"
+             fill="#d3d3d8"
+             opacity="1"
+             xlink:href="#lmBdAiL3c" />
+          <g
+             id="g964">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use962"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#lmBdAiL3c" />
+          </g>
+        </g>
+        <g
+           id="g974">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use968"
+             fill-opacity="1"
+             fill="#babac0"
+             opacity="1"
+             xlink:href="#a2oCx35Ij0" />
+          <g
+             id="g972">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use970"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#a2oCx35Ij0" />
+          </g>
+        </g>
+        <g
+           id="g982">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use976"
+             fill-opacity="1"
+             fill="#ececf1"
+             opacity="1"
+             xlink:href="#d3v9gQnZA" />
+          <g
+             id="g980">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use978"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#d3v9gQnZA" />
+          </g>
+        </g>
+        <g
+           id="g990">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use984"
+             fill-opacity="1"
+             fill="#e2e2e7"
+             opacity="1"
+             xlink:href="#ejEjOsPe8" />
+          <g
+             id="g988">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use986"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#ejEjOsPe8" />
+          </g>
+        </g>
+        <g
+           id="g998">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use992"
+             fill-opacity="1"
+             fill="#ececf1"
+             opacity="1"
+             xlink:href="#c4cMJtWpma" />
+          <g
+             id="g996">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use994"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#c4cMJtWpma" />
+          </g>
+        </g>
+        <g
+           id="g1006">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use1000"
+             fill-opacity="1"
+             fill="#e2e2e7"
+             opacity="1"
+             xlink:href="#a6uIOSCL" />
+          <g
+             id="g1004">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use1002"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#a6uIOSCL" />
+          </g>
+        </g>
+        <g
+           id="g1014">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use1008"
+             fill-opacity="1"
+             fill="#d3d3d8"
+             opacity="1"
+             xlink:href="#f55legmfPb" />
+          <g
+             id="g1012">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use1010"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#f55legmfPb" />
+          </g>
+        </g>
+        <g
+           id="g1022">
+          <use
+             height="100%"
+             width="100%"
+             y="0"
+             x="0"
+             id="use1016"
+             fill-opacity="1"
+             fill="#babac0"
+             opacity="1"
+             xlink:href="#c1LAIAWf7b" />
+          <g
+             id="g1020">
+            <use
+               height="100%"
+               width="100%"
+               y="0"
+               x="0"
+               id="use1018"
+               stroke-opacity="0"
+               stroke-width="1"
+               stroke="#000000"
+               fill-opacity="0"
+               opacity="1"
+               xlink:href="#c1LAIAWf7b" />
+          </g>
+        </g>
+      </g>
+      <text
+         id="text1271"
+         y="377.48483"
+         x="188.59848"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:373.334px;font-family:'URW Palladio L';-inkscape-font-specification:'URW Palladio L';fill:#ffffff;fill-opacity:1"
+         xml:space="preserve"><tspan
+           y="377.48483"
+           x="188.59848"
+           id="tspan1269"
+           sodipodi:role="line">V</tspan></text>
+    </g>
+  </g>
+</svg>

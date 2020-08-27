@@ -4,6 +4,8 @@ import {Listener} from "./TypeEvent";
 
 export class KFEvent
 {
+    public static ShareEvent:KFEvent = new KFEvent();
+
     public type:KFDName;
     ///[0]
     public arg:any;

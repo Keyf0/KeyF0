@@ -1699,6 +1699,14 @@
         {
             "class": "GSSaveBLKDataScriptData",
             "id": 1416
+        },
+        {
+            "class": "BLKVar",
+            "id": 1417
+        },
+        {
+            "class": "SDBLKVars",
+            "id": 1418
         }
     ]
 }

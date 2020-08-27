@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0alpha (9dee831, 2019-01-15)"
+   sodipodi:docname="proQuaestor.svg"
+   xml:space="preserve"
+   style="enable-background:new 0 0 494.4 494.4;"
+   viewBox="0 0 494.4 494.4"
+   y="0px"
+   x="0px"
+   id="Layer_1"
+   version="1.1"><metadata
+   id="metadata1599">
+  <rdf:RDF>
+    <cc:Work
+       rdf:about="">
+      <dc:format>image/svg+xml</dc:format>
+      <dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      <dc:title></dc:title>
+    </cc:Work>
+  </rdf:RDF>
+</metadata>
+<defs
+   id="defs1597" />
+<sodipodi:namedview
+   inkscape:current-layer="Layer_1"
+   inkscape:window-maximized="1"
+   inkscape:window-y="34"
+   inkscape:window-x="59"
+   inkscape:cy="247.2"
+   inkscape:cx="247.2"
+   inkscape:zoom="1.0800971"
+   showgrid="false"
+   id="namedview1595"
+   inkscape:window-height="702"
+   inkscape:window-width="1307"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0"
+   guidetolerance="10"
+   gridtolerance="10"
+   objecttolerance="10"
+   borderopacity="1"
+   inkscape:document-rotation="0"
+   bordercolor="#666666"
+   pagecolor="#ffffff" />
+
+<path
+   id="path1488"
+   d="M247.2,494.4c-132,0-240-108-240-240s108-240,240-240s240,108,240,240S379.2,494.4,247.2,494.4z"
+   style="fill:#DBAB56;" />
+
+<circle
+   id="circle1490"
+   r="224.8"
+   cy="240"
+   cx="247.2"
+   style="fill:#EFB30C;" />
+
+<g
+   id="g1496">
+	<path
+   id="path1492"
+   d="M48.8,267.2c0-124,100.8-224.8,224.8-224.8c55.2,0,105.6,20,144.8,52.8   c-40.8-48.8-102.4-80-171.2-80C123.2,15.2,22.4,116,22.4,240c0,68.8,31.2,130.4,80,172C68.8,372.8,48.8,322.4,48.8,267.2z"
+   style="fill:#E5A300;" />
+
+	<path
+   id="path1494"
+   d="M406.4,81.6c88,88,88,230.4,0,318.4S176,488,88,400"
+   style="fill:#E5A300;" />
+
+</g>
+
+<path
+   id="path1498"
+   d="M247.2,480c-132,0-240-108-240-240s108-240,240-240s240,108,240,240S379.2,480,247.2,480z   M247.2,30.4c-116,0-209.6,94.4-209.6,209.6c0,116,94.4,209.6,209.6,209.6S456.8,355.2,456.8,240S363.2,30.4,247.2,30.4z"
+   style="fill:#F7D27F;" />
+
+<path
+   id="path1500"
+   d="M487.2,240c0-60.8-22.4-116-59.2-157.6c-42.4-36.8-97.6-59.2-158.4-59.2c-40.8,0-78.4,10.4-112,28  c27.2-13.6,57.6-20.8,89.6-20.8c63.2,0,120.8,28.8,159.2,73.6c44.8,38.4,72.8,95.2,72.8,159.2c0,32-7.2,62.4-20,89.6  C476.8,319.2,487.2,280.8,487.2,240z"
+   style="fill:#EFC273;" />
+
+<path
+   id="path1502"
+   d="M29.6,263.2c0,60.8,22.4,116,59.2,157.6c42.4,36.8,97.6,59.2,157.6,59.2c40.8,0,78.4-10.4,112-28  c-27.2,12.8-57.6,20-89.6,20c-63.2,0-120.8-28.8-159.2-73.6C64.8,360,36,303.2,36,239.2c0-32,7.2-62.4,20-89.6  C40,184,29.6,222.4,29.6,263.2z"
+   style="fill:#EAC06C;" />
+
+<path
+   id="path1504"
+   d="M260.8,88.8c0,7.2-6.4,19.2-13.6,19.2s-13.6-12-13.6-19.2s6.4-13.6,13.6-13.6S260.8,81.6,260.8,88.8z  "
+   style="fill:#E5A300;" />
+
+<circle
+   id="circle1506"
+   r="13.6"
+   cy="88.8"
+   cx="247.2"
+   style="fill:#F7D27F;" />
+
+<path
+   id="path1508"
+   d="M256.8,79.2c5.6,5.6,5.6,13.6,0,19.2s-13.6,5.6-19.2,0"
+   style="fill:#EFC273;" />
+
+
+
+<g
+   id="g1564">
+</g>
+
+<g
+   id="g1566">
+</g>
+
+<g
+   id="g1568">
+</g>
+
+<g
+   id="g1570">
+</g>
+
+<g
+   id="g1572">
+</g>
+
+<g
+   id="g1574">
+</g>
+
+<g
+   id="g1576">
+</g>
+
+<g
+   id="g1578">
+</g>
+
+<g
+   id="g1580">
+</g>
+
+<g
+   id="g1582">
+</g>
+
+<g
+   id="g1584">
+</g>
+
+<g
+   id="g1586">
+</g>
+
+<g
+   id="g1588">
+</g>
+
+<g
+   id="g1590">
+</g>
+
+<g
+   id="g1592">
+</g>
+
+<text
+   id="text1603"
+   y="340.19556"
+   x="145.25436"
+   style="font-size:266.667px;font-family:'URW Palladio L';-inkscape-font-specification:'URW Palladio L';fill:#ffe0a1;fill-opacity:1"
+   xml:space="preserve"><tspan
+     y="340.19556"
+     x="145.25436"
+     id="tspan1601"
+     sodipodi:role="line">Q</tspan></text>
+</svg>

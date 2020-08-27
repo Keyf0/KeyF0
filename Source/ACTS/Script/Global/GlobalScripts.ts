@@ -233,6 +233,8 @@ export class GSLoadBLKDataScript extends KFScript
                             GSLoadBLKDataScript.Deserialize(Instance, KFDJson.read_value(bytes));
                         }
 
+                        Instance.FireEvent("OnBlkDataLoad", ret);
+
                     }, null);
 
             }
@@ -321,15 +323,23 @@ export class GSSaveBLKDataScript extends KFScript{
                 let bytearr:KFByteArray = new KFByteArray();
                 KFDJson.write_value(bytearr,blkData);
                 IKFFileIO_Type.instance.asyncSaveFile(scriptdata.rebuildPath
-                    , bytearr, null);
+                    , bytearr, function (ret:any,data:any,path:string) {
+
+                        Instance.FireEvent("OnBlkDataSave", ret);
+                    });
             }
         }
     }
 }
 
 
+///脚本变量
+export class VarScriptData {
+    public UpdateEvent:(arg:any)=>void;
+}
+
 //extends scriptdata
-export class kfVector3 {
+export class kfVector3 extends VarScriptData{
 
     public x:number;
     public y:number;
@@ -337,6 +347,7 @@ export class kfVector3 {
 
     public constructor(x:number=0,y:number=0,z:number=0)
     {
+        super();
         this.x = x;
         this.y = y;
         this.z = z;
@@ -346,6 +357,10 @@ export class kfVector3 {
     {
         this.x = v2.x;
         this.y = v2.y;
+
+        if(this.UpdateEvent){
+            this.UpdateEvent(this);
+        }
     }
 
     public setValue(v3:any)
@@ -353,6 +368,10 @@ export class kfVector3 {
         this.x = v3.x;
         this.y = v3.y;
         this.z = v3.z;
+
+        if(this.UpdateEvent){
+            this.UpdateEvent(this);
+        }
     }
 
     public getValue(copy:boolean = false):kfVector3
@@ -405,16 +424,23 @@ export class kfVector3 {
     }
 }
 
-export class SDFloat {
+export class SDFloat  extends VarScriptData {
 
     public value:number = 0;
 
     public setValue(v)
     {
-        if(isNaN(v)) {
-            this.value = v.getValue();
+        let val:number;
+
+        if(isNaN(v)) {val = v.getValue();}
+        else val = v;
+
+        if(this.value != val) {
+            this.value = val;
+            if (this.UpdateEvent) {
+                this.UpdateEvent(this);
+            }
         }
-        else this.value = v;
     };
     public getValue() {return this.value;};
     public add(vo)
@@ -436,15 +462,22 @@ export class SDFloat {
     }
 }
 
-export class SDInt32 {
+export class SDInt32  extends VarScriptData {
 
     public value:number = 0;
     public setValue(v)
     {
-        if(isNaN(v)) {
-            this.value = v.getValue();
+        let val:number;
+
+        if(isNaN(v)) {val = v.getValue();}
+        else val = v;
+
+        if(this.value != val) {
+            this.value = val;
+            if (this.UpdateEvent) {
+                this.UpdateEvent(this);
+            }
         }
-        else this.value = v;
     };
     public getValue() {return this.value;};
     public add(vo)
@@ -466,14 +499,23 @@ export class SDInt32 {
     }
 }
 
-export class SDString {
+export class SDString extends VarScriptData {
 
     public value:string = "";
+
     public setValue(v)
-    {   if(typeof(v) != "string") {
-        this.value = v.getValue();
+    {
+        let val:string;
+
+        if(typeof(v) != "string") {val = v.getValue();}
+        else val = v;
+
+        if(this.value != val) {
+            this.value = val;
+            if (this.UpdateEvent) {
+                this.UpdateEvent(this);
+            }
         }
-        else this.value = v;
     }
 
     public getValue() {return this.value;};
@@ -494,18 +536,23 @@ export class SDString {
 ///KFD(P=1,NAME=value,CNAME=对象数据,TYPE=arr,OTYPE=KFNewBlkData)
 ///KFD(*)
 
-export class SDNewBlkDataList{
+export class SDNewBlkDataList extends VarScriptData {
 
     public value:any[] = [];
 
     public getValue() {return this.value;}
     public setValue(data:any){
         if(!data)return;
+
         this.value.length = 0;
         if(data.getValue){
             this.value.push.apply(this.value, data.getValue());
         }else{
             this.value.push.apply(this.value, data);
+        }
+
+        if (this.UpdateEvent) {
+            this.UpdateEvent(this);
         }
     }
 }
@@ -518,7 +565,7 @@ export class SDNewBlkDataList{
 ///KFD(P=2,NAME=children,CNAME=子集,TYPE=arr,OTYPE=SDBlockTarget)
 ///KFD(*)
 
-export class SDBlockTarget{
+export class SDBlockTarget extends VarScriptData{
 
     public data:any;
     public children:any[] = [];
@@ -533,10 +580,48 @@ export class SDBlockTarget{
         this.children.length = 0;
         this.data = val.data;
         this.children.push.apply(this.children, val.children);
+
+        if (this.UpdateEvent) {
+            this.UpdateEvent(this);
+        }
     }
 }
 
 
+///定义一个BLK参数对象 轻量化的定义只包括参数
+
+///KFD(C,CLASS=BLKVar,CNAME=参数定义)
+///KFD(P=1,NAME=name,CNAME=参数名,TYPE=kfname)
+///KFD(P=2,NAME=value,CNAME=参数值,TYPE=mixobject,OTYPE=KFScriptData)
+///KFD(*)
+
+///KFD(C,CLASS=SDBLKVars,CNAME=对象参数,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDBLKVars,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=value,CNAME=参数集,TYPE=arr,OTYPE=BLKVar)
+///KFD(P=2,NAME=children,CNAME=子集,TYPE=arr,OTYPE=SDBLKVars)
+///KFD(*)
+
+export class SDBLKVars extends VarScriptData{
+    public value:any[] = [];
+    public children:any[] = [];
+
+    public getValue(){return this.value;}
+    public setValue(v:any){
+        if(v == null) return;
+        if(v.getValue){
+
+            this.value.length = 0;
+            this.value.push.apply(this.value, v.value);
+            this.children.length = 0;
+            this.children.push.apply(this.children, v.children);
+
+            if (this.UpdateEvent) {
+                this.UpdateEvent(this);
+            }
+
+        }
+    }
+}
 
 
 ///定义一个对象的引用
@@ -547,8 +632,9 @@ export class SDBlockTarget{
 ///KFD(P=2,NAME=sid,CNAME=实例SID,TYPE=int32)
 ///KFD(*)
 
-export class SDBlockTargetRef {
+export class SDBlockTargetRef extends VarScriptData {
 
+    public blkref:boolean = true;
     public name:KFDName;
     public sid:number = 0;
 
@@ -557,25 +643,42 @@ export class SDBlockTargetRef {
     public getValue(){return this.value;}
     public setValue(data:any){
         if(data == null){
+
+            if(data == this.value) return;
+
             this.value = null;
             this.sid = 0;
             this.name = null;
 
+            if (this.UpdateEvent) {
+                this.UpdateEvent(this);
+            }
+
             return;
         }
+
+        let val:KFBlockTarget;
+
         if(data.getValue){
-            this.value = data.getValue();
+            val = data.getValue();
         } else
         {
-            this.value = data;
+            val = data;
         }
 
-        if(this.value){
-            this.name = this.value.name;
-            this.sid = this.value.sid;
-        }else{
-            this.sid = 0;
-            this.name = null;
+        if(val != this.value) {
+            this.value = val;
+            if (this.value) {
+                this.name = this.value.name;
+                this.sid = this.value.sid;
+            } else {
+                this.sid = 0;
+                this.name = null;
+            }
+
+            if (this.UpdateEvent) {
+                this.UpdateEvent(this);
+            }
         }
     }
 

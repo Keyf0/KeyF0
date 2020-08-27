@@ -1,15 +1,16 @@
 import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFGraphBlockType} from "../../Data/KFGraphBlockType";
 import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
+import {LOG} from "../../../Core/Log/KFLog";
 
 export class KFGraphBlockExportPoint extends KFGraphBlockBase
 {
-        private m_evt:KFEvent = new KFEvent();
-
         public Input(arg: any)
         {
+            //LOG("EXEC {0}", this.data.name.toString());
             let outtype = this.data.type;
-            if(outtype != KFGraphBlockType.InputPoint) {
+            if(outtype != KFGraphBlockType.InputPoint)
+            {
 
               let etable:KFEventTable = null;
               let target = this.GetAttachTarget();
@@ -26,19 +27,24 @@ export class KFGraphBlockExportPoint extends KFGraphBlockBase
                   }
               }
 
-              if (outtype == KFGraphBlockType.EventPoint) {
+              if (outtype == KFGraphBlockType.OutputPoint) {
                   if (target) {
                       etable = target.etable;
+                      LOG("READY SELF FIRE");
                   }
               }
               else {
+                  LOG("READY RUNTIME FIRE:{0}",outtype);
                   etable = this.m_ctx.runtime.etable;
               }
 
               if (etable) {
-                  this.m_evt.type.value = this.data.name.value;
-                  this.m_evt.arg = arg;
-                  etable.FireEvent(this.m_evt);
+                  LOG("OUT FIRE:{0} {1}",this.data.name.toString(), this.data.name.value);
+
+                  let ShareEvent:KFEvent = KFEvent.ShareEvent;
+                  ShareEvent.type.value = this.data.name.value;
+                  ShareEvent.arg = arg;
+                  etable.FireEvent(ShareEvent);
               }
           }
 

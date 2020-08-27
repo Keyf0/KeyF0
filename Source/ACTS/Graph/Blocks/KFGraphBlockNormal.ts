@@ -1,24 +1,43 @@
 import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
+import {KFDName} from "../../../KFData/Format/KFDName";
 
 
 export class KFGraphBlockNormal extends KFGraphBlockBase
 {
-    private m_target:KFBlockTarget = null;
+    private m_target:KFBlockTarget;
+    private m_Instancs:KFBlockTarget[];
 
     public Input(arg: any)
     {
-        let t = this.m_target;
-        if(t == null) {
+        ///没有命名的实例可以随意创建
+        let targetdata = this.data.target;
+        if(targetdata && targetdata.option == KFBlockTargetOption.Create)
+        {
+            let instname: KFDName = this.data.instname;
+            if (instname == null || instname.value == 0)
+            {
+                if (this.m_target)
+                {
+                    if (this.m_Instancs == null)
+                        this.m_Instancs = [];
+                    this.m_Instancs.push(this.m_target);
+                    this.m_target = null;
+                }
+            }
+        }
+
+        if(this.m_target == null)
+        {
             this.Activate();
         }
-        t = this.m_target;
-        if(t) {
 
+        if(this.m_target)
+        {
             let fd = this.data.frame;
-            if(fd && fd.scripts.length > 0) {
-
+            if(fd && fd.scripts.length > 0)
+            {
                 let script = this.m_ctx.script;
                 ///填充第一位寄存器 需要先保存之前的参数
                 ///执行完后再填充
@@ -27,7 +46,7 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
                 OBJS[0] = arg;
                 ///强制读取一个参数
                 if(fd.paramsize == 0){fd.paramsize = 1;}
-                script.ExecuteFrameScript(0, fd, t);
+                script.ExecuteFrameScript(0, fd, this.m_target);
                 OBJS[0] = Arg0;
             }
         }
@@ -52,7 +71,16 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         let targetdata = this.data.target;
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
-            this.m_ctx.targetObject.DeleteChild(this.m_target);
+            let container = this.m_ctx.targetObject;
+            container.DeleteChild(this.m_target);
+
+            if(this.m_Instancs)
+            {
+                for(let i:number = 0;i < this.m_Instancs.length ;i ++){
+                    container.DeleteChild(this.m_Instancs[i]);
+                }
+                this.m_Instancs = null;
+            }
         }
 
         this.m_target = null;

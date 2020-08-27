@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="-49 51 512 512" style="enable-background:new -49 51 512 512;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;}
+	.st1{fill:#008186;}
+	.st2{fill:#FFD391;}
+	.st3{fill:#ED7C31;stroke:#F2A26B;stroke-miterlimit:10;}
+	.st4{opacity:0.51;fill:#FFD391;stroke:#EF8B46;stroke-width:5;stroke-miterlimit:10;}
+</style>
+<g>
+	<title>background</title>
+	<rect id="canvas_background" x="-50" y="50" class="st0" width="582" height="402"/>
+</g>
+<g>
+	<title>Layer 1</title>
+	<g id="svg_1">
+		<path id="svg_4" class="st1" d="M207,372.3H81L79.9,563h105.8l21.3-64.7l10.7-42L207,372.3z"/>
+		<polygon id="svg_5" class="st1" points="228.3,563 334.1,563 333,372.3 207,372.3 207,498.3 		"/>
+		<path id="svg_6" class="st2" d="M207,51h-51.9l-21.6,43.1c-26.1,2.6-49.4,16-65,37.7c-17.4,24.1-22,54.1-12.8,82.3l6.5,24.8
+			c-0.1,0.2-0.2,0.4-0.3,0.6L207,157.7l11-65.5L207,51L207,51z"/>
+		<path id="svg_7" class="st2" d="M207,51h48.6l21.6,43.1c26.1,2.6,49.4,16,65,37.7c17.4,24.1,22,54.1,12.8,82.3l-6.5,24.8
+			c0.1,0.2,0.2,0.4,0.3,0.6L207,157.7L207,51L207,51z"/>
+		<path id="svg_8" class="st2" d="M61,155.9c0,8,2.5,15.6,6.9,22.3c-11.9,11.3-22.3,24-31.1,38c-2.5,4-4.8,8-7,12.2
+			c-15,28.2-22.9,59.7-22.9,91.9c0,46,16.3,90.8,45.9,126l0.7,0.8l0.7,0.7c1.9,1.8,46.6,43.1,148.7,43.1l25.5-194.8l-25.5-192
+			c-34.9,0-69.9,0-70.9,0C92.8,104.1,61,127.3,61,155.9L61,155.9z"/>
+		<path id="svg_9" class="st2" d="M342.9,156c0,8-2.5,15.6-6.9,22.3c11.9,11.3,22.3,24,31.1,38c2.5,4,4.8,8,7,12.2
+			c15,28.2,22.9,59.6,22.9,91.8c0,46-16.3,90.7-45.8,125.9l-0.6,0.8l-0.7,0.7c-1.9,1.8-46.5,43-148.6,43.1V104.2
+			c34.9,0,69.8,0,70.9,0C311.2,104.2,342.9,127.4,342.9,156L342.9,156z"/>
+		<rect id="svg_10" x="186.2" y="327.3" class="st3" width="30" height="30"/>
+	</g>
+</g>
+<ellipse class="st4" cx="201.2" cy="326.7" rx="187" ry="159.2"/>
+</svg>

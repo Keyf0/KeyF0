@@ -1,13 +1,15 @@
 import {IKFRuntime} from "./IKFRuntime";
 import {KFScriptContext} from "../../KFScript/KFScriptDef";
 import {KFDName} from "../../KFData/Format/KFDName";
-import {KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {kfVector3} from "../Script/Global/GlobalScripts";
 import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
+import {KFGraphBlockType} from "../Data/KFGraphBlockType";
+import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
 
 export interface IKFBlockTargetContainer
 {
@@ -107,14 +109,28 @@ export class KFBlockTarget
         if(this.vars == null) this.vars = {};
         let varsize = bytesarr.readvaruint();
         while (varsize > 0) {
-           let nameval = KFDName._Strs.GetNameID(bytesarr.readstring());
+            let varname:string = bytesarr.readstring();
+           let nameval = KFDName._Strs.GetNameID(varname);
            let data = KFDJson.read_value(bytesarr);
 
            let valueobj:any = this.vars[nameval];
-           if(valueobj)
+           if(valueobj) {
                valueobj.setValue(data);
-           else
+           }
+           else {
+
                this.vars[nameval] = data;
+               ///如果是网络变量需要有事件通知
+               if(data.group == KFScriptGroupType.NetVar){
+                   let self:KFBlockTarget = this;
+                   let varevent = "ON_" + varname;
+                   data.UpdateEvent = function (arg:any)
+                   {
+                       self.FireEvent(varevent, arg);
+                   } 
+               }
+           }
+
            varsize -= 1;
         }
     }
@@ -165,6 +181,39 @@ export class KFBlockTarget
 
         } else {
             bytesarr.writevaruint(0);
+        }
+    }
+
+    public VarsCopyTo(t:KFBlockTarget, autocreate:boolean = false){
+        for(let key in this.vars)
+        {
+            let onevar = t.vars[key];
+            let orgvar = this.vars[key];
+            if(onevar)onevar.setValue(orgvar);
+            else if(autocreate)
+            {
+                onevar = new orgvar.constructor();
+                t.vars[key] = onevar;
+                onevar.setValue(orgvar);
+            }
+        }
+    }
+
+
+    public FireEvent(event:string, arg:any = null, global:boolean = false):void
+    {
+        let etable:KFEventTable = null;
+        if (!global) {
+           etable = this.etable;
+        }
+        else {
+            etable = this.runtime.etable;
+        }
+        if (etable) {
+            let ShareEvent:KFEvent = KFEvent.ShareEvent;
+            ShareEvent.type.value = KFDName._Strs.GetNameID(event);
+            ShareEvent.arg = arg;
+            etable.FireEvent(ShareEvent);
         }
     }
 

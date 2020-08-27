@@ -38,7 +38,9 @@ export class HElementActor extends KFActor implements HElement
 
         let etb = this.etable;
         this.target["fireEvent"] = function (event) {
-            etb.FireEvent(new KFEvent(KFDName._Strs.GetNameID(event)));
+            let ShareEvent:KFEvent = KFEvent.ShareEvent;
+            ShareEvent.type.value = KFDName._Strs.GetNameID(event);
+            etb.FireEvent(ShareEvent);
         };
     }
 
@@ -55,13 +57,55 @@ export class HElementActor extends KFActor implements HElement
         }
     }
 
-    public Value(id:string):string
+    public HTMLElement(id:string,endsid:boolean = false):any{
+
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
+            let ele:HTMLElement = this.document.nativedom.getElementById(id);
+            if(ele)return ele;
+        }
+        return null;
+    }
+
+    public HTMLValue(id:string,endsid:boolean = false):string
     {
         if(this.document)
         {
+            if(endsid) id = id + this.sid;
+            let ele:HTMLElement = this.document.nativedom.getElementById(id);
+            if(ele)return ele.innerText;
+        }
+        return "";
+    }
+
+    public SetHTMLValue(id:string, value:string,endsid:boolean = false){
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
+            let ele:HTMLElement = this.document.nativedom.getElementById(id);
+            if(ele)ele.innerText = value;
+        }
+    }
+
+
+    public Value(id:string,endsid:boolean = false):string
+    {
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
             let ele:any = this.document.nativedom.getElementById(id);
             if(ele)return ele.value;
         }
         return "";
+    }
+
+    public SetValue(id:string, value:string,endsid:boolean = false){
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
+            let ele:any = this.document.nativedom.getElementById(id);
+            if(ele)ele.vaule = value;
+        }
     }
 }
