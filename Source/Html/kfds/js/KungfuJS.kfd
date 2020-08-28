@@ -240,6 +240,35 @@
     {
         "includes": [
             "Global/GlobalScripts.ts",
+            "KFScriptDataF.h"
+        ],
+        "class": "SDArray",
+        "cname": "数组",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "数据",
+                "type": "mixarr",
+                "otype": "KFScriptData"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDArray",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1419
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts",
             "KFNewBlkDataF.h"
         ],
         "class": "SDNewBlkDataList",

@@ -529,6 +529,49 @@ export class SDString extends VarScriptData {
 }
 
 
+///KFD(C,CLASS=SDArray,CNAME=数组,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDArray,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=value,CNAME=数据,TYPE=mixarr,OTYPE=KFScriptData)
+///KFD(*)
+
+///定义一个数组对象
+export class SDArray extends VarScriptData{
+    public value:any[] = [];
+
+    public getValue() {return this.value;}
+    public setValue(data:any){
+        if(!data)return;
+
+        this.value.length = 0;
+        if(data.getValue){
+            this.value.push.apply(this.value, data.getValue());
+        }else{
+            this.value.push.apply(this.value, data);
+        }
+
+        if (this.UpdateEvent) {
+            this.UpdateEvent(this);
+        }
+    }
+
+    public push(vo:any){
+        this.value.push(vo);
+    }
+
+    public remove(vo:any){
+        let index = this.value.indexOf(vo);
+        if(index != -1)
+            this.value.splice(index,1);
+    }
+
+    public contain(vo:any):boolean {
+        if(this.value.indexOf(vo) == -1)
+        return false;
+        return true;
+    }
+}
+
+
 ///定义一个对象数据结构体和一个列表
 
 ///KFD(C,CLASS=SDNewBlkDataList,CNAME=对象数据列表,EXTEND=KFScriptData)
