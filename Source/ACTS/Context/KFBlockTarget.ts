@@ -1,5 +1,4 @@
 import {IKFRuntime} from "./IKFRuntime";
-import {KFScriptContext} from "../../KFScript/KFScriptDef";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
@@ -8,7 +7,6 @@ import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {kfVector3} from "../Script/Global/GlobalScripts";
 import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
-import {KFGraphBlockType} from "../Data/KFGraphBlockType";
 import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
 
 export interface IKFBlockTargetContainer

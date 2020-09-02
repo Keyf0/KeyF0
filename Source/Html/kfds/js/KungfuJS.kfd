@@ -1,6 +1,32 @@
 [
     {
         "includes": [
+            "KFDataTable.ts",
+            "SDBLKVarsDefF.h",
+            "SDBLKVarsF.h"
+        ],
+        "class": "KFDataTable",
+        "extend": "KFBlockTarget",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "struct",
+                "cname": "结构定义",
+                "type": "object",
+                "otype": "SDBLKVarsDef"
+            },
+            {
+                "id": 2,
+                "name": "rows",
+                "cname": "数据行",
+                "type": "arr",
+                "otype": "SDBLKVars"
+            }
+        ],
+        "clsid": 1420
+    },
+    {
+        "includes": [
             "KFInternalDataTypes.ts"
         ],
         "class": "kfVector3",
@@ -239,6 +265,33 @@
     },
     {
         "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "SDBool",
+        "cname": "SDBool",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "数据",
+                "type": "bool"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDBool",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1421
+    },
+    {
+        "includes": [
             "Global/GlobalScripts.ts",
             "KFScriptDataF.h"
         ],
@@ -337,8 +390,85 @@
             "Global/GlobalScripts.ts",
             "KFScriptDataF.h"
         ],
-        "class": "BLKVar",
+        "class": "BLKVarDef",
         "cname": "参数定义",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "name",
+                "cname": "参数名",
+                "type": "kfname"
+            },
+            {
+                "id": 2,
+                "name": "value",
+                "cname": "参数类型",
+                "type": "mixobject",
+                "otype": "KFScriptData"
+            },
+            {
+                "id": 3,
+                "name": "enum",
+                "cname": "关联",
+                "type": "kfstr"
+            },
+            {
+                "id": 4,
+                "name": "pkey",
+                "cname": "主键",
+                "type": "bool"
+            },
+            {
+                "id": 5,
+                "name": "label",
+                "cname": "显示名",
+                "type": "kfstr"
+            }
+        ],
+        "clsid": 1422
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts",
+            "BLKVarDefF.h"
+        ],
+        "class": "SDBLKVarsDef",
+        "cname": "BLK参数定义",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "name",
+                "cname": "BLK参数名",
+                "type": "kfname"
+            },
+            {
+                "id": 2,
+                "name": "value",
+                "cname": "BLK参数定义",
+                "type": "arr",
+                "otype": "BLKVarDef"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDBLKVarsDef",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1423
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts",
+            "KFScriptDataF.h"
+        ],
+        "class": "BLKVar",
+        "cname": "参数对",
         "propertys": [
             {
                 "id": 1,
@@ -359,26 +489,18 @@
     {
         "includes": [
             "Global/GlobalScripts.ts",
-            "BLKVarF.h",
-            "SDBLKVarsF.h"
+            "BLKVarF.h"
         ],
         "class": "SDBLKVars",
-        "cname": "对象参数",
+        "cname": "BLK参数",
         "extend": "KFScriptData",
         "propertys": [
             {
                 "id": 1,
                 "name": "value",
-                "cname": "参数集",
+                "cname": "BLK参数数据",
                 "type": "arr",
                 "otype": "BLKVar"
-            },
-            {
-                "id": 2,
-                "name": "children",
-                "cname": "子集",
-                "type": "arr",
-                "otype": "SDBLKVars"
             }
         ],
         "orprops": [

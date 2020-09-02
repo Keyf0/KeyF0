@@ -1711,6 +1711,22 @@
         {
             "class": "SDArray",
             "id": 1419
+        },
+        {
+            "class": "KFDataTable",
+            "id": 1420
+        },
+        {
+            "class": "SDBool",
+            "id": 1421
+        },
+        {
+            "class": "BLKVarDef",
+            "id": 1422
+        },
+        {
+            "class": "SDBLKVarsDef",
+            "id": 1423
         }
     ]
 }

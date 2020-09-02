@@ -529,6 +529,31 @@ export class SDString extends VarScriptData {
 }
 
 
+///KFD(C,CLASS=SDBool,CNAME=SDBool,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDBool,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=value,CNAME=数据,TYPE=bool)
+///KFD(*)
+
+export class SDBool  extends VarScriptData {
+
+    public value:boolean = false;
+    public setValue(v)
+    {
+        let val:boolean;
+
+        if(typeof(v) != "boolean") {val = v.getValue();}
+        else val = v;
+
+        if(this.value != val) {
+            this.value = val;
+            if (this.UpdateEvent) {
+                this.UpdateEvent(this);
+            }
+        }
+    };
+    public getValue() {return this.value;};
+}
+
 ///KFD(C,CLASS=SDArray,CNAME=数组,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDArray,OR=1,TYPE=kfname)
 ///KFD(P=1,NAME=value,CNAME=数据,TYPE=mixarr,OTYPE=KFScriptData)
@@ -632,21 +657,40 @@ export class SDBlockTarget extends VarScriptData{
 
 
 ///定义一个BLK参数对象 轻量化的定义只包括参数
+///关联可以直接链连到另一个BLK参数的定义
 
-///KFD(C,CLASS=BLKVar,CNAME=参数定义)
+//定义用的结构，更多一些, 值用的类型更加轻量
+
+///KFD(C,CLASS=BLKVarDef,CNAME=参数定义)
+///KFD(P=1,NAME=name,CNAME=参数名,TYPE=kfname)
+///KFD(P=2,NAME=value,CNAME=参数类型,TYPE=mixobject,OTYPE=KFScriptData)
+///KFD(P=3,NAME=enum,CNAME=关联,TYPE=kfstr)
+///KFD(P=4,NAME=pkey,CNAME=主键,TYPE=bool)
+///KFD(P=5,NAME=label,CNAME=显示名,TYPE=kfstr)
+///KFD(*)
+
+///KFD(C,CLASS=SDBLKVarsDef,CNAME=BLK参数定义,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDBLKVarsDef,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=name,CNAME=BLK参数名,TYPE=kfname)
+///KFD(P=2,NAME=value,CNAME=BLK参数定义,TYPE=arr,OTYPE=BLKVarDef)
+///KFD(*)
+
+
+///值结构
+
+///KFD(C,CLASS=BLKVar,CNAME=参数对)
 ///KFD(P=1,NAME=name,CNAME=参数名,TYPE=kfname)
 ///KFD(P=2,NAME=value,CNAME=参数值,TYPE=mixobject,OTYPE=KFScriptData)
 ///KFD(*)
 
-///KFD(C,CLASS=SDBLKVars,CNAME=对象参数,EXTEND=KFScriptData)
+///KFD(C,CLASS=SDBLKVars,CNAME=BLK参数,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDBLKVars,OR=1,TYPE=kfname)
-///KFD(P=1,NAME=value,CNAME=参数集,TYPE=arr,OTYPE=BLKVar)
-///KFD(P=2,NAME=children,CNAME=子集,TYPE=arr,OTYPE=SDBLKVars)
+///KFD(P=1,NAME=value,CNAME=BLK参数数据,TYPE=arr,OTYPE=BLKVar)
 ///KFD(*)
+
 
 export class SDBLKVars extends VarScriptData{
     public value:any[] = [];
-    public children:any[] = [];
 
     public getValue(){return this.value;}
     public setValue(v:any){
@@ -655,13 +699,10 @@ export class SDBLKVars extends VarScriptData{
 
             this.value.length = 0;
             this.value.push.apply(this.value, v.value);
-            this.children.length = 0;
-            this.children.push.apply(this.children, v.children);
 
             if (this.UpdateEvent) {
                 this.UpdateEvent(this);
             }
-
         }
     }
 }

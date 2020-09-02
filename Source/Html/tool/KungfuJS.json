@@ -43,6 +43,10 @@
                 {
                     "path": "../../ACTS/Data",
                     "headpath": ""
+                },
+                {
+                    "path": "../../ACTS/Context",
+                    "headpath": ""
                 }
             ]
         },
