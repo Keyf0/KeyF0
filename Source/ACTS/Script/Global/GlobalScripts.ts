@@ -689,11 +689,12 @@ export class SDBlockTarget extends VarScriptData{
 ///KFD(*)
 
 
-export class SDBLKVars extends VarScriptData{
+export class SDBLKVars extends VarScriptData
+{
     public value:any[] = [];
 
     public getValue(){return this.value;}
-    public setValue(v:any){
+    public setValue(v:any) {
         if(v == null) return;
         if(v.getValue){
 

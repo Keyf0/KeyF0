@@ -9,8 +9,8 @@ import {KFDName} from "../../KFData/Format/KFDName";
 ///KFD(C,CLASS=HElementActor,EXTEND=KFActor)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
 ///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,texttype=html)
+///KFD(P=3,NAME=containerID,CNAME=子集容器ID,TYPE=kfstr)
 ///KFD(*)
-
 
 export class HElementActor extends KFActor implements HElement
 {
@@ -23,16 +23,28 @@ export class HElementActor extends KFActor implements HElement
 
     public attachId:string;
     public html:string;
+    public containerID:string;
 
     public document: IDocument;
     public target: Element;
+
+    public GetH5Container():Element
+    {
+        ///可以指定一个特别的DIV做为容器
+        if(this.containerID != null && this.containerID != "")
+        {
+            return this.document.nativedom.getElementById(this.containerID);
+        }
+
+        return this.target;
+    }
 
     protected TargetNew(KFBlockTargetData: any):  any
     {
         let parent = <HElementActor>this.parent;
         this.document = parent.document;
         this.target = HElementCreator.DefaultCreateHtml(
-              parent.target
+              parent.GetH5Container()
             , this
             , this.document);
 
@@ -53,7 +65,7 @@ export class HElementActor extends KFActor implements HElement
 
         if(this.parent) {
             let parent = <HElementActor>this.parent;
-            HElementCreator.DefaultDestroyHtml(parent.target, this);
+            HElementCreator.DefaultDestroyHtml(parent.GetH5Container(), this);
         }
     }
 

@@ -10,6 +10,7 @@ import {KFDomain} from "../ACTS/Context/KFDomain";
 import {KFActor} from "../ACTS/Actor/KFActor";
 import {KFDName} from "../KFData/Format/KFDName";
 import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
+import {KFDataTable} from "../ACTS/Context/KFDataTable";
 
 export class KFiSayPlayer implements IKFRuntime
 {
@@ -116,5 +117,24 @@ export class KFiSayPlayer implements IKFRuntime
     }
 
     public systems: { [p: string]: any };
+
+    public DataRow(name: string, id: any): any
+    {
+        let dataTable:KFDataTable = this.systems[KFDName._Strs.GetNameID(name)];
+        if(dataTable)
+        {
+            let varsmap:{[key:number]:any} = dataTable.varsmap;
+            if(varsmap) return varsmap[id];
+        }
+        return null;
+    }
+
+    public GetSystem(name: string): any {
+        return this.systems[KFDName._Strs.GetNameID(name)];
+    }
+
+    public SetSystem(name: string, sys: any) {
+        this.systems[KFDName._Strs.GetNameID(name)] = sys;
+    }
 
 }

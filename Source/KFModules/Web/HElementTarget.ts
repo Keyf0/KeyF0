@@ -22,6 +22,8 @@ export interface HElement
     target:Element;
     document:IDocument;
     sid:number;
+
+    GetH5Container():Element;
 }
 
 export class HElementTarget extends KFBlockTarget implements HElement
@@ -44,7 +46,7 @@ export class HElementTarget extends KFBlockTarget implements HElement
 
         let parent = <HElementTarget><any>this.parent;
         this.document = parent.document;
-        this.target = HElementCreator.DefaultCreateHtml(parent.target
+        this.target = HElementCreator.DefaultCreateHtml(parent.GetH5Container()
             , this
             , this.document);
         this.etable = new KFEventTable();
@@ -60,8 +62,9 @@ export class HElementTarget extends KFBlockTarget implements HElement
 
         super.DeactiveBLK();
 
+        this.target["fireEvent"] = null;
         let parent = <HElementTarget><any>this.parent;
-        HElementCreator.DefaultDestroyHtml(parent.target, this);
+        HElementCreator.DefaultDestroyHtml(parent.GetH5Container(), this);
 
         if( this.etable)
         {
@@ -69,19 +72,62 @@ export class HElementTarget extends KFBlockTarget implements HElement
             this.etable = null;
         }
 
-        this.target["fireEvent"] = null;
         this.target = null;
     }
 
-    public Value(id:string):string
+    public HTMLElement(id:string,endsid:boolean = false):any{
+
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
+            let ele:HTMLElement = this.document.nativedom.getElementById(id);
+            if(ele)return ele;
+        }
+        return null;
+    }
+
+    public HTMLValue(id:string,endsid:boolean = false):string
     {
         if(this.document)
         {
-            let ele:any = this.document.nativedom.getElementById(id);
-            if(ele)
-                return ele.value;
+            if(endsid) id = id + this.sid;
+            let ele:HTMLElement = this.document.nativedom.getElementById(id);
+            if(ele)return ele.innerText;
         }
         return "";
+    }
+
+    public SetHTMLValue(id:string, value:string,endsid:boolean = false){
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
+            let ele:HTMLElement = this.document.nativedom.getElementById(id);
+            if(ele)ele.innerText = value;
+        }
+    }
+
+    public Value(id:string,endsid:boolean = false):string
+    {
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
+            let ele:any = this.document.nativedom.getElementById(id);
+            if(ele)return ele.value;
+        }
+        return "";
+    }
+
+    public SetValue(id:string, value:string,endsid:boolean = false){
+        if(this.document)
+        {
+            if(endsid) id = id + this.sid;
+            let ele:any = this.document.nativedom.getElementById(id);
+            if(ele)ele.vaule = value;
+        }
+    }
+
+    public GetH5Container(): Element {
+        return this.target;
     }
 
 }

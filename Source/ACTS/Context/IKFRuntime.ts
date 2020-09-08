@@ -42,6 +42,12 @@ export interface IKFRuntime
 
      //注册的系统
      systems:{[key:number]:any;};
+     GetSystem(name:string):any;
+     SetSystem(name:string,sys:any);
+
+     ///获取数据表格的行
+     DataRow(name:string, id:any):any;
+
 }
 
 export const EventEnterFrame:KFDName = new KFDName("onEnterFrame");

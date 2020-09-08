@@ -101,7 +101,17 @@ export class KFBlockTarget
     ///更新显示对象
     public set_datas(datas:number[]){}
 
-    public StrVar(name:string){return this.vars[KFDName._Strs.GetNameID(name)];}
+    public StrVar(name:string)
+    {
+        return this.vars[KFDName._Strs.GetNameID(name)];
+    }
+
+    public StrValue(name:string):any
+    {
+        let varx = this.vars[KFDName._Strs.GetNameID(name)];
+        return varx? varx.getValue() : null;
+    }
+
     public ReadVars(bytesarr:KFByteArray,len:number) {
 
         if(this.vars == null) this.vars = {};

@@ -17,10 +17,17 @@
             },
             {
                 "id": 2,
+                "name": "pkey",
+                "cname": "主键名称",
+                "type": "kfname"
+            },
+            {
+                "id": 3,
                 "name": "rows",
                 "cname": "数据行",
                 "type": "arr",
-                "otype": "SDBLKVars"
+                "otype": "SDBLKVars",
+                "call": "OnReadRows"
             }
         ],
         "clsid": 1420

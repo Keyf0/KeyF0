@@ -41,6 +41,12 @@
                         "val": "html"
                     }
                 ]
+            },
+            {
+                "id": 3,
+                "name": "containerID",
+                "cname": "子集容器ID",
+                "type": "kfstr"
             }
         ],
         "clsid": 1367

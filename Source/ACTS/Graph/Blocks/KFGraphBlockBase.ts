@@ -5,6 +5,7 @@ import {KFDName} from "../../../KFData/Format/KFDName";
 import {IKFRuntime} from "../../Context/IKFRuntime";
 import {LOG} from "../../../Core/Log/KFLog";
 
+///c++里继承SCRIPTDATA可以在参数中传递
 export class KFGraphBlockBase
 {
     protected m_ctx:IKFGraphContext;
@@ -44,6 +45,17 @@ export class KFGraphBlockBase
     public Activate(){}
     public Deactive(force:boolean = false) {}
     public Reset(){}
+
+    public InputNext(index:number,arg:any)
+    {
+        let outputs = this.data.outputs;
+        if(outputs && outputs.length > index)
+        {
+            var inputname = outputs[index].name;
+            if(inputname)
+            this.m_ctx.Input(inputname, arg);
+        }
+    }
 
     protected OutNext(arg:any)
     {

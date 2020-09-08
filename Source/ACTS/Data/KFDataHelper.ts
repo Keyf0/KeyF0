@@ -10,6 +10,7 @@ import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
 import {KFScript, KFScriptData} from "../../KFScript/KFScriptDef";
 import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
+import {KFDataTable} from "../Context/KFDataTable";
 
 export class KFDataHelper
 {
@@ -42,6 +43,7 @@ export class KFDataHelper
 
     public static InitAfterKFDTable(kfdtable:KFDTable)
     {
+        KFDataTable;
         ///注册所有脚本数据的初始化
         KFDataHelper.InitSD([
             GSPlayStateScript.Meta

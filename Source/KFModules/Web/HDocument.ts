@@ -21,9 +21,21 @@ export class HDocument extends HElementActor implements IDocument
     public Construct(metadata:any, runtime:IKFRuntime)
     {
         super.Construct(metadata,runtime);
+
+        let nativdoc = window.document;
+
         this.document = this;
-        this.nativedom = window.document;
-        this.target = this.nativedom.body;
+        this.nativedom = nativdoc;
+        this.target = nativdoc.body;
+
+        window["FireEvent"] = function (id,event)
+        {
+            let ele:any = nativdoc.getElementById(id);
+           if(ele && ele.fireEvent)
+           {
+               ele.fireEvent(event);
+           }
+        }
     }
 
     protected TargetNew(KFBlockTargetData: any): any

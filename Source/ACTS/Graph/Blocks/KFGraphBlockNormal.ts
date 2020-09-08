@@ -43,11 +43,14 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
                 ///执行完后再填充
                 let OBJS = script._reg._OBJECTS;
                 let Arg0 = OBJS[0];
+                let Arg1 = OBJS[1];
                 OBJS[0] = arg;
+                OBJS[1] = this;
                 ///强制读取一个参数
-                if(fd.paramsize == 0){fd.paramsize = 1;}
+                if(fd.paramsize < 2){fd.paramsize = 2;}
                 script.ExecuteFrameScript(0, fd, this.m_target);
                 OBJS[0] = Arg0;
+                OBJS[1] = Arg1;
             }
         }
         this.OutNext(arg);

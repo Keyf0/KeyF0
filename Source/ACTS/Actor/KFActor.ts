@@ -322,7 +322,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
         this.m_removelist.length = 0;
         this.m_children.length = 0;
-        this.m_childrenmap = null;
+        this.m_childrenmap = {};
     }
 
     public _DeleteChild(child:KFBlockTarget):boolean
