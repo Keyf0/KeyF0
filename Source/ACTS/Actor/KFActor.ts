@@ -19,6 +19,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 );
 
     public static PARENT:KFDName = new KFDName("parent");
+    public static SELF:KFDName = new KFDName("self");
     public static BEGIN_PLAY:KFEvent = new KFEvent(KFDName._Strs.GetNameID("onBeginPlay"));
     public static END_PLAY:KFEvent = new KFEvent(KFDName._Strs.GetNameID("onEndPlay"));
 
@@ -107,6 +108,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         super.ActivateBLK(KFBlockTargetData);
         //把父级映射上去
         this.m_childrenmap[KFActor.PARENT.value] = <any>this.parent;
+        this.m_childrenmap[KFActor.SELF.value] = <any>this;
         this.TargetNew(KFBlockTargetData);
         this.ActivateAllComponent(KFBlockTargetData.inputArg);
     }
@@ -125,6 +127,52 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         ///这个顺序不知道可以不，先这样
         //delete this.m_childrenmap[KFActor.PARENT.value];
         this.TargetDelete();
+    }
+
+    public EditTick(frameindex:number):void
+    {
+        if (this.pause) {return;}
+
+        ///实始化后一第一帧TICK
+        if(!this.m_bplay)
+        {
+            this.m_bplay = true;
+            this.etable.FireEvent(KFActor.BEGIN_PLAY);
+        }
+
+        ///暂时都不需要
+        //this.timeline.EnterFrame(frameindex);
+
+        for(let i = 0; i < this.m_children.length; i ++)
+        {
+            let child = this.m_children[i];
+            if(child.tickable)
+                child.EditTick(frameindex);
+        }
+
+        ///tick保持住的脚本对象
+        //let scripti = this.m_keepsts ? this.m_keepsts.length -1 : -1;
+        //while (scripti >= 0){
+        //    let sc = this.m_keepsts[scripti];
+        //    sc.Update(frameindex);
+        //    if(!sc.isrunning) {
+        //        this.m_keepsts.splice(scripti,1);
+        //        sc.Stop(this.m_keepstmap);
+        //    }
+        //    scripti -= 1;
+        //}
+
+        ///删除元素
+        let removelen = this.m_removelist.length;
+        if(removelen > 0) {
+
+            for(let i = 0; i < removelen; i ++)
+            {
+                let t = this.m_removelist[i];
+                this._DeleteChild(t);
+            }
+            this.m_removelist.length = 0;
+        }
     }
 
     public Tick(frameindex:number):void
@@ -212,6 +260,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             let namelen = names.length;
             let c:any = this;
             let str2id = KFDName._Strs._Strings2ID;
+
+
             while (i < namelen){
                 if(c == null)
                     return null;

@@ -1,10 +1,8 @@
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
-import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFDJson} from "../../KFData/Format/KFDJson";
-import {KFActor} from "../../ACTS/Actor/KFActor";
 import {IKFFileIO_Type} from "../../Core/FileIO/IKFFileIO";
 import {GSLoadBLKDataScript, GSSaveBLKDataScript} from "../../ACTS/Script/Global/GlobalScripts";
 

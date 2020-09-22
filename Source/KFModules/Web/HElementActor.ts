@@ -49,9 +49,12 @@ export class HElementActor extends KFActor implements HElement
             , this.document);
 
         let etb = this.etable;
-        this.target["fireEvent"] = function (event) {
+        this.target["fireEvent"] = function (event, arg) {
             let ShareEvent:KFEvent = KFEvent.ShareEvent;
+
             ShareEvent.type.value = KFDName._Strs.GetNameID(event);
+            ShareEvent.arg = arg;
+
             etb.FireEvent(ShareEvent);
         };
     }

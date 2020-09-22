@@ -1,7 +1,7 @@
 import {IKFRuntime, onEndFrame, onEnterFrame, onRenderFrame} from "../ACTS/Context/IKFRuntime";
 import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {IKFDomain} from "../ACTS/Context/IKFDomain";
-import {KFEvent, KFEventTable} from "../Core/Misc/KFEventTable";
+import {KFEventTable} from "../Core/Misc/KFEventTable";
 import {KFRandom} from "../ACTS/Context/KFRandom";
 import {KFScriptSystem} from "../ACTS/Script/KFScriptSystem";
 import {KFTimers} from "../ACTS/Context/KFTimers";
@@ -14,6 +14,7 @@ import {KFDataTable} from "../ACTS/Context/KFDataTable";
 
 export class KFiSayPlayer implements IKFRuntime
 {
+    public IsEditMode: boolean;
     public configs: IKFConfigs;
     public domain: IKFDomain;
     public etable: KFEventTable;
@@ -40,9 +41,10 @@ export class KFiSayPlayer implements IKFRuntime
     private m_startTicks:number = 0;
     private m_frameTicks:number = 0;
 
-    public constructor(userdata:any = null)
+    public constructor(userdata:any = null,editmode:boolean = false)
     {
         this.m_userdata = userdata;
+        this.IsEditMode = editmode;
     }
 
     public Init(basedir:string)
@@ -75,7 +77,8 @@ export class KFiSayPlayer implements IKFRuntime
         this.m_path = path;
 
         //let metaData = this.configs.GetMetaData(path,false);
-        let KFBlockTargetData = {
+        let KFBlockTargetData =
+        {
                 asseturl:path
             ,   instname:new KFDName("_root")
         };
@@ -101,7 +104,8 @@ export class KFiSayPlayer implements IKFRuntime
 
         let etb = this.etable;
         ///累计的帧时间
-        while ((ticks - this.m_frameTicks) >= this.fixtpf) {
+        while ((ticks - this.m_frameTicks) >= this.fixtpf)
+        {
             this.m_frameTicks += this.fixtpf;
 
             let currenti  = this.frameindex + 1;
@@ -109,7 +113,10 @@ export class KFiSayPlayer implements IKFRuntime
 
             etb.FireEvent(onEnterFrame);
             if (this.m_root)
-                this.m_root.Tick(currenti);
+            {
+                if(this.IsEditMode) {this.m_root.EditTick(currenti);}
+                else {this.m_root.Tick(currenti);}
+            }
             etb.FireEvent(onEndFrame);
         }
         ///渲染的帧只要可更新的频率运行
@@ -129,12 +136,13 @@ export class KFiSayPlayer implements IKFRuntime
         return null;
     }
 
-    public GetSystem(name: string): any {
+    public GetSystem(name: string): any
+    {
         return this.systems[KFDName._Strs.GetNameID(name)];
     }
 
-    public SetSystem(name: string, sys: any) {
+    public SetSystem(name: string, sys: any)
+    {
         this.systems[KFDName._Strs.GetNameID(name)] = sys;
     }
-
 }

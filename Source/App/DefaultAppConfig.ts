@@ -8,6 +8,7 @@ import {KFDJson} from "../KFData/Format/KFDJson";
 import {KFDataHelper} from "../ACTS/Data/KFDataHelper";
 import {TypeEvent} from "../Core/Misc/TypeEvent";
 import {kfVector3} from "../ACTS/Script/Global/GlobalScripts";
+import {KFDName} from "../KFData/Format/KFDName";
 
 export class DefaultAppConfig implements IKFConfigs
 {
@@ -48,6 +49,18 @@ export class DefaultAppConfig implements IKFConfigs
 
     public GetMetaData(asseturl: string, bFullpath: boolean): any
     {
+        ///兼容下直接获取的类":KFActor"
+        if(asseturl[0] == ':')
+        {
+            let KFMetaData:any = {};
+            let name:string = asseturl.substring(1,-1);
+
+            KFMetaData.name = name;
+            KFMetaData.type = new KFDName(name);
+
+            return KFMetaData;
+        }
+
         return this._metadata[asseturl];
     }
 
@@ -157,7 +170,7 @@ export class DefaultAppConfig implements IKFConfigs
         let filelist = [];
         let blkmap = {};
 
-        this.build_assetpath(this._start, blkmap,filelist);
+        this.build_assetpath(this._start, blkmap, filelist);
 
         IKFFileIO_Type.instance.asyncLoadFileList(filelist,
             function (ret, data, path:string)

@@ -47,7 +47,8 @@ export class KFDomain implements IKFDomain
             let meta = KFMetaManager.GetMetaName(metadata.type);
             if (meta)
             {
-                if((meta.execSide & this.m_execSide) == 0){
+                if((meta.execSide & this.m_execSide) == 0)
+                {
                     LOG(this.m_NoSideLog, asseturl);
                     return null;
                 }

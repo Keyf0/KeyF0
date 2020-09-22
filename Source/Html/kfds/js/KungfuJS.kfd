@@ -557,6 +557,26 @@
     },
     {
         "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "SDAnyRef",
+        "cname": "任意引用",
+        "extend": "KFScriptData",
+        "propertys": [],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDAnyRef",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1424
+    },
+    {
+        "includes": [
             "Global/KFExpression.ts"
         ],
         "class": "KFExpression",

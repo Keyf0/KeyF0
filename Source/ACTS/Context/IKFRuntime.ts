@@ -37,11 +37,15 @@ export interface IKFRuntime
      // 3 流程图上 客户端创建节点失败
      execSide:number;
 
+     ///是否处在编辑模式下
+     IsEditMode:boolean;
+
      scripts:KFScriptSystem;
      configs:IKFConfigs;
 
      //注册的系统
      systems:{[key:number]:any;};
+
      GetSystem(name:string):any;
      SetSystem(name:string,sys:any);
 

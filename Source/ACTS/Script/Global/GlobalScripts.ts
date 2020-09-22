@@ -579,6 +579,16 @@ export class SDArray extends VarScriptData{
         }
     }
 
+    public valueAt(index:number)
+    {
+        if(this.value){
+            var varitem = this.value[index];
+            if(varitem) return varitem.getValue();
+        }
+        return null;
+    }
+
+
     public push(vo:any){
         this.value.push(vo);
     }
@@ -767,4 +777,26 @@ export class SDBlockTargetRef extends VarScriptData {
         }
     }
 
+}
+
+///KFD(C,CLASS=SDAnyRef,CNAME=任意引用,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDAnyRef,OR=1,TYPE=kfname)
+///KFD(*)
+
+export class SDAnyRef extends VarScriptData {
+
+    public value:any = null;
+
+    public getValue(){return this.value;}
+    public setValue(data:any)
+    {
+        if(data != this.value)
+        {
+            this.value = data;
+            if (this.UpdateEvent)
+            {
+                this.UpdateEvent(this);
+            }
+        }
+    }
 }

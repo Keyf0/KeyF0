@@ -9,6 +9,7 @@ export class KFApp
     public player:KFiSayPlayer;
     public gameInput:KFGameInputs;
     public gameTicker:KFGameTicker;
+
     public execSide:number = BlkExecSide.BOTH;
 
     public constructor()
@@ -36,9 +37,9 @@ export class KFApp
         this.player = null;
     }
 
-    public Play(basedir:string, path:string)
+    public Play(basedir:string, path:string, editmode:boolean = false)
     {
-        this.player = new KFiSayPlayer(this.userdata);
+        this.player = new KFiSayPlayer(this.userdata, editmode);
         this.player.execSide = this.execSide;
         this.player.Init(basedir);
         this.player.Play(path);

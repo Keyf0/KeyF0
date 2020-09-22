@@ -79,6 +79,7 @@ export class KFBlockTarget
 
     //Release():void{}
 
+    public EditTick(frameindex:number):void{}
     public Tick(frameindex:number):void{}
 
     public ActivateBLK(KFBlockTargetData:any):void
