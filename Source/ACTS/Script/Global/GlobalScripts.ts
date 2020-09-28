@@ -422,6 +422,11 @@ export class kfVector3 extends VarScriptData{
             this.x=0;this.y=0;this.z=0;
         }
     }
+
+    public toString():string
+    {
+        return this.x + "," + this.y + "," + this.z;
+    }
 }
 
 export class SDFloat  extends VarScriptData {
@@ -460,6 +465,10 @@ export class SDFloat  extends VarScriptData {
         if(isNaN(vo)){v = vo.getValue();}
         this.value *= v;
     }
+
+    public toString():string{
+        return this.value + "";
+    }
 }
 
 export class SDInt32  extends VarScriptData {
@@ -497,6 +506,10 @@ export class SDInt32  extends VarScriptData {
         if(isNaN(vo)){v = vo.getValue();}
         this.value *= v;
     }
+
+    public toString():string{
+        return this.value + "";
+    }
 }
 
 export class SDString extends VarScriptData {
@@ -526,6 +539,10 @@ export class SDString extends VarScriptData {
         if(typeof(v) != "string"){v = vo.getValue();}
         this.value += v;
     }
+
+    public toString():string{
+        return this.value ;
+    }
 }
 
 
@@ -552,6 +569,10 @@ export class SDBool  extends VarScriptData {
         }
     };
     public getValue() {return this.value;};
+
+    public toString():string{
+        return this.value ? "true" : "false";
+    }
 }
 
 ///KFD(C,CLASS=SDArray,CNAME=数组,EXTEND=KFScriptData)
@@ -702,6 +723,26 @@ export class SDBlockTarget extends VarScriptData{
 export class SDBLKVars extends VarScriptData
 {
     public value:any[] = [];
+
+    public constructor(){
+        super();
+
+        ///rewrite array tostring function
+        let arr:any = this.value;
+        arr.toString = function () {
+            let arrstr:string = "";
+            for(let i:number = 0;i < this.length; i++){
+                let item:any = this[i];
+                let itemstr:string = "{" + item.name + ":" + item.value +"}";
+                if(i != 0){
+                    itemstr = "," + itemstr;
+                }
+                arrstr += itemstr;
+            }
+
+            return arrstr;
+        }
+    }
 
     public getValue(){return this.value;}
     public setValue(v:any) {

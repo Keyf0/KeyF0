@@ -88,6 +88,7 @@ export class KFTimelineComponent implements IKFTimelineContext
 
     public DeactiveComponent():void
     {
+        ///todo Deactive blocks;
         this.stateid = 0;
         this.playing = true;
         this.m_cfg = null;

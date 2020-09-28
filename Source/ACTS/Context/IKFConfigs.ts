@@ -10,7 +10,7 @@ export interface LoadConfigEnd
 
 export interface IKFConfigs
 {
-    load_config(appdatapath:string, kfdpath:string, start:string, end:LoadConfigEnd);
+    load_config(appdatapath:string, kfdpath:string, start:string, end:LoadConfigEnd, startfiles:string[]);
 
     GetMetaData(asseturl:string, bFullpath:boolean):any;//KFMetaData
     GetTimelineConfig(path:string, bFullpath:boolean):any; //KFTimelineConfig
@@ -24,6 +24,7 @@ export interface IKFConfigs
 
     basedir():string;
     start():string;
+    startFiles():string[];
 
     OnKFDLoaded:TypeEvent<KFDTable>;
     worldSize:kfVector3;

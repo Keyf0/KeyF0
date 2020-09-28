@@ -56,6 +56,7 @@ export class KFGraphComponent implements IKFGraphContext
 
     public DeactiveComponent()
     {
+        ///todo Deactive All Blocks
         this.m_cfg = null;
     }
 

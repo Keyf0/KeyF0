@@ -6,7 +6,7 @@ import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {KFDName} from "../../KFData/Format/KFDName";
 
-///KFD(C,CLASS=HElementActor,EXTEND=KFActor)
+///KFD(C,CLASS=HElementActor,EXTEND=KFActor,EDITCLASS=EditHTMLBlk)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
 ///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,texttype=html)
 ///KFD(P=3,NAME=containerID,CNAME=子集容器ID,TYPE=kfstr)
@@ -49,14 +49,19 @@ export class HElementActor extends KFActor implements HElement
             , this.document);
 
         let etb = this.etable;
+        let isEditMode:boolean = this.runtime.isEditMode;
         this.target["fireEvent"] = function (event, arg) {
-            let ShareEvent:KFEvent = KFEvent.ShareEvent;
+
+            if(isEditMode) return;
+
+            let ShareEvent: KFEvent = KFEvent.ShareEvent;
 
             ShareEvent.type.value = KFDName._Strs.GetNameID(event);
             ShareEvent.arg = arg;
 
             etb.FireEvent(ShareEvent);
         };
+
     }
 
     protected TargetDelete(): void {

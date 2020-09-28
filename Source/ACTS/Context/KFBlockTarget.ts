@@ -65,6 +65,7 @@ export class KFBlockTarget
     {
         this.metadata = metadata;
         this.runtime = runtime;
+        this.vars = {};
         ///如果有MEATDATA数据则给对象赋值
         ///不考虑延时创建的对象了[不纯粹]，METADATA就是类初始化时赋值的
         ///需要考虑下如果是频繁创建的对象的性能问题？

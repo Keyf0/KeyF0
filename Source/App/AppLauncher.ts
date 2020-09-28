@@ -13,7 +13,6 @@ export class AppLauncher
 {
     private _app:KFApp;
 
-
     public config:IKFConfigs = null;
     public execSide:number = BlkExecSide.BOTH;
 
@@ -67,12 +66,13 @@ export class AppLauncher
     public run(     appdatapath:string = ""
                 , kfdpath:string = ""
                 , start:string = "main"
-                , editmode:boolean = false):void
+                , editmode:boolean = false
+                , startFiles:string[] = null):void
     {
         this.config.load_config(
-            appdatapath
-            ,kfdpath
-            ,start
+                appdatapath
+            ,   kfdpath
+            ,   start
             ,(ret:boolean)=>
             {
                 if(ret)
@@ -83,6 +83,6 @@ export class AppLauncher
                 {
                     LOG_ERROR("加载失败...");
                 }
-            });
+            },startFiles);
     }
 }

@@ -20,11 +20,17 @@ export class DefaultAppConfig implements IKFConfigs
     );
 
 
+    public static IsClassName(asseturl:string){
+        return asseturl[0] == ":";
+    }
+
+
     public worldSize: kfVector3;
 
     private _appdatapath:string;
     private _kfdpath:string;
     private _start:string;
+    private _startFiles:string[];
     private _kfdpaths:Array<string>;
     private _refs:any;
     private _metadata:{[key: string]:any;} = {};
@@ -50,10 +56,12 @@ export class DefaultAppConfig implements IKFConfigs
     public GetMetaData(asseturl: string, bFullpath: boolean): any
     {
         ///兼容下直接获取的类":KFActor"
-        if(asseturl[0] == ':')
+        if(DefaultAppConfig.IsClassName(asseturl))
         {
             let KFMetaData:any = {};
-            let name:string = asseturl.substring(1,-1);
+            let name:string = asseturl.substring(1,asseturl.length);
+
+            LOG("name:{0}",name);
 
             KFMetaData.name = name;
             KFMetaData.type = new KFDName(name);
@@ -135,11 +143,12 @@ export class DefaultAppConfig implements IKFConfigs
     private build_assetpath(asseturl,blkmap,filelist)
     {
         ///不重复加入
-        if(!blkmap[asseturl])
+        if(!blkmap[asseturl] && false == DefaultAppConfig.IsClassName(asseturl))
         {
             blkmap[asseturl] = true;
+
             let refmap = this._refs[asseturl];
-            if(refmap)
+            if(refmap && this._metadata[asseturl] == null)
             {
                 for (let refasseturl in refmap)
                 {
@@ -167,10 +176,22 @@ export class DefaultAppConfig implements IKFConfigs
     private load_start(end:LoadConfigEnd)
     {
         let self = this;
+
         let filelist = [];
         let blkmap = {};
 
+        ///如果是类别则不用进入加载流程了
+
         this.build_assetpath(this._start, blkmap, filelist);
+
+        if(this._startFiles)
+        {
+            for(let i:number = 0; i < this._startFiles.length ; i++)
+            {
+                let blkpath = this._startFiles[i];
+                this.build_assetpath(blkpath, blkmap, filelist);
+            }
+        }
 
         IKFFileIO_Type.instance.asyncLoadFileList(filelist,
             function (ret, data, path:string)
@@ -210,21 +231,26 @@ export class DefaultAppConfig implements IKFConfigs
     public load_config(appdatapath:string
                        , kfdpath:string
                        , start:string
-                       ,    end:LoadConfigEnd)
+                       , end:LoadConfigEnd
+                , startfiles:string[] = null)
     {
         this._appdatapath = appdatapath;
         this._kfdpath = kfdpath;
 
         //加上后缀
-        if(start.indexOf(".blk") == -1)
+        if(start.indexOf(".blk") == -1 && start[0] != ":")
         {
             start += ".blk";
         }
+
         this._start = start;
+        this._startFiles = startfiles;
+
         this.load_setting(end);
     }
 
     public start(): string {return this._start;}
+    public startFiles(): string[] {return this._startFiles;}
 
     public OnKFDLoaded: TypeEvent<KFDTable> = new TypeEvent<KFDTable>();
 

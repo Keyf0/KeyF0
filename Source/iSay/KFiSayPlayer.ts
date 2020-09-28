@@ -1,4 +1,11 @@
-import {IKFRuntime, onEndFrame, onEnterFrame, onRenderFrame} from "../ACTS/Context/IKFRuntime";
+import {
+    IKFRuntime,
+    onEditEndFrame,
+    onEditEnterFrame,
+    onEndFrame,
+    onEnterFrame,
+    onRenderFrame
+} from "../ACTS/Context/IKFRuntime";
 import {IKFConfigs, IKFConfigs_Type} from "../ACTS/Context/IKFConfigs";
 import {IKFDomain} from "../ACTS/Context/IKFDomain";
 import {KFEventTable} from "../Core/Misc/KFEventTable";
@@ -14,7 +21,7 @@ import {KFDataTable} from "../ACTS/Context/KFDataTable";
 
 export class KFiSayPlayer implements IKFRuntime
 {
-    public IsEditMode: boolean;
+    public isEditMode: boolean;
     public configs: IKFConfigs;
     public domain: IKFDomain;
     public etable: KFEventTable;
@@ -44,7 +51,7 @@ export class KFiSayPlayer implements IKFRuntime
     public constructor(userdata:any = null,editmode:boolean = false)
     {
         this.m_userdata = userdata;
-        this.IsEditMode = editmode;
+        this.isEditMode = editmode;
     }
 
     public Init(basedir:string)
@@ -111,13 +118,21 @@ export class KFiSayPlayer implements IKFRuntime
             let currenti  = this.frameindex + 1;
             this.frameindex = currenti;
 
-            etb.FireEvent(onEnterFrame);
-            if (this.m_root)
-            {
-                if(this.IsEditMode) {this.m_root.EditTick(currenti);}
-                else {this.m_root.Tick(currenti);}
+            if(this.isEditMode) {
+                etb.FireEvent(onEditEnterFrame);
+                if (this.m_root) {
+                    this.m_root.EditTick(currenti);
+                }
+                etb.FireEvent(onEditEndFrame);
+            }else {
+
+                etb.FireEvent(onEnterFrame);
+                if (this.m_root) {
+                    this.m_root.Tick(currenti);
+                }
+                etb.FireEvent(onEndFrame);
             }
-            etb.FireEvent(onEndFrame);
+
         }
         ///渲染的帧只要可更新的频率运行
         this.etable.FireEvent(onRenderFrame);

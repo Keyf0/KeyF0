@@ -38,7 +38,7 @@ export interface IKFRuntime
      execSide:number;
 
      ///是否处在编辑模式下
-     IsEditMode:boolean;
+     isEditMode:boolean;
 
      scripts:KFScriptSystem;
      configs:IKFConfigs;
@@ -56,8 +56,12 @@ export interface IKFRuntime
 
 export const EventEnterFrame:KFDName = new KFDName("onEnterFrame");
 export const EventEndFrame:KFDName = new KFDName("onEndFrame");
+export const EventEditEnterFrame:KFDName = new KFDName("onEditEnterFrame");
+export const EventEditEndFrame:KFDName = new KFDName("onEditEndFrame");
 export const EventRenderFrame:KFDName = new KFDName("onRenderFrame");
 
 export const onEnterFrame:KFEvent = new KFEvent(EventEnterFrame);
 export const onEndFrame:KFEvent = new KFEvent(EventEndFrame);
+export const onEditEnterFrame:KFEvent = new KFEvent(EventEditEnterFrame);
+export const onEditEndFrame:KFEvent = new KFEvent(EventEditEndFrame);
 export const onRenderFrame:KFEvent = new KFEvent(EventRenderFrame);
