@@ -177,15 +177,15 @@ export class KFGraphComponent implements IKFGraphContext
 
     public Input(blockname:KFDName, arg:any)
     {
-        let block = this.m_blocks[blockname.value];
-        if (block != null)
+        if(blockname)
         {
-            if(arg != undefined) block.Input(arg);
-            else block.Input(KF_GRAPHARG_NULL);
-        }
-        else
-        {
-            //LOG_TAG_ERROR("Can't find block: %s", blockname.c_str());
+            let block = this.m_blocks[blockname.value];
+            if (block != null) {
+                if (arg != undefined) block.Input(arg);
+                else block.Input(KF_GRAPHARG_NULL);
+            } else {
+                //LOG_TAG_ERROR("Can't find block: %s", blockname.c_str());
+            }
         }
     }
 }

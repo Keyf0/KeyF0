@@ -83,7 +83,8 @@ export class KFGraphBlockBase
         let outdata:any = this.mapnext[nameid];
         if(outdata)
         {
-            this.m_ctx.Input(outdata.name, arg);
+            let inputName:KFDName = outdata.name;
+            this.m_ctx.Input(inputName, arg);
         }
     }
 
