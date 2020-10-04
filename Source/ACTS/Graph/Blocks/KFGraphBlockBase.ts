@@ -1,9 +1,10 @@
 import {IKFGraphContext} from "../IKFGraphContext";
 import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
-import {KFDName} from "../../../KFData/Format/KFDName";
+import {KFDName, KFDNameStrings} from "../../../KFData/Format/KFDName";
 import {IKFRuntime} from "../../Context/IKFRuntime";
 import {LOG} from "../../../Core/Log/KFLog";
+import {KFScript} from "../../../KFScript/KFScriptDef";
 
 ///c++里继承SCRIPTDATA可以在参数中传递
 export class KFGraphBlockBase
@@ -12,6 +13,7 @@ export class KFGraphBlockBase
 
     public data:any;
     public nextname:KFDName;
+    public mapnext:{[key:number]:any;};
 
     public Create(ctx:IKFGraphContext, data:any)
     {
@@ -54,6 +56,34 @@ export class KFGraphBlockBase
             var inputname = outputs[index].name;
             if(inputname)
             this.m_ctx.Input(inputname, arg);
+        }
+    }
+
+    public InputName(outname:string, arg:any)
+    {
+        let nameid = KFDName._Strs.GetNameID(outname);
+        if(this.mapnext == null)
+        {
+            this.mapnext = {};
+            let outputs = this.data.outputs;
+            if (outputs) {
+
+                for (let i = 0; i < outputs.length; i++) {
+                    let output = outputs[i];
+                    let outfunc = output.func;
+
+                    if (outfunc)
+                    {
+                        this.mapnext[outfunc.name.value] = output;
+                    }
+                }
+            }
+        }
+
+        let outdata:any = this.mapnext[nameid];
+        if(outdata)
+        {
+            this.m_ctx.Input(outdata.name, arg);
         }
     }
 

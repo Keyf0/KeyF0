@@ -5,7 +5,7 @@ import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
-import {kfVector3} from "../Script/Global/GlobalScripts";
+import {kfVector3, SDBlockTargetRef} from "../Script/Global/GlobalScripts";
 import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
 import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
 
@@ -78,6 +78,13 @@ export class KFBlockTarget
         }
     }
 
+    public get Ref():SDBlockTargetRef
+    {
+        let targetRef:SDBlockTargetRef = new SDBlockTargetRef();
+        targetRef.value = this;
+        return targetRef;
+    }
+
     //Release():void{}
 
     public EditTick(frameindex:number):void{}
@@ -106,6 +113,13 @@ export class KFBlockTarget
     public StrVar(name:string)
     {
         return this.vars[KFDName._Strs.GetNameID(name)];
+    }
+
+    public VarVal(name:string)
+    {
+        let varx:any = this.vars[KFDName._Strs.GetNameID(name)];
+        if(varx) return varx.getValue();
+        return null;
     }
 
     public StrValue(name:string):any
@@ -194,17 +208,28 @@ export class KFBlockTarget
         }
     }
 
-    public VarsCopyTo(t:KFBlockTarget, autocreate:boolean = false){
+    public VarsCopyTo(t:KFBlockTarget, autocreate:boolean = false)
+    {
         for(let key in this.vars)
         {
-            let onevar = t.vars[key];
-            let orgvar = this.vars[key];
-            if(onevar)onevar.setValue(orgvar);
+            let onevar:any = t.vars[key];
+            let orgvar:any = this.vars[key];
+            let orgval:any = orgvar;
+
+            if(orgvar.Clone)
+            {
+                orgval = orgvar.Clone();
+            }
+
+            if(onevar)
+            {
+                onevar.setValue(orgval);
+            }
             else if(autocreate)
             {
                 onevar = new orgvar.constructor();
                 t.vars[key] = onevar;
-                onevar.setValue(orgvar);
+                onevar.setValue(orgval);
             }
         }
     }

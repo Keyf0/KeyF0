@@ -431,6 +431,7 @@ export class kfVector3 extends VarScriptData{
 
 export class SDFloat  extends VarScriptData {
 
+    public static Share:SDFloat = new SDFloat();
     public value:number = 0;
 
     public setValue(v)
@@ -473,12 +474,13 @@ export class SDFloat  extends VarScriptData {
 
 export class SDInt32  extends VarScriptData {
 
+    public static Share:SDInt32 = new SDInt32();
     public value:number = 0;
     public setValue(v)
     {
         let val:number;
 
-        if(isNaN(v)) {val = v.getValue();}
+        if(v.getValue) {val = v.getValue();}
         else val = v;
 
         if(this.value != val) {
@@ -512,8 +514,9 @@ export class SDInt32  extends VarScriptData {
     }
 }
 
-export class SDString extends VarScriptData {
-
+export class SDString extends VarScriptData
+{
+    public static Share:SDString = new SDString();
     public value:string = "";
 
     public setValue(v)
@@ -540,7 +543,8 @@ export class SDString extends VarScriptData {
         this.value += v;
     }
 
-    public toString():string{
+    public toString():string
+    {
         return this.value ;
     }
 }
@@ -581,28 +585,54 @@ export class SDBool  extends VarScriptData {
 ///KFD(*)
 
 ///定义一个数组对象
-export class SDArray extends VarScriptData{
+export class SDArray extends VarScriptData
+{
     public value:any[] = [];
 
     public getValue() {return this.value;}
-    public setValue(data:any){
+    public setValue(data:any)
+    {
         if(!data)return;
-
         this.value.length = 0;
-        if(data.getValue){
+        if(data.getValue)
+        {
             this.value.push.apply(this.value, data.getValue());
-        }else{
+        }
+        else
+        {
             this.value.push.apply(this.value, data);
         }
 
-        if (this.UpdateEvent) {
+        if (this.UpdateEvent)
+        {
             this.UpdateEvent(this);
         }
     }
 
-    public valueAt(index:number)
+    public Clone():any
     {
-        if(this.value){
+        let valarr:any[] = [];
+        for(let i:number = 0;i < this.value.length; i++)
+        {
+            let itemvar:any = this.value[i];
+            let itemval:any = itemvar.getValue();
+            let newvar:any = new itemvar.constructor();
+
+            if(itemvar.Clone)
+            {
+                itemval = itemvar.Clone();
+            }
+
+            newvar.setValue(itemval);
+            valarr.push(newvar);
+        }
+        return valarr;
+    }
+
+    public ValueAt(index:number)
+    {
+        if(this.value)
+        {
             var varitem = this.value[index];
             if(varitem) return varitem.getValue();
         }
@@ -610,22 +640,307 @@ export class SDArray extends VarScriptData{
     }
 
 
-    public push(vo:any){
+    public Push(vo:any)
+    {
         this.value.push(vo);
+
+        if (this.UpdateEvent)
+        {
+            this.UpdateEvent(this);
+        }
     }
 
-    public remove(vo:any){
+    public Remove(vo:any)
+    {
         let index = this.value.indexOf(vo);
         if(index != -1)
-            this.value.splice(index,1);
+        {
+            this.value.splice(index, 1);
+
+            if (this.UpdateEvent)
+            {
+                this.UpdateEvent(this);
+            }
+        }
     }
 
-    public contain(vo:any):boolean {
+    public Contain(vo:any):boolean
+    {
         if(this.value.indexOf(vo) == -1)
         return false;
         return true;
     }
+
+    public get Length():number
+    {
+        return this.value ? this.value.length : 0;
+    }
 }
+
+
+///KFD(C,CLASS=SDStringArray,CNAME=字符数组,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDStringArray,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=value,CNAME=数据,TYPE=arr,OTYPE=kfstr)
+///KFD(*)
+
+///定义一个字符数组对象
+export class SDStringArray extends VarScriptData
+{
+    public value:string[] = [];
+
+    public getValue() {return this.value;}
+    public setValue(data:any)
+    {
+        if(!data)return;
+        this.value.length = 0;
+        if(data.getValue)
+        {
+            this.value.push.apply(this.value, data.getValue());
+        }
+        else
+        {
+            this.value.push.apply(this.value, data);
+        }
+
+        if (this.UpdateEvent)
+        {
+            this.UpdateEvent(this);
+        }
+    }
+
+    public get Length():number
+    {
+        return this.value ? this.value.length : 0;
+    }
+
+    public ValueAt(index:number):string
+    {
+        if(this.value)
+        {
+            return this.value[index];
+        }
+        return "";
+    }
+
+    public VarAt(index:number, share:boolean = true):any
+    {
+        let sdstr:SDString = share ? SDString.Share : new SDString();
+        if(this.value)
+        {
+            sdstr.value = this.value[index];
+        }
+        return sdstr;
+    }
+
+
+    public Push(vo:string)
+    {
+        this.value.push(vo);
+
+        if (this.UpdateEvent)
+        {
+            this.UpdateEvent(this);
+        }
+    }
+
+    public Remove(vo:string)
+    {
+        let index = this.value.indexOf(vo);
+        if(index != -1)
+        {
+            this.value.splice(index, 1);
+
+            if (this.UpdateEvent)
+            {
+                this.UpdateEvent(this);
+            }
+        }
+    }
+
+    public Contain(vo:string):boolean
+    {
+        if(this.value.indexOf(vo) == -1)
+            return false;
+        return true;
+    }
+}
+
+///KFD(C,CLASS=SDFloatArray,CNAME=浮点数组,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDFloatArray,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=value,CNAME=数据,TYPE=arr,OTYPE=float)
+///KFD(*)
+
+///定义一个浮点数组对象
+export class SDFloatArray extends VarScriptData
+{
+    public value:number[] = [];
+
+    public getValue() {return this.value;}
+    public setValue(data:any)
+    {
+        if(!data)return;
+        this.value.length = 0;
+        if(data.getValue)
+        {
+            this.value.push.apply(this.value, data.getValue());
+        }
+        else
+        {
+            this.value.push.apply(this.value, data);
+        }
+
+        if (this.UpdateEvent)
+        {
+            this.UpdateEvent(this);
+        }
+    }
+
+    public ValueAt(index:number):number
+    {
+        if(this.value)
+        {
+            return this.value[index];
+        }
+        return 0;
+    }
+
+    public VarAt(index:number, share:boolean = true):any
+    {
+        let sdstr:SDFloat = share ? SDFloat.Share : new SDFloat();
+        if(this.value)
+        {
+            sdstr.value = this.value[index];
+        }
+        return sdstr;
+    }
+
+
+    public Push(vo:number)
+    {
+        this.value.push(vo);
+
+        if (this.UpdateEvent)
+        {
+            this.UpdateEvent(this);
+        }
+    }
+
+    public Remove(vo:number)
+    {
+        let index = this.value.indexOf(vo);
+        if(index != -1)
+        {
+            this.value.splice(index, 1);
+
+            if (this.UpdateEvent)
+            {
+                this.UpdateEvent(this);
+            }
+        }
+    }
+
+    public Contain(vo:number):boolean
+    {
+        if(this.value.indexOf(vo) == -1)
+            return false;
+        return true;
+    }
+
+    public get Length():number
+    {
+        return this.value ? this.value.length : 0;
+    }
+}
+
+
+
+///KFD(C,CLASS=SDInt32Array,CNAME=整型数组,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDInt32Array,OR=1,TYPE=kfname)
+///KFD(P=1,NAME=value,CNAME=数据,TYPE=arr,OTYPE=int32)
+///KFD(*)
+
+///定义一个整型数组对象
+export class SDInt32Array extends VarScriptData
+{
+    public value:number[] = [];
+
+    public getValue() {return this.value;}
+    public setValue(data:any)
+    {
+        if(!data)return;
+        this.value.length = 0;
+        if(data.getValue)
+        {
+            this.value.push.apply(this.value, data.getValue());
+        }
+        else
+        {
+            this.value.push.apply(this.value, data);
+        }
+
+        if (this.UpdateEvent)
+        {
+            this.UpdateEvent(this);
+        }
+    }
+
+    public ValueAt(index:number):number
+    {
+        if(this.value)
+        {
+            return this.value[index];
+        }
+        return 0;
+    }
+
+    public VarAt(index:number , share:boolean = true):any
+    {
+        let sdstr:SDFloat = share ? SDFloat.Share : new SDFloat();
+        if(this.value)
+        {
+            sdstr.value = this.value[index];
+        }
+        return sdstr;
+    }
+
+
+    public Push(vo:number)
+    {
+        this.value.push(vo);
+
+        if (this.UpdateEvent)
+        {
+            this.UpdateEvent(this);
+        }
+    }
+
+    public Remove(vo:number)
+    {
+        let index = this.value.indexOf(vo);
+        if(index != -1)
+        {
+            this.value.splice(index, 1);
+
+            if (this.UpdateEvent)
+            {
+                this.UpdateEvent(this);
+            }
+        }
+    }
+
+    public Contain(vo:number):boolean
+    {
+        if(this.value.indexOf(vo) == -1)
+            return false;
+        return true;
+    }
+
+    public get Length():number
+    {
+        return this.value ? this.value.length : 0;
+    }
+}
+
 
 
 ///定义一个对象数据结构体和一个列表

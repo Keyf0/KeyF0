@@ -328,6 +328,90 @@
     },
     {
         "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "SDStringArray",
+        "cname": "字符数组",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "数据",
+                "type": "arr",
+                "otype": "kfstr"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDStringArray",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1427
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "SDFloatArray",
+        "cname": "浮点数组",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "数据",
+                "type": "arr",
+                "otype": "float"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDFloatArray",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1428
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "SDInt32Array",
+        "cname": "整型数组",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "value",
+                "cname": "数据",
+                "type": "arr",
+                "otype": "int32"
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "数据类型",
+                "default": "SDInt32Array",
+                "OR": 1,
+                "type": "kfname"
+            }
+        ],
+        "clsid": 1429
+    },
+    {
+        "includes": [
             "Global/GlobalScripts.ts",
             "KFNewBlkDataF.h"
         ],

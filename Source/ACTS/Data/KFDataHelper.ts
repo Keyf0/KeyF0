@@ -13,10 +13,10 @@ import {
     SDBlockTarget,
     SDBlockTargetRef,
     SDBool,
-    SDFloat,
-    SDInt32,
+    SDFloat, SDFloatArray,
+    SDInt32, SDInt32Array,
     SDNewBlkDataList,
-    SDString
+    SDString, SDStringArray
 } from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
@@ -105,6 +105,27 @@ export class KFDataHelper
                 , KFScriptGroupType.Global
                 ,()=>{
                     return new SDArray();
+                })
+
+                , new ScriptMeta("SDStringArray"
+                ,():KFScript=>{return null;}
+                , KFScriptGroupType.Global
+                ,()=>{
+                    return new SDStringArray();
+                })
+
+                , new ScriptMeta("SDFloatArray"
+                ,():KFScript=>{return null;}
+                , KFScriptGroupType.Global
+                ,()=>{
+                    return new SDFloatArray();
+                })
+
+                , new ScriptMeta("SDInt32Array"
+                ,():KFScript=>{return null;}
+                , KFScriptGroupType.Global
+                ,()=>{
+                    return new SDInt32Array();
                 })
 
                 , new ScriptMeta("SDNewBlkDataList"

@@ -1739,6 +1739,18 @@
         {
             "class": "EditDataTable",
             "id": 1426
+        },
+        {
+            "class": "SDStringArray",
+            "id": 1427
+        },
+        {
+            "class": "SDFloatArray",
+            "id": 1428
+        },
+        {
+            "class": "SDInt32Array",
+            "id": 1429
         }
     ]
 }

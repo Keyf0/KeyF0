@@ -2,6 +2,7 @@ import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
 import {KFDName} from "../../../KFData/Format/KFDName";
+import {LOG} from "../../../Core/Log/KFLog";
 
 
 export class KFGraphBlockNormal extends KFGraphBlockBase
@@ -42,15 +43,17 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
                 ///填充第一位寄存器 需要先保存之前的参数
                 ///执行完后再填充
                 let OBJS = script._reg._OBJECTS;
+                let BIndex:number = 1;
+
                 let Arg0 = OBJS[0];
-                let Arg1 = OBJS[1];
+                let Arg1 = OBJS[BIndex];
                 OBJS[0] = arg;
-                OBJS[1] = this;
+                OBJS[BIndex] = this;
                 ///强制读取一个参数
                 if(fd.paramsize < 2){fd.paramsize = 2;}
                 script.ExecuteFrameScript(0, fd, this.m_target);
                 OBJS[0] = Arg0;
-                OBJS[1] = Arg1;
+                OBJS[BIndex] = Arg1;
             }
         }
         this.OutNext(arg);
