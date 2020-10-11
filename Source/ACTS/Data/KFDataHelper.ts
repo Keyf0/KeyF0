@@ -20,9 +20,9 @@ import {
 } from "../Script/Global/GlobalScripts";
 import {ScriptMeta} from "../Script/KFScriptFactory";
 import {KFExpression} from "../Script/Global/KFExpression";
-import {KFScript, KFScriptData} from "../../KFScript/KFScriptDef";
-import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
 import {KFDataTable} from "../Context/KFDataTable";
+import {KFScript, KFScriptData} from "../Script/KFScriptDef";
+import {KFScriptGroupType} from "../Script/KFScriptGroupType";
 
 export class KFDataHelper
 {

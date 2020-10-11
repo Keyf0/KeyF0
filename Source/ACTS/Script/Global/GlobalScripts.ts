@@ -1,7 +1,7 @@
-import {KFScript, KFScriptContext, KFScriptData} from "../../../KFScript/KFScriptDef";
+import {KFScript, KFScriptContext, KFScriptData} from "../KFScriptDef";
 import {ScriptMeta} from "../KFScriptFactory";
 import {KFDName} from "../../../KFData/Format/KFDName";
-import {KFScriptGroupType} from "../../../KFScript/KFScriptGroupType";
+import {KFScriptGroupType} from "../KFScriptGroupType";
 import {KFExpression} from "./KFExpression";
 import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {LOG} from "../../../Core/Log/KFLog";
@@ -140,7 +140,7 @@ export class GSRemoteScript extends KFScript {
         if(toj.rpcc_exec) {
             ///调用服务器
             let eside = sd.execSide ? sd.execSide : BlkExecSide.BOTH;
-            let currside = toj.execSide;
+            let currside = toj.runtime.execSide;
 
             switch (eside) {
                 case BlkExecSide.SERVER:
@@ -335,19 +335,26 @@ export class GSSaveBLKDataScript extends KFScript{
 
 ///脚本变量
 export class VarScriptData {
+
+    public constructor(clsname:string)
+    {
+        this["__cls__"] = clsname;
+    }
     public UpdateEvent:(arg:any)=>void;
 }
 
-//extends scriptdata
-export class kfVector3 extends VarScriptData{
+///注意定义__cls__ 而不是通过constructor.name来获取是因为如果代码被压缩名称可能会改变
 
+//extends scriptdata
+export class kfVector3 extends VarScriptData
+{
     public x:number;
     public y:number;
     public z:number;
 
     public constructor(x:number=0,y:number=0,z:number=0)
     {
-        super();
+        super("kfVector3");
         this.x = x;
         this.y = y;
         this.z = z;
@@ -434,6 +441,11 @@ export class SDFloat  extends VarScriptData {
     public static Share:SDFloat = new SDFloat();
     public value:number = 0;
 
+    public constructor()
+    {
+        super("SDFloat");
+    }
+
     public setValue(v)
     {
         let val:number;
@@ -476,6 +488,12 @@ export class SDInt32  extends VarScriptData {
 
     public static Share:SDInt32 = new SDInt32();
     public value:number = 0;
+
+    public constructor()
+    {
+        super("SDInt32");
+    }
+
     public setValue(v)
     {
         let val:number;
@@ -519,6 +537,11 @@ export class SDString extends VarScriptData
     public static Share:SDString = new SDString();
     public value:string = "";
 
+    public constructor()
+    {
+        super("SDString");
+    }
+
     public setValue(v)
     {
         let val:string;
@@ -558,6 +581,12 @@ export class SDString extends VarScriptData
 export class SDBool  extends VarScriptData {
 
     public value:boolean = false;
+
+    public constructor()
+    {
+        super("SDBool");
+    }
+
     public setValue(v)
     {
         let val:boolean;
@@ -588,6 +617,11 @@ export class SDBool  extends VarScriptData {
 export class SDArray extends VarScriptData
 {
     public value:any[] = [];
+
+    public constructor()
+    {
+        super("SDArray");
+    }
 
     public getValue() {return this.value;}
     public setValue(data:any)
@@ -688,6 +722,11 @@ export class SDStringArray extends VarScriptData
 {
     public value:string[] = [];
 
+    public constructor()
+    {
+        super("SDStringArray");
+    }
+
     public getValue() {return this.value;}
     public setValue(data:any)
     {
@@ -774,6 +813,11 @@ export class SDStringArray extends VarScriptData
 export class SDFloatArray extends VarScriptData
 {
     public value:number[] = [];
+
+    public constructor()
+    {
+        super("SDFloatArray");
+    }
 
     public getValue() {return this.value;}
     public setValue(data:any)
@@ -863,6 +907,11 @@ export class SDFloatArray extends VarScriptData
 export class SDInt32Array extends VarScriptData
 {
     public value:number[] = [];
+
+    public constructor()
+    {
+        super("SDInt32Array");
+    }
 
     public getValue() {return this.value;}
     public setValue(data:any)
@@ -954,6 +1003,12 @@ export class SDNewBlkDataList extends VarScriptData {
 
     public value:any[] = [];
 
+
+    public constructor()
+    {
+        super("SDNewBlkDataList");
+    }
+
     public getValue() {return this.value;}
     public setValue(data:any){
         if(!data)return;
@@ -983,6 +1038,11 @@ export class SDBlockTarget extends VarScriptData{
 
     public data:any;
     public children:any[] = [];
+
+    public constructor()
+    {
+        super("SDBlockTarget");
+    }
 
     public getValue() {return this.data;}
     public setValue(val:any){
@@ -1039,8 +1099,9 @@ export class SDBLKVars extends VarScriptData
 {
     public value:any[] = [];
 
-    public constructor(){
-        super();
+    public constructor()
+    {
+        super("SDBLKVars");
 
         ///rewrite array tostring function
         let arr:any = this.value;
@@ -1091,6 +1152,11 @@ export class SDBlockTargetRef extends VarScriptData {
 
     public value:KFBlockTarget = null;
 
+    public constructor()
+    {
+        super("SDBlockTargetRef");
+    }
+
     public getValue(){return this.value;}
     public setValue(data:any){
         if(data == null){
@@ -1139,9 +1205,14 @@ export class SDBlockTargetRef extends VarScriptData {
 ///KFD(P=1,NAME=type,CNAME=数据类型,DEFAULT=SDAnyRef,OR=1,TYPE=kfname)
 ///KFD(*)
 
-export class SDAnyRef extends VarScriptData {
-
+export class SDAnyRef extends VarScriptData
+{
     public value:any = null;
+
+    public constructor()
+    {
+        super("SDAnyRef");
+    }
 
     public getValue(){return this.value;}
     public setValue(data:any)

@@ -1,10 +1,7 @@
 import {IKFGraphContext} from "../IKFGraphContext";
-import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
+import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
-import {KFDName, KFDNameStrings} from "../../../KFData/Format/KFDName";
-import {IKFRuntime} from "../../Context/IKFRuntime";
-import {LOG} from "../../../Core/Log/KFLog";
-import {KFScript} from "../../../KFScript/KFScriptDef";
+import {KFDName} from "../../../KFData/Format/KFDName";
 
 ///c++里继承SCRIPTDATA可以在参数中传递
 export class KFGraphBlockBase

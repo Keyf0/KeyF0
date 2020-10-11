@@ -1,6 +1,6 @@
 import {KFDName} from "../../KFData/Format/KFDName";
 import {AMeta, InstantiateFunc, KFMetaManager} from "../../Core/Meta/KFMetaManager";
-import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
+import {KFScriptGroupType} from "./KFScriptGroupType";
 
 
 export interface ScriptDataNew

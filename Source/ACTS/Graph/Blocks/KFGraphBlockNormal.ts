@@ -2,7 +2,6 @@ import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
 import {KFDName} from "../../../KFData/Format/KFDName";
-import {LOG} from "../../../Core/Log/KFLog";
 
 
 export class KFGraphBlockNormal extends KFGraphBlockBase
@@ -37,7 +36,9 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         if(this.m_target)
         {
             let fd = this.data.frame;
-            if(fd && fd.scripts.length > 0)
+            let scripts = fd ? fd.scripts : null;
+
+            if(scripts && scripts.length > 0)
             {
                 let script = this.m_ctx.script;
                 ///填充第一位寄存器 需要先保存之前的参数

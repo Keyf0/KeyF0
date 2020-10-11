@@ -77,8 +77,8 @@ export class HElementActor extends KFActor implements HElement
         }
     }
 
-    public HTMLElement(id:string,endsid:boolean = false):any{
-
+    public HTMLElement(id:string,endsid:boolean = false):any
+    {
         if(this.document)
         {
             if(endsid) id = id + this.sid;

@@ -1,5 +1,5 @@
-import {KFScriptManagerBase} from "../../KFScript/KFScriptManagerBase";
-import {KFScript, KFScriptContext} from "../../KFScript/KFScriptDef";
+import {KFScriptManagerBase} from "./KFScriptManagerBase";
+import {KFScript, KFScriptContext} from "./KFScriptDef";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFScriptFactory} from "./KFScriptFactory";

@@ -5,8 +5,8 @@ import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFDName} from "../../KFData/Format/KFDName";
-import {KFScript} from "../../KFScript/KFScriptDef";
 import {IKFDomain} from "../Context/IKFDomain";
+import {KFScript} from "../Script/KFScriptDef";
 
 
 export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer

@@ -5,9 +5,9 @@ import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFBytes} from "../../KFData/Format/KFBytes";
 import {KFGlobalDefines} from "../KFACTSDefines";
 import {KFByteArray} from "../../KFData/Utils/FKByteArray";
-import {kfVector3, SDBlockTargetRef} from "../Script/Global/GlobalScripts";
+import {kfVector3, SDBlockTargetRef, SDInt32, SDString} from "../Script/Global/GlobalScripts";
 import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
-import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
+import {KFScriptGroupType} from "../Script/KFScriptGroupType";
 
 export interface IKFBlockTargetContainer
 {
@@ -110,16 +110,9 @@ export class KFBlockTarget
     ///更新显示对象
     public set_datas(datas:number[]){}
 
-    public StrVar(name:string)
+    public StrVar(name:string):any
     {
         return this.vars[KFDName._Strs.GetNameID(name)];
-    }
-
-    public VarVal(name:string)
-    {
-        let varx:any = this.vars[KFDName._Strs.GetNameID(name)];
-        if(varx) return varx.getValue();
-        return null;
     }
 
     public StrValue(name:string):any
@@ -128,36 +121,87 @@ export class KFBlockTarget
         return varx? varx.getValue() : null;
     }
 
-    public ReadVars(bytesarr:KFByteArray,len:number) {
+    public AddVar(varname:string, type:number = 0, netvar:boolean = true)
+    {
+        if(this.vars == null) this.vars = {};
+        let nameval:number = KFDName._Strs.GetNameID(varname);
+        let varitem:any = this.vars[nameval];
 
+        if(varitem)
+        {
+            return varitem;
+        }
+
+        switch (type)
+        {
+            case 0:
+                varitem = new SDInt32();
+                break;
+            case 1:
+                varitem = new SDString();
+                break;
+        }
+
+        if(netvar)
+        {
+            varitem.group = KFScriptGroupType.NetVar;
+            varitem.UpdateEvent = this.OnNetVarUpdate.bind(this, varname);
+        }
+
+        this.vars[nameval] = varitem;
+        return varitem;
+    }
+
+    public RemoveVar(varname:string)
+    {
+        let nameval:number = KFDName._Strs.GetNameID(varname);
+        if(this.vars && this.vars[nameval])
+        {
+            let strvar:SDString = SDString.Share;
+            strvar.value = varname;
+            this.FireEvent("OnVarRemoved",strvar);
+            delete this.vars[nameval];
+        }
+    }
+
+    public ReadVars(bytesarr:KFByteArray,len:number)
+    {
         if(this.vars == null) this.vars = {};
         let varsize = bytesarr.readvaruint();
-        while (varsize > 0) {
+        while (varsize > 0)
+        {
             let varname:string = bytesarr.readstring();
-           let nameval = KFDName._Strs.GetNameID(varname);
-           let data = KFDJson.read_value(bytesarr);
+            let nameval = KFDName._Strs.GetNameID(varname);
+            let data = KFDJson.read_value(bytesarr);
 
-           let valueobj:any = this.vars[nameval];
-           if(valueobj) {
+            let valueobj:any = this.vars[nameval];
+           if(valueobj)
+           {
                valueobj.setValue(data);
            }
-           else {
-
+           else
+           {
                this.vars[nameval] = data;
                ///如果是网络变量需要有事件通知
-               if(data.group == KFScriptGroupType.NetVar){
-                   let self:KFBlockTarget = this;
-                   let varevent = "ON_" + varname;
-                   data.UpdateEvent = function (arg:any)
-                   {
-                       self.FireEvent(varevent, arg);
-                   } 
+               if(data.group == KFScriptGroupType.NetVar)
+               {
+                   data.UpdateEvent = this.OnNetVarUpdate.bind(this, varname);
                }
            }
 
            varsize -= 1;
         }
     }
+
+    public OnNetVarUpdate(varname:string, arg:any):void
+    {
+        let strvar:SDString = SDString.Share;
+        strvar.value = varname;
+        this.FireEvent("OnVarUpdate",strvar);
+        let varevent = "ON_" + varname;
+        this.FireEvent(varevent, arg);
+    }
+
     public WriteVars(bytesarr:KFByteArray, attribFlags?:KFAttribflags) {
 
         if(this.vars) {

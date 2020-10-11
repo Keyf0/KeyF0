@@ -1,5 +1,5 @@
-import {KFScriptContext} from "../../KFScript/KFScriptDef";
 import {KFDName} from "../../KFData/Format/KFDName";
+import {KFScriptContext} from "../Script/KFScriptDef";
 
 export interface IKFGraphContext
 {

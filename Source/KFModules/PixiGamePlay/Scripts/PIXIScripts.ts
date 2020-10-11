@@ -1,11 +1,11 @@
 import {KFTargetScript} from "../../../ACTS/Script/KFScriptSystem";
-import {KFScript, KFScriptContext} from "../../../KFScript/KFScriptDef";
 import {ScriptMeta} from "../../../ACTS/Script/KFScriptFactory";
-import {KFScriptGroupType} from "../../../KFScript/KFScriptGroupType";
 import {LOG_ERROR} from "../../../Core/Log/KFLog";
 import {KFEvent} from "../../../Core/Misc/KFEventTable";
 import {IKFBlockTargetContainer, KFBlockTarget} from "../../../ACTS/Context/KFBlockTarget";
 import {PIXINetActor} from "../PIXINetActor";
+import {KFScriptGroupType} from "../../../ACTS/Script/KFScriptGroupType";
+import {KFScript, KFScriptContext} from "../../../ACTS/Script/KFScriptDef";
 
 ///KFD(C,CLASS=TSSmoothMoveData,CNAME=2D平滑移动,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=TSSmoothMove,OR=1,TYPE=kfname)

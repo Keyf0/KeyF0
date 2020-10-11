@@ -11,7 +11,7 @@ import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {KFDTable} from "../../KFData/Format/KFDTable";
 import {KFDJson} from "../../KFData/Format/KFDJson";
 import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
-import {KFScriptGroupType} from "../../KFScript/KFScriptGroupType";
+import {KFScriptGroupType} from "../../ACTS/Script/KFScriptGroupType";
 
 ///KFD(C,CLASS=NetSensor,EXTEND=KFBlockTarget)
 ///KFD(*)
