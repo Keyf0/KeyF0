@@ -1,6 +1,5 @@
 import {IKFGraphContext} from "../../Graph/IKFGraphContext";
 import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
-import {KFScriptContext} from "../../../KFScript/KFScriptDef";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 import {KFGraphBlockBase} from "../../Graph/Blocks/KFGraphBlockBase";
 import {KFDName} from "../../../KFData/Format/KFDName";
@@ -9,6 +8,7 @@ import {KFGraphBlockNormal} from "../../Graph/Blocks/KFGraphBlockNormal";
 import {KFGraphBlockExportPoint} from "../../Graph/Blocks/KFGraphBlockExportPoint";
 import {KFGraphBlockEventPoint} from "../../Graph/Blocks/KFGraphBlockEventPoint";
 import {IKFRuntime} from "../../Context/IKFRuntime";
+import {KFScriptContext} from "../../Script/KFScriptDef";
 
 export class KFGraphComponent implements IKFGraphContext
 {

@@ -3,10 +3,10 @@ import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {IKFTimelineContext} from "../../Timeline/IKFTimelineProc";
 import {KFTimeBlock} from "../../Timeline/KFTimeBlock";
 import {KFPool} from "../../../Core/Misc/KFPool";
-import {KFScriptContext} from "../../../KFScript/KFScriptDef";
 import {KFGlobalDefines} from "../../KFACTSDefines";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
 import {IKFRuntime} from "../../Context/IKFRuntime";
+import {KFScriptContext} from "../../Script/KFScriptDef";
 
 export class KFTimelineComponent implements IKFTimelineContext
 {
