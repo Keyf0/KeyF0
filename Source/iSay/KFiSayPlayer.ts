@@ -18,13 +18,14 @@ import {KFActor} from "../ACTS/Actor/KFActor";
 import {KFDName} from "../KFData/Format/KFDName";
 import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
 import {KFDataTable} from "../ACTS/Context/KFDataTable";
+import {KFEventDispatcher} from "../ACTS/Event/KFEventDispatcher";
 
 export class KFiSayPlayer implements IKFRuntime
 {
     public isEditMode: boolean;
     public configs: IKFConfigs;
     public domain: IKFDomain;
-    public etable: KFEventTable;
+    public etable: KFEventDispatcher;
     public realframeindex: number;
     public frameindex: number;
     public fixtpf:number;
@@ -70,7 +71,7 @@ export class KFiSayPlayer implements IKFRuntime
         this.domain = new KFDomain(this);
         ///后面有需要再实现
         this.timers = new KFTimers(this);
-        this.etable = new KFEventTable();
+        this.etable = new KFEventDispatcher(this.domain);
         this.random = new KFRandom();
         this.random.Init(0);
 

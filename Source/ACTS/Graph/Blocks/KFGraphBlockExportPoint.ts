@@ -2,18 +2,19 @@ import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFGraphBlockType} from "../../Data/KFGraphBlockType";
 import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
 import {LOG} from "../../../Core/Log/KFLog";
+import {KFBlockTarget} from "../../Context/KFBlockTarget";
+import {KFActor} from "../../Actor/KFActor";
 
 export class KFGraphBlockExportPoint extends KFGraphBlockBase
 {
-        public Input(arg: any)
+        public Input(self:KFBlockTarget, arg: any)
         {
             //LOG("EXEC {0}", this.data.name.toString());
             let outtype = this.data.type;
             if(outtype != KFGraphBlockType.InputPoint)
             {
-
               let etable:KFEventTable = null;
-              let target = this.GetAttachTarget();
+              let target = this.GetAttachTarget(self as KFActor);
               if(target) {
                   let fd = this.data.frame;
                   if(fd && fd.scripts.length > 0) {
@@ -48,6 +49,6 @@ export class KFGraphBlockExportPoint extends KFGraphBlockBase
               }
           }
 
-            this.OutNext(arg);
+            this.OutNext(self, arg);
         }
 }

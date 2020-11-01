@@ -8,6 +8,7 @@ import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 import {kfVector3, SDBlockTargetRef, SDInt32, SDString} from "../Script/Global/GlobalScripts";
 import {KFAttribflags} from "../../KFData/Format/KFAttribflags";
 import {KFScriptGroupType} from "../Script/KFScriptGroupType";
+import {KFEventDispatcher} from "../Event/KFEventDispatcher";
 
 export interface IKFBlockTargetContainer
 {
@@ -37,6 +38,7 @@ export class BlkExecSide
     static SELFCLIENT:number = 5;///自己的客户端
 };
 
+
 export class KFBlockTarget
 {
     ///名称
@@ -46,7 +48,8 @@ export class KFBlockTarget
     ///是否属于主客户端
     public owner:boolean;
     public parent:IKFBlockTargetContainer;
-    public etable:KFEventTable;
+
+    public etable:KFEventDispatcher;
     public runtime:IKFRuntime;
 
     ///是否需要TICK
@@ -92,14 +95,14 @@ export class KFBlockTarget
 
     public ActivateBLK(KFBlockTargetData:any):void
     {
-        if(KFGlobalDefines.IS_Debug) {
+        if(KFGlobalDefines.IS_Debug)
+        {
             let self = <any>this;
             self.CreateTargetData = KFBlockTargetData;
         }
     }
 
     public DeactiveBLK():void { }
-    public AsActor():any{return null;}
 
     ///更新显示对象
     public set_position(v3?: { x: number; y: number; z?: number }){}
@@ -277,7 +280,6 @@ export class KFBlockTarget
             }
         }
     }
-
 
     public FireEvent(event:string, arg:any = null, global:boolean = false):void
     {

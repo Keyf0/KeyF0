@@ -5,6 +5,36 @@ import {KFMetaManager} from "../../Core/Meta/KFMetaManager";
 import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFConfigs} from "./IKFConfigs";
+import {KFGraphComponent} from "../Actor/Components/KFGraphComponent";
+
+
+export class KFGraphSystem
+{
+    private m_rt:IKFRuntime;
+    private m_instances:{[key:string]:KFGraphComponent};
+
+    public constructor(runtime:IKFRuntime)
+    {
+        this.m_rt = runtime;
+        this.m_instances = {};
+    }
+
+    public Create(asseturl:string): KFGraphComponent
+    {
+        let getinst:KFGraphComponent = this.m_instances[asseturl];
+        if(getinst == null)
+        {
+            getinst = new KFGraphComponent(this.m_rt, asseturl);
+            this.m_instances[asseturl] = getinst;
+        }
+
+        return getinst;
+    }
+
+    public Destroy(graph: KFGraphComponent): void
+    {}
+}
+
 
 export class KFDomain implements IKFDomain
 {
@@ -14,8 +44,13 @@ export class KFDomain implements IKFDomain
     private m_NoSideLog:string;
     private m_configs:IKFConfigs;
 
+    private m_graphsystem:KFGraphSystem;
+
+    private m_instances:{[key:string]:KFBlockTarget};
+
     public constructor(runtime:IKFRuntime)
     {
+        this.m_instances = {};
         this.m_runtime = runtime;
         this.m_configs = runtime.configs;
         this.m_execSide = runtime.execSide;
@@ -28,6 +63,8 @@ export class KFDomain implements IKFDomain
             this.m_incrsid = 90000000;
         }
         this.m_NoSideLog = "{0} 不能创建在" + endstr ;
+
+        this.m_graphsystem = new KFGraphSystem(runtime);
     }
 
     public CreateBlockTarget(KFBlockTargetData: any,meta?:any): KFBlockTarget
@@ -75,6 +112,8 @@ export class KFDomain implements IKFDomain
                 target.name = instname;
                 target.sid = currsid;
 
+                this.m_instances[currsid] = target;
+
                 LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
                 target.Construct(metadata, this.m_runtime);
 
@@ -97,11 +136,15 @@ export class KFDomain implements IKFDomain
     public DestroyBlockTarget(target: KFBlockTarget): void
     {
         ///kfgcRelease(target);
-
+        let sid = target.sid;
         let meta = target.metadata;
         let asseturl = meta.asseturl;
         if(asseturl == undefined)
+        {
             asseturl = target.name.toString();
+        }
+
+        delete this.m_instances[sid];
 
         LOG("销毁 BlockTarget:{0}",asseturl);
     }
@@ -156,4 +199,18 @@ export class KFDomain implements IKFDomain
         return this.m_incrsid;
     }
 
+    public CreateGraphComponent(target: KFBlockTarget): KFGraphComponent
+    {
+        let asseturl:string = target.metadata.asseturl;
+        return this.m_graphsystem.Create(asseturl);
+    }
+
+    public DestroyGraphComponent(graph: KFGraphComponent): void
+    {
+        this.m_graphsystem.Destroy(graph);
+    }
+
+    public GetBlockTarget(instSID: number): KFBlockTarget {
+        return undefined;
+    }
 }

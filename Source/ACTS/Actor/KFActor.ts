@@ -7,6 +7,7 @@ import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFDomain} from "../Context/IKFDomain";
 import {KFScript} from "../Script/KFScriptDef";
+import {KFEventDispatcher} from "../Event/KFEventDispatcher";
 
 
 export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
@@ -30,8 +31,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public rpcc_exec:(scriptdata:any)=>any;
     public rpcs_exec:(scriptdata:any)=>any;
 
-
-    public AsActor():any{return this;}
     public GetChildren():KFBlockTarget[]{return this.m_children;};
 
     protected m_children:KFBlockTarget[] = [];
@@ -51,8 +50,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public Construct(metadata:any, runtime:IKFRuntime)
     {
         super.Construct(metadata,runtime);
-        this.etable = new KFEventTable();
+
         this.m_CDomain = this.runtime.domain;
+        this.etable = new KFEventDispatcher(this.m_CDomain);
         this.rpcc_exec = this.Exec;
         this.rpcs_exec = this.Exec;
         this.Init(this.metadata.asseturl);
@@ -67,37 +67,25 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.rpcc_exec(scriptdata);
     }
 
-
     public Init(asseturl:string):void
     {
         if(this.timeline == null)
         {
             this.timeline = new KFTimelineComponent(this);
-            this.graph = new KFGraphComponent(this);
+            this.graph = this.m_CDomain.CreateGraphComponent(this);
         }
-    }
-
-    public ResetAllComponent():void
-    {
-        this.timeline.ResetComponent();
-        this.graph.ReleaseComponent();
     }
 
     public ActivateAllComponent(inarg:any):void
     {
         this.timeline.ActivateComponent();
-        this.graph.ActivateComponent(inarg);
+        this.graph.ActivateComponent(this, inarg);
     }
 
     public DeactiveAllComponent():void
     {
         this.timeline.DeactiveComponent();
-        this.graph.DeactiveComponent();
-    }
-
-    public Reset():void
-    {
-        this.ResetAllComponent();
+        this.graph.DeactiveComponent(this);
     }
 
     protected TargetNew(KFBlockTargetData:any): any{}
@@ -347,7 +335,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         let newtarget = this.m_CDomain.CreateBlockTarget(targetdata, meta);
         if (newtarget != null)
         {
-            if(Init){
+            if(Init)
+            {
                 Init(newtarget);
             }
             this.AddChild(newtarget);
@@ -361,6 +350,16 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     {
         this.m_removelist.push(child);
         return true;
+    }
+
+    public DeleteChildrenBySuffix(suffix:string)
+    {
+        for(let child of this.m_children){
+            let childname:string = child.name.toString();
+            if(childname.indexOf(suffix) == 0){
+                this.m_removelist.push(child);
+            }
+        }
     }
 
     public DeleteChildren() {
@@ -415,23 +414,31 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
     }
 
+
     ///FOR SCRIPT
-    public StrBlock(name:string, op:number = 0){
+    public StrBlock(name:string, op:number = 0)
+    {
         let block = this.graph.GetBlockID(KFDName._Strs._Strings2ID[name]);
-        if(block) {
-            if(op == 1) {
-                block.Input(null);
-            }else if(op == -1){
-                block.Deactive();
+        if(block)
+        {
+            if(op == 1)
+            {
+                block.Input(this,null);
+            }
+            else if(op == -1)
+            {
+                block.Deactive(this);
             }
         }
         return block;
     }
+
     ///FOR SCRIPT
-    public InputBlock(name:string, arg:any = null):void{
+    public InputBlock(name:string, arg:any = null):void
+    {
         let block = this.graph.GetBlockID(KFDName._Strs._Strings2ID[name]);
         if(block) {
-            block.Input(arg);
+            block.Input(this, arg);
         }
     }
 }

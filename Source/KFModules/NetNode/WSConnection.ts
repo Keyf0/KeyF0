@@ -1,8 +1,9 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {WSMDClient} from "../../KFNetwork/WS/WSMDClient";
-import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {KFEventDispatcher} from "../../ACTS/Event/KFEventDispatcher";
 
 ///KFD(C,CLASS=WSConnection,EXTEND=KFBlockTarget)
 ///KFD(P=1,NAME=tickable,CNAME=开启更新,DEFAULT=true,OR=1,TYPE=bool)
@@ -56,7 +57,7 @@ export class WSConnection extends KFBlockTarget
         super.Construct(metadata, runtime);
 
         this.tickable = true;
-        this.etable = new KFEventTable();
+        this.etable = new KFEventDispatcher(runtime.domain);
         this.execSide = runtime.execSide;
     }
 

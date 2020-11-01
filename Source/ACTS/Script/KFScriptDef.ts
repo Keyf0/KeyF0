@@ -3,6 +3,23 @@ import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFBlockTarget} from "../Context/KFBlockTarget";
 import {KFActor} from "../Actor/KFActor";
+import {KFGraphBlockBase} from "../Graph/Blocks/KFGraphBlockBase";
+
+
+export class BlockCache
+{
+    public self:KFBlockTarget;
+    public current:KFGraphBlockBase;
+
+    public Input(arg:any)
+    {
+        ///懒得判定了
+        //if(this.self && this.block){
+            this.current.Input(this.self, arg);
+        //}
+    }
+}
+
 
 export interface KFScriptContext
 {
@@ -10,8 +27,11 @@ export interface KFScriptContext
     runtime:IKFRuntime;
     ///当前对象
     targetObject:KFActor;
-    /// 当前的寄存器
+    ///当前的寄存器
     _reg:KFRegister;
+    ///当前block
+    block:BlockCache;
+
     /// 设置寄存器
     PushRegister(paramnum:number, varsize:number):KFRegister;
     PopRegister():KFRegister;

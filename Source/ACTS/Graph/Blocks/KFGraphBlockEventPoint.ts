@@ -1,38 +1,30 @@
 import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFDName} from "../../../KFData/Format/KFDName";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
-import {KFEvent, KFEventTable} from "../../../Core/Misc/KFEventTable";
+import {KFEvent} from "../../../Core/Misc/KFEventTable";
 import {KFGraphBlockType} from "../../Data/KFGraphBlockType";
-import {IKFGraphContext} from "../IKFGraphContext";
+import {KFActor} from "../../Actor/KFActor";
+import {KFEventDispatcher} from "../../Event/KFEventDispatcher";
 
 
-export class BindEventFunc {
+///事件不执行脚本是为了保持堆栈不被破坏
+export class KFGraphBlockEventPoint extends KFGraphBlockBase
+{
+    public m_firenodeMap:{[key:number]:KFDName;};
 
-    public m_evtname:KFDName;
-    public m_firenode:KFDName;
-    public m_ctx:IKFGraphContext;
-    public m_etb:KFEventTable;
-
-    public constructor(evt:KFDName, etb:KFEventTable, outname:KFDName, ctx:IKFGraphContext)
+    public Input(self:KFBlockTarget, arg: any)
     {
-        this.m_evtname = evt;
-        this.m_firenode = outname;
-        this.m_ctx = ctx;
-        this.m_etb = etb;
-
-        etb.AddEventListener(evt, this.OnEvent, this);
+        this.Activate(self);
+        this.OutNext(self, arg);
     }
 
-    public Dispose(){
-        if(this.m_etb){
-            this.m_etb.RemoveEventListener(this.m_evtname,this.OnEvent);
-            this.m_etb = null;
-        }
-    }
-
-    public OnEvent(evt:KFEvent):void
+    public OnEvent(evt: KFEvent, self: KFBlockTarget): void
     {
-        if(this.m_firenode)
+        if(!this.m_firenodeMap)
+            return;
+        let m_firenode = this.m_firenodeMap[evt.type.value];
+
+        if(m_firenode)
         {
             let statcks = evt.stacks;
             let OBJS = null;
@@ -55,7 +47,7 @@ export class BindEventFunc {
                 }
             }
 
-            this.m_ctx.Input(this.m_firenode, evt.arg);
+            this.m_ctx.Input(self, m_firenode, evt.arg);
 
             if(OBJS){
                 ///还原堆栈
@@ -65,49 +57,36 @@ export class BindEventFunc {
                 }
             }
         }
-    };
-}
-
-///事件不执行脚本是为了保持堆栈不被破坏
-export class KFGraphBlockEventPoint extends KFGraphBlockBase
-{
-    private m_target:KFBlockTarget;
-    private m_bindevents:BindEventFunc[];
-
-
-    public Input(arg: any)
-    {
-        if(this.m_target == null)
-        {
-            this.Activate();
-        }
-        this.OutNext(arg);
     }
 
-    public Activate()
-    {
-        super.Activate();
+    public GetEventDispatcher(self:KFBlockTarget):KFEventDispatcher{
 
+        let etable:KFEventDispatcher = null;
+        let m_evtscope = this.data.type;
+        if (m_evtscope == KFGraphBlockType.EventPoint)
+        {
+            let m_target = this.GetAttachTarget(self as KFActor);
+            if(m_target)
+            {
+                etable = m_target.etable;
+            }
+        }
+        else {
+            etable = this.m_ctx.runtime.etable;
+        }
+
+        return etable;
+    }
+
+    public Activate(self:KFBlockTarget)
+    {
         let outputs = this.data.outputs;
         if (this.data && outputs.length > 1)
         {
-            let  m_evtscope = this.data.type;
+            let etable:KFEventDispatcher = this.GetEventDispatcher(self);
 
-            let etable:KFEventTable = null;
-
-            if (m_evtscope == KFGraphBlockType.EventPoint) {
-                this.m_target = this.GetAttachTarget();
-                if(this.m_target)
-                    etable = this.m_target.etable;
-            }
-            else  {
-                etable = this.m_ctx.runtime.etable;
-            }
-
-            if (etable) {
-                if(this.m_bindevents == null)
-                    this.m_bindevents = [];
-
+            if (etable)
+            {
                 for(let i:number = 1; i < outputs.length; i++){
                     let output = outputs[i];
                     if(output.func || i == 1) {
@@ -117,28 +96,43 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
                         }else
                             ename = output.func.name;
 
-                        let bindevt: BindEventFunc = new BindEventFunc(ename
-                            , etable, output.name, this.m_ctx);
-                        this.m_bindevents.push(bindevt);
+                        if(false == etable.HasBlockListener(ename, self, this))
+                        {
+                            etable.AddBlockListener(ename, self, this);
+                            if(this.m_firenodeMap == null)
+                            {
+                                this.m_firenodeMap = {};
+                            }
+                            this.m_firenodeMap[ename.value] = output.name;
+
+                        } else {
+                            break;
+                        }
                     }
                 }
             }
-
         }
     }
 
-    public Deactive(force: boolean = false)
+    public Deactive(self:KFBlockTarget, force: boolean = false)
     {
-        super.Deactive(force);
-
-        if (this.m_bindevents != null)
-        {
-            for(let i:number = 0;i < this.m_bindevents.length ;i ++){
-                let bindevt:BindEventFunc = this.m_bindevents[i];
-                bindevt.Dispose();
+        super.Deactive(self, force);
+        let outputs = this.data.outputs;
+        if (this.data && outputs.length > 1) {
+            let etable: KFEventDispatcher = this.GetEventDispatcher(self);
+            if (etable) {
+                for (let i: number = 1; i < outputs.length; i++) {
+                    let output = outputs[i];
+                    if (output.func || i == 1) {
+                        let ename: KFDName = null;
+                        if (output.func == null) {
+                            ename = this.data.name;
+                        } else
+                            ename = output.func.name;
+                        etable.RemoveBlockListener(ename, self, this);
+                    }
+                }
             }
-            this.m_bindevents = null;
-            this.m_target = null;
         }
     }
 }

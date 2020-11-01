@@ -1,8 +1,9 @@
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElementCreator} from "./HElementCreator";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {KFDName} from "../../KFData/Format/KFDName";
+import {KFEventDispatcher} from "../../ACTS/Event/KFEventDispatcher";
 
 ///KFD(C,CLASS=HElementTarget,EXTEND=KFBlockTarget,EDITCLASS=EditHTMLBlk)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
@@ -49,7 +50,7 @@ export class HElementTarget extends KFBlockTarget implements HElement
         this.target = HElementCreator.DefaultCreateHtml(parent.GetH5Container()
             , this
             , this.document);
-        this.etable = new KFEventTable();
+        this.etable = new KFEventDispatcher(this.runtime.domain);
 
         let etb = this.etable;
         let isEditMode:boolean = this.runtime.isEditMode;

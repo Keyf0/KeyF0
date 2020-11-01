@@ -26,15 +26,19 @@ export class KFEvent
         else
             this.type.value = evtname == null ? 0 : evtname.value;
     }
-
 }
 
 export class KFEventTable
 {
-    private _listenersMap :{[key:number]: {func:Listener<KFEvent>,target:any}[];} = {}
+    private _listenersMap :{[key:number]: {func:Listener<KFEvent>,target:any}[];} = {};
+    private _fireType:KFDName;
+    private _delayRemoves:Listener<KFEvent>[] = [];
 
-    public Clear(){
+    public Clear()
+    {
+        this._fireType = null;
         this._listenersMap = {};
+        this._delayRemoves = [];
     }
 
     public AddEventListener(type:KFDName, listener:Listener<KFEvent>,target:any = null)
@@ -51,14 +55,20 @@ export class KFEventTable
 
     public RemoveEventListener(type:KFDName, listener:Listener<KFEvent>)
     {
+        if(this._fireType && this._fireType.value == type.value)
+        {
+            this._delayRemoves.push(listener);
+            return;
+        }
+
         let evtlist = this._listenersMap[type.value];
         if(evtlist)
         {
             let index = evtlist.length - 1;
             while(index >= 0)
             {
-                if(evtlist[index].func == listener) {
-
+                if(evtlist[index].func == listener)
+                {
                     evtlist.splice(index, 1);
                     break;
                 }
@@ -72,11 +82,23 @@ export class KFEventTable
         let listeners = this._listenersMap[event.type.value];
         if(listeners)
         {
+            this._fireType = event.type;
             let count: number = listeners.length;
             for (let i = 0; i < count; i++)
             {
                 let itm = listeners[i];
-                itm.func.call(itm.target,event);
+                itm.func.call(itm.target, event);
+            }
+
+            let removeType = this._fireType;
+            this._fireType = null;
+
+            if(this._delayRemoves.length > 0)
+            {
+                for(let listener of this._delayRemoves){
+                    this.RemoveEventListener(removeType, listener);
+                }
+                this._delayRemoves.length = 0;
             }
         }
     }

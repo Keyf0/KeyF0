@@ -1,4 +1,4 @@
-import {KFScript, KFScriptContext, KFScriptData} from "./KFScriptDef";
+import {BlockCache, KFScript, KFScriptContext, KFScriptData} from "./KFScriptDef";
 import {KFRegister} from "./ExecCode/KFRegister";
 import {KFScriptGroupType} from "./KFScriptGroupType";
 import {KFDName} from "../../KFData/Format/KFDName";
@@ -11,13 +11,16 @@ export class KFScriptManagerBase implements KFScriptContext
     targetObject: KFActor;
     _reg: KFRegister;
     runtime: IKFRuntime;
+    block: BlockCache;
 
     protected _G_SCRIPT_INSTANCE: { [key: number]: KFScript; } = {};
     ///对象脚本池
     protected _T_SCRIPT_POOL:{[key:number]:KFScript[];} = {};
 
-    public constructor() {
+    public constructor()
+    {
         this._reg = KFRegister.Create();
+        this.block = new BlockCache();
     }
 
     public Init() {}
@@ -197,4 +200,6 @@ export class KFScriptManagerBase implements KFScriptContext
 
     public Get(i: number = 0): any {return this._reg._OBJECTS[i];}
     public Set(i: number, v: any) {this._reg._OBJECTS[i] = v;}
+
+
 }

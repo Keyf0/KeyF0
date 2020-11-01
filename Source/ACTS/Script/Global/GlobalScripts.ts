@@ -204,7 +204,7 @@ export class GSLoadBLKDataScript extends KFScript
 
         let childrenData = InData.children;
         if(childrenData){
-            let blkActor:KFActor = blk.AsActor();
+            let blkActor:KFActor = blk as KFActor;
             for(let i = 0;i < childrenData.length; i++){
 
                 let childdata = childrenData[i];
@@ -297,8 +297,8 @@ export class GSSaveBLKDataScript extends KFScript{
         KFDJson.write_value(kfbytes.bytes, blk);
 
         ///查看子集
-        let Actor:KFActor = blk.AsActor();
-        if(Actor){
+        let Actor:KFActor = blk as KFActor;
+        if(Actor && Actor.GetChildren){
             blkData.children = [];
 
             let ActorChildren: KFBlockTarget[] = Actor.GetChildren();

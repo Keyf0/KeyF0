@@ -14,60 +14,56 @@ export class KFGraphComponent implements IKFGraphContext
 {
     public static Meta:IKFMeta
         = new IKFMeta("KFGraphComponent");
+
     public script: KFScriptContext;
-    public targetObject:KFBlockTarget;
     public runtime: IKFRuntime;
+    public asseturl:string;
 
     private m_cfg:any;
     private m_blocks:{[key:number]:KFGraphBlockBase} = {};
     private m_inputnames:Array<KFDName> = [];
 
-    public constructor(target:KFBlockTarget)
+    public constructor(runtime:IKFRuntime, asseturl:string)
     {
-        this.targetObject = target;
-        this.runtime = target.runtime;
-        this.script = this.runtime.scripts;
+        this.runtime = runtime;
+        this.script = runtime.scripts;
+        this.asseturl = asseturl;
     }
 
-    public ReleaseComponent()
+    public ReleaseComponent(self:KFBlockTarget)
     {
         for (let key in this.m_blocks)
         {
             let block:KFGraphBlockBase = this.m_blocks[key];
             if(block != null)
-                block.Release();
+                block.Release(self);
         }
     }
 
-    public ResetComponent()
+    public ActivateComponent(self:KFBlockTarget, inarg:any)
     {
-        this.Reset();
-        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl,false);
-        this.SetConfig(this.m_cfg);
-        this.Play(null);
+        if(this.m_cfg == null)
+        {
+            this.m_cfg = this.runtime.configs.GetGraphConfig(this.asseturl, false);
+            this.SetConfig(self, this.m_cfg);
+        }
+
+        this.Play(self, inarg);
     }
 
-    public ActivateComponent(inarg:any)
-    {
-        this.m_cfg = this.runtime.configs.GetGraphConfig(this.targetObject.metadata.asseturl,false);
-        this.SetConfig(this.m_cfg);
-        this.Play(inarg);
-    }
-
-    public DeactiveComponent()
+    public DeactiveComponent(self:KFBlockTarget)
     {
         ///todo Deactive All Blocks
-        this.m_cfg = null;
     }
 
-    public SetConfig(cfg:any)
+    public SetConfig(self:KFBlockTarget, cfg:any)
     {
         //TODO 在Editor模式下，这里有可能需要差量处理
         if (!cfg) return;
 
         for (let it in this.m_blocks)
         {
-            this.m_blocks[it].Release();
+            this.m_blocks[it].Release(self);
         }
 
         this.m_blocks = {};
@@ -75,7 +71,6 @@ export class KFGraphComponent implements IKFGraphContext
         this.m_cfg = cfg;
 
         let CurrSide = this.runtime.execSide;
-        let owner = this.targetObject.owner;
 
         for ( let data of cfg.data.blocks)
         {
@@ -85,8 +80,10 @@ export class KFGraphComponent implements IKFGraphContext
             let execSide = (tdata && tdata.execSide) ? tdata.execSide : BlkExecSide.BOTH;
             if((CurrSide & execSide) == 0)
                 continue;
+
             ///如果是主客户端
-            if(execSide == BlkExecSide.SELFCLIENT && !owner){
+            if(execSide == BlkExecSide.SELFCLIENT)
+            {
                 continue;
             }
 
@@ -128,35 +125,36 @@ export class KFGraphComponent implements IKFGraphContext
         }
     }
 
-    public Play(inarg:any)
+    public Play(self:KFBlockTarget, inarg:any)
     {
-        inarg = inarg==undefined?KF_GRAPHARG_NULL:inarg
+        inarg = inarg==undefined ? KF_GRAPHARG_NULL:inarg;
+
         for (let it in this.m_inputnames)
         {
             let blockname:KFDName  = this.m_inputnames[it];
             let block = this.m_blocks[blockname.value];
             if(block)
             {
-                block.Input(inarg);
+                block.Input(self, inarg);
             }
         }
     }
 
-    public Stop()
+    public Stop(self:KFBlockTarget)
     {
         for (let it in this.m_blocks)
         {
             let block:KFGraphBlockBase = this.m_blocks[it];
-            block.Deactive();
+            block.Deactive(self);
         }
     }
 
-    public Reset()
+    public Reset(self:KFBlockTarget)
     {
         for (let it in this.m_blocks)
         {
             let block:KFGraphBlockBase = this.m_blocks[it];
-            block.Reset();
+            block.Reset(self);
         }
     }
 
@@ -175,15 +173,20 @@ export class KFGraphComponent implements IKFGraphContext
         return this.m_blocks[id];
     }
 
-    public Input(blockname:KFDName, arg:any)
+    public Input(self:KFBlockTarget, blockname:KFDName, arg:any)
     {
         if(blockname)
         {
             let block = this.m_blocks[blockname.value];
-            if (block != null) {
-                if (arg != undefined) block.Input(arg);
-                else block.Input(KF_GRAPHARG_NULL);
-            } else {
+            if (block != null)
+            {
+                if (arg != undefined)
+                    block.Input(self, arg);
+                else
+                    block.Input(self,KF_GRAPHARG_NULL);
+            }
+            else
+            {
                 //LOG_TAG_ERROR("Can't find block: %s", blockname.c_str());
             }
         }

@@ -1,14 +1,12 @@
 import {KFDName} from "../../KFData/Format/KFDName";
 import {KFScriptContext} from "../Script/KFScriptDef";
+import {IKFRuntime} from "../Context/IKFRuntime";
+import {KFBlockTarget} from "../Context/KFBlockTarget";
 
 export interface IKFGraphContext
 {
-    //兼容KFSCRIPTCONTEXT的类型用any
-    runtime:any;
-    //兼容KFSCRIPTCONTEXT的类型用any
-    targetObject:any;
-    //
+    runtime:IKFRuntime;
     script:KFScriptContext;
 
-    Input(blockname:KFDName, arg:any);
+    Input(self:KFBlockTarget, blockname:KFDName, arg:any);
 }

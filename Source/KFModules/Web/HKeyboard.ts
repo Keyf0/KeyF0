@@ -1,8 +1,8 @@
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
-import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFDName} from "../../KFData/Format/KFDName";
-import {LOG} from "../../Core/Log/KFLog";
+import {KFEventDispatcher} from "../../ACTS/Event/KFEventDispatcher";
 
 ///KFD(C,CLASS=HKeyboard,EXTEND=KFBlockTarget)
 ///KFD(*)
@@ -45,7 +45,7 @@ export class HKeyboard extends KFBlockTarget {
 
         this.etable =  this.global ?
               this.runtime.etable
-            : new KFEventTable();
+            : new KFEventDispatcher(this.runtime.domain);
 
         this._keydown = this.onKeyDown.bind(this);
         this._keyup = this.onKeyUp.bind(this);

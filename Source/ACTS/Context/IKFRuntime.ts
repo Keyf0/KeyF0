@@ -1,16 +1,17 @@
-import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {KFRandom} from "./KFRandom";
 import {KFTimers} from "./KFTimers";
 import {IKFDomain} from "./IKFDomain";
 import {KFScriptSystem} from "../Script/KFScriptSystem";
 import {IKFConfigs} from "./IKFConfigs";
 import {KFDName} from "../../KFData/Format/KFDName";
+import {KFEventDispatcher} from "../Event/KFEventDispatcher";
 
 export interface IKFRuntime
 {
      root:IKFRuntime;
      parent:IKFRuntime;
-     etable:KFEventTable;
+     etable:KFEventDispatcher;
      random:KFRandom;
      timers:KFTimers;
      domain:IKFDomain;

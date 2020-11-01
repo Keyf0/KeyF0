@@ -2,38 +2,20 @@ import {KFGraphBlockBase} from "./KFGraphBlockBase";
 import {KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
 import {KFDName} from "../../../KFData/Format/KFDName";
-
+import {KFActor} from "../../Actor/KFActor";
 
 export class KFGraphBlockNormal extends KFGraphBlockBase
 {
-    private m_target:KFBlockTarget;
-    private m_Instancs:KFBlockTarget[];
-
-    public Input(arg: any)
+    private InitCreateName(target:KFBlockTarget)
     {
-        ///没有命名的实例可以随意创建
-        let targetdata = this.data.target;
-        if(targetdata && targetdata.option == KFBlockTargetOption.Create)
-        {
-            let instname: KFDName = this.data.instname;
-            if (instname == null || instname.value == 0)
-            {
-                if (this.m_target)
-                {
-                    if (this.m_Instancs == null)
-                        this.m_Instancs = [];
-                    this.m_Instancs.push(this.m_target);
-                    this.m_target = null;
-                }
-            }
-        }
+        target.name = new KFDName(this.data.name.toString() + "@" + target.sid);
+    }
 
-        if(this.m_target == null)
-        {
-            this.Activate();
-        }
+    public Input(self:KFBlockTarget, arg: any)
+    {
+        let m_target = this.Activate(self);
 
-        if(this.m_target)
+        if(m_target)
         {
             let fd = this.data.frame;
             let scripts = fd ? fd.scripts : null;
@@ -44,52 +26,78 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
                 ///填充第一位寄存器 需要先保存之前的参数
                 ///执行完后再填充
                 let OBJS = script._reg._OBJECTS;
-                let BIndex:number = 1;
 
                 let Arg0 = OBJS[0];
-                let Arg1 = OBJS[BIndex];
                 OBJS[0] = arg;
-                OBJS[BIndex] = this;
+                let bcache = script.block;
+
+                let bcurr = bcache.current;
+                let bself = bcache.self;
+
+                bcache.current = this;
+                bcache.self = self;
+
                 ///强制读取一个参数
-                if(fd.paramsize < 2){fd.paramsize = 2;}
-                script.ExecuteFrameScript(0, fd, this.m_target);
+                if(fd.paramsize < 1){fd.paramsize = 1;}
+                script.ExecuteFrameScript(0, fd, m_target);
+
                 OBJS[0] = Arg0;
-                OBJS[BIndex] = Arg1;
+                bcache.current = bcurr;
+                bcache.self = bself;
             }
         }
-        this.OutNext(arg);
+
+        this.OutNext(self,arg);
     }
 
-    public Activate()
+    public Activate(self:KFBlockTarget):any
     {
+        let m_target = null;
         let targetdata = this.data.target;
+        let selfActor:KFActor = self as KFActor;
 
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
-            this.m_target = this.m_ctx.targetObject.CreateChild(targetdata);
+            ///没有命名的实例可以随意创建
+            let instname: KFDName = this.data.instname;
+            let instval = instname ? instname.value : 0;
+            if (instval > 0)
+            {
+                m_target = selfActor.FindChild(instval);
+            }
+
+            if(m_target == null)
+            {
+                m_target = selfActor.CreateChild(targetdata,null, this.InitCreateName.bind(this));
+            }
         }
         else {
-            this.m_target = this.GetAttachTarget();
+            m_target = this.GetAttachTarget(selfActor);
         }
+
+        return m_target;
     }
 
-    public Deactive(force: boolean = false)
+    public Deactive(self:KFBlockTarget, force: boolean = false)
     {
         let targetdata = this.data.target;
+
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
-            let container = this.m_ctx.targetObject;
-            container.DeleteChild(this.m_target);
+            let container:KFActor = self as KFActor;
+            let instname: KFDName = this.data.instname;
 
-            if(this.m_Instancs)
+            if (instname == null || instname.value == 0)
             {
-                for(let i:number = 0;i < this.m_Instancs.length ;i ++){
-                    container.DeleteChild(this.m_Instancs[i]);
+                container.DeleteChildrenBySuffix(this.data.name.toString() + "@");
+            }
+            else {
+                let m_target = this.GetAttachTarget(container);
+                if (m_target)
+                {
+                    container.DeleteChild(m_target);
                 }
-                this.m_Instancs = null;
             }
         }
-
-        this.m_target = null;
     }
 }
