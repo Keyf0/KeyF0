@@ -1,6 +1,6 @@
 import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
 import {IKFRuntime} from "../Context/IKFRuntime";
-import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
 import {KFGraphComponent} from "./Components/KFGraphComponent";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
