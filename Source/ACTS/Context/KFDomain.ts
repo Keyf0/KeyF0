@@ -6,6 +6,7 @@ import {LOG, LOG_ERROR} from "../../Core/Log/KFLog";
 import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFConfigs} from "./IKFConfigs";
 import {KFGraphComponent} from "../Actor/Components/KFGraphComponent";
+import {KFTimelineComponent} from "../Actor/Components/KFTimelineComponent";
 
 
 export class KFGraphSystem
@@ -35,6 +36,32 @@ export class KFGraphSystem
     {}
 }
 
+export class KFTimelineSystem
+{
+    private m_rt:IKFRuntime;
+    private m_instances:{[key:string]:KFTimelineComponent};
+
+    public constructor(runtime:IKFRuntime)
+    {
+        this.m_rt = runtime;
+        this.m_instances = {};
+    }
+
+    public Create(asseturl:string): KFTimelineComponent
+    {
+        let getinst:KFTimelineComponent = this.m_instances[asseturl];
+        if(getinst == null)
+        {
+            getinst = new KFTimelineComponent(this.m_rt, asseturl);
+            this.m_instances[asseturl] = getinst;
+        }
+        return getinst;
+    }
+
+    public Destroy(timeline: KFTimelineComponent): void
+    {}
+}
+
 
 export class KFDomain implements IKFDomain
 {
@@ -45,6 +72,7 @@ export class KFDomain implements IKFDomain
     private m_configs:IKFConfigs;
 
     private m_graphsystem:KFGraphSystem;
+    private m_timelinesystem:KFTimelineSystem;
 
     private m_instances:{[key:string]:KFBlockTarget};
 
@@ -65,6 +93,7 @@ export class KFDomain implements IKFDomain
         this.m_NoSideLog = "{0} 不能创建在" + endstr ;
 
         this.m_graphsystem = new KFGraphSystem(runtime);
+        this.m_timelinesystem = new KFTimelineSystem(runtime);
     }
 
     public CreateBlockTarget(KFBlockTargetData: any,meta?:any): KFBlockTarget
@@ -199,9 +228,8 @@ export class KFDomain implements IKFDomain
         return this.m_incrsid;
     }
 
-    public CreateGraphComponent(target: KFBlockTarget): KFGraphComponent
+    public CreateGraphComponent(asseturl:string): KFGraphComponent
     {
-        let asseturl:string = target.metadata.asseturl;
         return this.m_graphsystem.Create(asseturl);
     }
 
@@ -210,7 +238,20 @@ export class KFDomain implements IKFDomain
         this.m_graphsystem.Destroy(graph);
     }
 
+    public DestroyTimelineComponent(timeline: KFTimelineComponent): void
+    {
+        this.m_timelinesystem.Destroy(timeline);
+    }
+
+    public CreateTimelineComponent(asseturl: string): KFTimelineComponent
+    {
+        return this.m_timelinesystem.Create(asseturl);
+    }
+
+
     public GetBlockTarget(instSID: number): KFBlockTarget {
         return undefined;
     }
+
+
 }

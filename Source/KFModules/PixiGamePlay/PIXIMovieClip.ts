@@ -125,9 +125,9 @@ export class PIXIMovieClip extends KFActor implements PIXIObject
         if(!isNaN(this.autoStateID)) {
             if(this.bGraphic) {
                 ///如果是图形区动不应该去播动画
-                this.timeline.SetState(this.autoStateID);
+                this.timeline.SetState(this,this.autoStateID);
             }else {
-                this.timeline.Play(this.autoStateID);
+                this.timeline.Play(this,this.autoStateID);
             }
         }
         ///有位置设置初始位置
@@ -209,7 +209,7 @@ export class PIXIMovieClip extends KFActor implements PIXIObject
             }
             this._display = v;
             if(this.bGraphic && v != -1) {
-                this.timeline.DisplayFrame(v);
+                this.timeline.DisplayFrame(this,v);
             }
         }
     }

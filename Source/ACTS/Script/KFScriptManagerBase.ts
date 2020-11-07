@@ -2,7 +2,6 @@ import {BlockCache, KFScript, KFScriptContext, KFScriptData} from "./KFScriptDef
 import {KFRegister} from "./ExecCode/KFRegister";
 import {KFScriptGroupType} from "./KFScriptGroupType";
 import {KFDName} from "../../KFData/Format/KFDName";
-import {LOG_WARNING} from "../../Core/Log/KFLog";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFActor} from "../Actor/KFActor";
 
@@ -71,21 +70,9 @@ export class KFScriptManagerBase implements KFScriptContext
 
         if (sd.group == KFScriptGroupType.Target) {
             ///判定是不是TARGET脚本
-            if(target.FindScript) {
-                let targetscript = target.FindScript(type);
-                if(targetscript == null){
-                    targetscript = this.BorrowScript(type);
-                    if(target.KeepScript(targetscript, type)) {
-                        retval = targetscript.Execute(sd, this);
-                    }else {
-                        this.ReturnScript(targetscript, type);
-                        LOG_WARNING("{0}脚本保持失败",type.toString());
-                    }
-                }
-                else {
-                    retval = targetscript.Execute(sd, this);
-                }
-
+            if(target.ExecuteScript)
+            {
+               let retval = target.ExecuteScript(sd, this);
                 ///如果是写有两个参数需要填写
                 if(sflag == KFScriptData.WRITE_S) {
                     let wi = pints[1];

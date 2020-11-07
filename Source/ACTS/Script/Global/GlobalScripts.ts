@@ -42,10 +42,10 @@ export class GSPlayStateScript extends KFScript
     {
         if(scriptdata.action == 0)
         {
-            context.targetObject.timeline.Play(scriptdata.stateid);
+            context.targetObject.Play(scriptdata.stateid);
         }
         else {
-            context.targetObject.timeline.playing = false;
+            context.targetObject.isPlaying = false;
         }
     }
 }

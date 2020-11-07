@@ -1,4 +1,4 @@
-import {DefaultType, IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {DefaultType} from "../../Core/Meta/KFMetaManager";
 import {TypeEvent} from "../../Core/Misc/TypeEvent";
 import {KFDTable} from "../../KFData/Format/KFDTable";
 import {kfVector3} from "../Script/Global/GlobalScripts";

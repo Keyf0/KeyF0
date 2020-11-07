@@ -40,6 +40,7 @@ export interface KFScriptContext
     Execute(scriptData:any, target:any):void;
     ExecCodeLine(codeline:any, target:any):void;
 
+    BorrowScript(type:KFDName):KFScript;
     ReturnScript(script:KFScript,type:KFDName);
 
     Get(i:number):any;
@@ -59,9 +60,6 @@ export class KFScriptData {
 
 export class KFScript
 {
-    ///是否在运行中
-    public isrunning:boolean;
-
      public Execute(scriptdata:any, context:KFScriptContext = null):any
      {}
 
@@ -69,10 +67,5 @@ export class KFScript
      {
          return true;
      }
-
-     public Update(frameindex:number) {}
-     public Keep(tmap:any,ctype:KFDName) {}
-     public Stop(tmap:any) {}
-
      public scriptTypes:KFDName[];
 }

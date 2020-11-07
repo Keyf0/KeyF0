@@ -1,5 +1,5 @@
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
-import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
+import {BlkExecSide} from "../../Context/KFBlockTarget";
 import {IKFTimelineContext} from "../../Timeline/IKFTimelineProc";
 import {KFTimeBlock} from "../../Timeline/KFTimeBlock";
 import {KFPool} from "../../../Core/Misc/KFPool";
@@ -7,189 +7,207 @@ import {KFGlobalDefines} from "../../KFACTSDefines";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
 import {IKFRuntime} from "../../Context/IKFRuntime";
 import {KFScriptContext} from "../../Script/KFScriptDef";
+import {KFActor} from "../KFActor";
+
+export class StateBlock
+{
+    public stateid:number = -1;
+    public length:number = 0;
+    public loop:boolean = true;
+    public blocks:Array<KFTimeBlock> = new Array<KFTimeBlock>();
+}
 
 export class KFTimelineComponent implements IKFTimelineContext
 {
-    public static Meta:IKFMeta
-        = new IKFMeta("KFTimelineComponent");
+    public static Meta:IKFMeta = new IKFMeta("KFTimelineComponent");
 
-    public targetObject:KFBlockTarget;
     public runtime: IKFRuntime;
 
-    public playing:boolean;
-
-    public currstate:any;
-    public currframeindex:number = 0;
-
     private m_cfg:any;
-    private stateid:number = -1;
 
     private m_states:{[key:number]:any} = {};
-    private m_blocks:Array<KFTimeBlock> = new Array<KFTimeBlock>();
+    private m_stateBlocks:{[key:number]:StateBlock} = {};
 
     private static TB_pool:KFPool<KFTimeBlock> = new KFPool<KFTimeBlock>
-    (function ():KFTimeBlock {
-        return new KFTimeBlock();
-    });
+    (function ():KFTimeBlock {return new KFTimeBlock();});
 
-    private m_length:number = 0;
-    private m_loop:boolean = true;
     private m_tpf:number = 0;
+    public asseturl:string;
 
-    private m_listProcKeyFrames:Array<{
-        target: any;
-        keyframe: any;
-    }> = [];
-
-    private m_listProcSize:number = 0;
-    private m_scripts:KFScriptContext = null;
-
-    public constructor(target:KFBlockTarget)
+    public constructor(runtime:IKFRuntime, asseturl:string)
     {
-        this.targetObject = target;
-        this.runtime = target.runtime;
+        this.runtime = runtime;
+        this.asseturl = asseturl;
         this.m_tpf = KFGlobalDefines.TPF / 1000.0;
     }
 
-    public ReleaseComponent():void
+    public Destroy():void
     {
-        for (let block of this.m_blocks)
+        this.DestroyBlocks();
+    }
+
+    public ClearState(self:KFActor)
+    {
+        let stateid  = self.stateid;
+        if(stateid != -1)
         {
-            block.Release();
+            let stateBlock:StateBlock = this.m_stateBlocks[stateid];
+            if(stateBlock) {
+                for (let block of stateBlock.blocks) {
+                    block.Deactive(self, true);
+                }
+            }
+            self.stateid = -1;
         }
     }
 
-    public ResetComponent():void
+    public ResetComponent(self:KFActor):void
     {
-        let state = this.currstate;
-        let currentFrameIndex = this.currframeindex;
+        let state = this.m_states[self.stateid];
+        let currentFrameIndex = self.currframeindex;
 
         if (state && currentFrameIndex >= state.length)
         {
             currentFrameIndex = state.length - 1;
         }
 
-        let tmp:number = this.stateid;
-        this.stateid = -1;
-        this.Reset();
-        let tconfig = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl,false);
-        this.m_cfg = tconfig;
+        let tmp:number = self.stateid;
+        this.ClearState(self);
+        self.currframeindex = -1;
 
-        this.SetConfig(tconfig);
-
-        this.PlayFrame(currentFrameIndex, tmp);
+        this.PlayFrame(self, currentFrameIndex, tmp);
     }
 
-    public ActivateComponent():void
+    public ActivateComponent(self:KFActor):void
     {
-        this.m_cfg = this.runtime.configs.GetTimelineConfig(this.targetObject.metadata.asseturl,false);
-        this.SetConfig(this.m_cfg);
+        if(this.m_cfg == null)
+        {
+            this.m_cfg = this.runtime.configs.GetTimelineConfig(this.asseturl, false);
+            this.SetConfig(this.m_cfg);
+        }
     }
 
-    public DeactiveComponent():void
+    public DeactiveComponent(self:KFActor):void
     {
-        ///todo Deactive blocks;
-        this.stateid = 0;
-        this.playing = true;
-        this.m_cfg = null;
+        this.ClearState(self);
     }
 
-    public EnterFrame(frameindex:number):void {
-        if(this.playing) {
-            if (this.currstate) {
-                let nextFrameIndex = this.currframeindex + 1;
-                if (nextFrameIndex >= this.m_length) {
-                    if (this.m_loop) {
+    public EnterFrame(self:KFActor, frameindex:number):void
+    {
+        if(self.isPlaying)
+        {
+            let stateBlock:StateBlock = this.m_stateBlocks[self.stateid];
+            if (stateBlock)
+            {
+                let nextFrameIndex = self.currframeindex + 1;
+                if (nextFrameIndex >= stateBlock.length)
+                {
+                    if (stateBlock.loop)
+                    {
                         nextFrameIndex = 0;
-                        this.TickInternal(nextFrameIndex, false);
+                        this.TickInternal(self, stateBlock, nextFrameIndex, false);
                     }
                     else {
                         //this.onPlayEnd.emit(this.currstate.id);
                     }
                 }
                 else {
-                    this.TickInternal(nextFrameIndex, false);
+                    this.TickInternal(self, stateBlock, nextFrameIndex, false);
                 }
             }
         }
     }
 
-    public Play(stateid:number, startframe:number = 0, force:boolean = false) {
-        if (!force && this.stateid == stateid) return;
+    public Play(self:KFActor, stateid:number, startframe:number = 0, force:boolean = false)
+    {
+        if (!force && self.stateid == stateid)
+            return;
 
-        this.playing = true;
-        this.stateid = stateid;
+        self.isPlaying = true;
+
         //this.ClearKeyFrame();
 
-        this.m_listProcSize = 0;
-        if(this.SetState(stateid)) {
-            this.TickInternal(startframe, true);
+        self.tlProcSize = 0;
+
+        if(this.SetState(self,stateid))
+        {
+            let stateBlock:StateBlock = this.m_stateBlocks[self.stateid];
+            if(stateBlock)
+            this.TickInternal(self, stateBlock, startframe, true);
         }
     }
 
-    public DisplayFrame(frameIndex:number, bJumpFrame:boolean = false) {
-        if (this.currframeindex == frameIndex) return;
-        this.currframeindex = frameIndex;
-        for (let block of this.m_blocks) {
-            block.DisplayFrame(frameIndex, bJumpFrame);
+    public DisplayFrame(self:KFActor,frameIndex:number, bJumpFrame:boolean = false)
+    {
+        if (self.currframeindex == frameIndex)
+            return;
+        self.currframeindex = frameIndex;
+        let stateBlock:StateBlock = this.m_stateBlocks[self.stateid];
+        if(stateBlock) {
+            for (let block of stateBlock.blocks) {
+                block.DisplayFrame(self, frameIndex, bJumpFrame);
+            }
         }
     }
 
     //public ClearKeyFrame():void{}
 
-    public PlayFrame(frame:number, stateid:number = -1) {
-        this.playing = true;
-        if(stateid != -1) {
-            this.stateid = stateid;
-            this.Play(stateid, frame);
+    public PlayFrame(self:KFActor, frame:number, stateid:number = -1) {
+        self.isPlaying = true;
+        if(self.stateid != -1) {
+            this.Play(self, stateid, frame);
         }else{
-            this.TickInternal(frame);
+            let stateBlock:StateBlock = this.m_stateBlocks[self.stateid];
+            if(stateBlock) {
+                this.TickInternal(self, stateBlock, frame);
+            }
         }
     }
 
-    public GetFrame():number{return this.currframeindex;}
-
-    public PlayTime(stateid:number, startTimeNormalized:number) {
-        this.playing = true;
-        this.stateid = stateid;
-        this.Play1(stateid, startTimeNormalized);
-    }
-
-    public PlayOnly(stateid:number) {
-        this.Play(stateid, 0);
-    }
-
-    public PlayRepeatFrame(startFrameIndex:number = 0) {
-
-        this.Play(this.stateid, startFrameIndex);
-    }
-
-    public PlayRepeatTime(startTimeNormalized:number = 0.0)
+    public PlayTime(self:KFActor,stateid:number, startTimeNormalized:number)
     {
-        this.Play1(this.stateid, startTimeNormalized);
+        self.isPlaying = true;
+
+        this.Play1(self,stateid, startTimeNormalized);
     }
 
-    public Stop()
-    {
-        this.playing = false;
+    public PlayOnly(self:KFActor,stateid:number) {
+        this.Play(self, stateid, 0);
     }
 
-    public StopAt(stopFrameIndex:number = 0)
-    {
-        this.TickInternal(stopFrameIndex,true);
-        this.playing = false;
+    public PlayRepeatFrame(self:KFActor,startFrameIndex:number = 0) {
+
+        this.Play(self, self.stateid, startFrameIndex);
     }
 
-    public StopAtTime(stopTimeNormalized:number = 0.0)
+    public PlayRepeatTime(self:KFActor,startTimeNormalized:number = 0.0)
     {
-        
+        this.Play1(self, self.stateid, startTimeNormalized);
+    }
+
+    public Stop(self:KFActor)
+    {
+        self.isPlaying = false;
+    }
+
+    public StopAt(self:KFActor,stopFrameIndex:number = 0)
+    {
+        let stateBlock:StateBlock = this.m_stateBlocks[self.stateid];
+        if(stateBlock) {
+            this.TickInternal(self, stateBlock, stopFrameIndex, true);
+        }
+        self.isPlaying = false;
+    }
+
+    public StopAtTime(self:KFActor,stopTimeNormalized:number = 0.0)
+    {
+
     }
 
     public HasState(stateid:number):boolean
     {
         return this.m_states[stateid] != null;
     }
-
 
     public SetConfig(cfg:any):void
     {
@@ -199,7 +217,6 @@ export class KFTimelineComponent implements IKFTimelineContext
 
         this.m_cfg = cfg;
         this.m_states = {};
-        this.m_scripts = this.runtime.scripts;
 
         let statesarr = cfg.states;
         if(statesarr) {
@@ -211,147 +228,139 @@ export class KFTimelineComponent implements IKFTimelineContext
 
     private DestroyBlocks()
     {
-        for (let block of this.m_blocks)
-        {
-            block.Release();
-            KFTimelineComponent.TB_pool.Recycle(block);
+        for(let key in this.m_stateBlocks) {
+
+            let blockstate = this.m_stateBlocks[key];
+            for (let block of blockstate.blocks) {
+                block.Destroy();
+                KFTimelineComponent.TB_pool.Recycle(block);
+            }
         }
-        this.m_blocks.length = 0;
+        this.m_stateBlocks = {};
     }
 
-    public TickInternal(frameIndex:number, bJumpFrame:boolean = false) {
-        if (this.currframeindex == frameIndex) return;
-        this.currframeindex = frameIndex;
-
-        for (let block of this.m_blocks) {
-            block.Tick(frameIndex, bJumpFrame);
+    public TickInternal(self:KFActor,stateBlock:StateBlock,frameIndex:number, bJumpFrame:boolean = false)
+    {
+        if (self.currframeindex == frameIndex) return;
+        self.currframeindex = frameIndex;
+        for (let block of stateBlock.blocks)
+        {
+            block.Tick(self, frameIndex, bJumpFrame);
         }
         ///帧的最后执行脚本逻辑
-        this.ProcKeyFrame();
+        this.ProcKeyFrame(self);
     }
 
-    public SetState(stateid:number):boolean
+    public SetState(self:KFActor, stateid:number):boolean
     {
-        this.stateid = stateid;
-        this.m_length = 1;
-        this.m_loop = false;
-
         if (this.m_cfg)
         {
-            this.currframeindex = -1;
-            this.currstate = this.m_states[stateid];
-
-            if (this.currstate)
+            if(self.stateid != stateid)
             {
-                this.m_length = this.currstate.length;
-                this.m_loop = this.currstate.loop;
+                this.ClearState(self);
 
-                //LOG_TAG("state:%d, loop:%d, length:%d", stateid, m_loop, m_length);
+                self.stateid = stateid;
+                self.currframeindex = -1;
+                let stateblock: StateBlock = this.m_stateBlocks[stateid];
+                if (stateblock == null) {
+                    let currstate = this.m_states[stateid];
+                    if (currstate) {
+                        stateblock = new StateBlock();
+                        this.m_stateBlocks[stateid] = stateblock;
 
-                this.DestroyBlocks();
+                        stateblock.stateid = stateid;
+                        stateblock.length = currstate.length;
+                        stateblock.loop = currstate.loop;
 
-                let CurrSide = this.targetObject.runtime.execSide;
-                let owner = this.targetObject.owner;
+                        //LOG_TAG("state:%d, loop:%d, length:%d", stateid, m_loop, m_length);
 
-                let m_pool = KFTimelineComponent.TB_pool;
-                let layers:any[] = this.currstate.layers;
-                let layeri = layers.length - 1;
-                while (layeri >= 0)
-                {
-                    let layer = layers[layeri];
-                    layeri -= 1;
-                    for (let data of layer.blocks)
-                    {
-                        let tdata = data.target;
-                        if(!tdata){
-                            tdata = {execSide:BlkExecSide.BOTH
-                                ,option:KFBlockTargetOption.Ignore};
-                            data.target = tdata;
+                        //this.DestroyBlocks();
+
+                        let CurrSide = this.runtime.execSide;
+
+                        let m_pool = KFTimelineComponent.TB_pool;
+                        let layers: any[] = currstate.layers;
+                        let layeri = layers.length - 1;
+
+                        while (layeri >= 0) {
+                            let layer = layers[layeri];
+                            layeri -= 1;
+                            for (let data of layer.blocks) {
+                                let tdata = data.target;
+                                if (!tdata) {
+                                    tdata = {
+                                        execSide: BlkExecSide.BOTH
+                                        , option: KFBlockTargetOption.Ignore
+                                    };
+                                    data.target = tdata;
+                                }
+                                let execSide = tdata.execSide ? tdata.execSide : BlkExecSide.BOTH;
+                                if ((CurrSide & execSide) == 0)
+                                    continue;
+                                ///如果是主客户端 不判定主客户端只判定服务器还是SERVER端
+                                if (execSide == BlkExecSide.SELFCLIENT) {
+                                    continue;
+                                }
+
+                                let block = m_pool.Fetch();
+                                block.Create(this, data);
+                                stateblock.blocks.push(block);
+                            }
                         }
-                        let execSide = tdata.execSide ? tdata.execSide : BlkExecSide.BOTH;
-                        if((CurrSide & execSide) == 0)
-                            continue;
-                        ///如果是主客户端
-                        if(execSide == BlkExecSide.SELFCLIENT && !owner){
-                            continue;
-                        }
 
-                        let block = m_pool.Fetch();
-                        block.Create(<any>this.targetObject, this, data);
-                        this.m_blocks.push(block);
+                        return true;
                     }
                 }
-
-                return true;
             }
         }
 
         return false;
     }
 
-    public Play1(stateid:number, startTimeNormalized:number)
+    public Play1(self:KFActor, stateid:number, startTimeNormalized:number)
     {
-        this.m_listProcSize = 0;
-        if (this.SetState(stateid)) {
-            let startFrameIndex:number = startTimeNormalized * this.m_length;
-            this.TickInternal(startFrameIndex, true);
+        self.tlProcSize = 0;
+        if (this.SetState(self,stateid))
+        {
+            let stateBlock:StateBlock = this.m_stateBlocks[self.stateid];
+            if(stateBlock)
+            {
+                let startFrameIndex: number = startTimeNormalized * stateBlock.length;
+                this.TickInternal(self, stateBlock, startFrameIndex, true);
+            }
         }
     }
 
-    public Reset()
+    public GetState(stateid:number):any
     {
-        this.DestroyBlocks();
-
-        this.currstate = null;
-        this.m_length = 1;
-        this.currframeindex = -1;
-        this.m_loop = false;
-    }
-
-    public GetState(stateid:number):any {
         return this.m_states[stateid];
     }
 
-    public OnFrameBox(box: any): void {
-
-    }
-
-    public OnKeyFrame(target: any, keyframe: any): void
+    public ProcKeyFrame(self:KFActor)
     {
-        if(this.m_listProcSize >= this.m_listProcKeyFrames.length)
-        {
-            this.m_listProcKeyFrames.push({target:target,keyframe:keyframe});
-        }
-        else
-        {
-            let info = this.m_listProcKeyFrames[this.m_listProcSize];
-            info.target = target;
-            info.keyframe = keyframe;
-        }
-
-        this.m_listProcSize += 1;
-    }
-
-    public ProcKeyFrame() {
-        if (this.m_listProcSize > 0)
+        if (self.tlProcSize > 0)
         {
             let i = 0;
-            let size = this.m_listProcSize;
+            let size = self.tlProcSize;
+            let m_scripts:KFScriptContext = self.runtime.scripts;
 
-            while ( i < size) {
+            while ( i < size)
+            {
 
-                let frameinfo = this.m_listProcKeyFrames[i];
+                let frameinfo = self.tlProcKeyFrames[i];
                 let keyframe = frameinfo.keyframe;
                 let target = frameinfo.target;
 
                 if(target == null)
                 {
-                    target = this.targetObject;
+                    target = self;
                 }
+
                 let framedata = keyframe.data;
                 let scripts = framedata.scripts;
-                if(scripts && scripts.length > 0) {
-                    this.m_scripts.ExecuteFrameScript(keyframe.id, framedata, target);
+                if(scripts && scripts.length > 0)
+                {
+                    m_scripts.ExecuteFrameScript(keyframe.id, framedata, target);
                 }
                 //改变成etable事件?
                 //if (keyframe.evt > 0)
@@ -366,7 +375,7 @@ export class KFTimelineComponent implements IKFTimelineContext
                 i += 1;
             }
 
-            this.m_listProcSize = 0;
+            self.tlProcSize = 0;
         }
     }
 }

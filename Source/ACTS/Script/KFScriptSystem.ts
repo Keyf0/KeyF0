@@ -8,32 +8,27 @@ import {KFBlockTarget} from "../Context/KFBlockTarget";
 ///绑定目标的脚本
 export class KFTargetScript extends KFScript
 {
-    protected m_c:KFScriptContext;
     protected m_t:KFBlockTarget;
-    protected m_type:KFDName;
     protected m_fixtpf:number;
 
-    public Execute(scriptdata: any
-                   , context: KFScriptContext = null): void {
-        this.m_c = context;
+    ///是否在运行中
+    public isrunning:boolean;
+    public type:KFDName;
+
+    public Update(frameindex:number) {}
+
+    public Execute(scriptdata: any, context: KFScriptContext = null): void
+    {
+        this.type = scriptdata.type;
         this.m_t = context.targetObject;
-        this.m_type = scriptdata.type;
-        this.m_fixtpf = this.m_t.runtime.fixtpf;
+        this.m_fixtpf = context.runtime.fixtpf;
         this.isrunning = true;
     }
 
-    public Keep(tmap: any, ctype:KFDName) {
-        tmap[ctype.value] = this;
-    }
-
-    public Stop(tmap: any): void {
-        delete tmap[this.m_type.value];
+    public Stop(): void
+    {
         this.isrunning = false;
-        if(this.m_c) {
-            this.m_c.ReturnScript(this,this.m_type);
-        }
-        this.m_type = null;
-        this.m_c = null;
+        this.type = null;
         this.m_t = null;
     }
 }

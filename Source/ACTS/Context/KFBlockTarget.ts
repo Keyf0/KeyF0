@@ -22,7 +22,7 @@ export interface IKFBlockTargetContainer
     FindChild(name:number):KFBlockTarget;
     StrChild(name:string):KFBlockTarget;
     GetRuntime():IKFRuntime;
-    CreateChild(targetdata:any,meta?:any,Init?:any):KFBlockTarget;
+    CreateChild(targetdata:any,meta?:any,Init?:any,search?:boolean):KFBlockTarget;
     DeleteChild(child:KFBlockTarget):boolean;
     ///直接删除不建议用
     _DeleteChild(child:KFBlockTarget):boolean;
