@@ -31,7 +31,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     ///控制时间轴的播放
     public isPlaying:boolean = true;
     public stateid:number = -1;
-    public currframeindex:number = 0;
+    public currframeindex:number = -2;
 
     ///时间轴上的脚本执行
     public tlProcKeyFrames:Array<{ target: any; keyframe: any; }> = [];
@@ -50,7 +50,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     protected m_removelist:Array<KFBlockTarget> = [];
     protected m_keepsts:KFTargetScript[];
     protected m_keepstmap:{[key:number]:KFTargetScript;};
-    protected m_bplay:boolean;
+    protected m_bplayEvent:boolean;
     protected m_CDomain:IKFDomain;
 
     public constructor()
@@ -134,9 +134,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         if (this.pause) {return;}
 
         ///实始化后一第一帧TICK
-        if(!this.m_bplay)
+        if(!this.m_bplayEvent)
         {
-            this.m_bplay = true;
+            this.m_bplayEvent = true;
             this.etable.FireEvent(KFActor.BEGIN_PLAY);
         }
 
@@ -180,8 +180,8 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         if (this.pause) {return;}
 
         ///实始化后一第一帧TICK
-        if(!this.m_bplay){
-            this.m_bplay = true;
+        if(!this.m_bplayEvent){
+            this.m_bplayEvent = true;
             this.etable.FireEvent(KFActor.BEGIN_PLAY);
         }
 
@@ -495,5 +495,11 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public Play(stateid:number)
     {
         this.timeline.Play(this, stateid);
+    }
+
+
+    public StopFrame(frameIndex:number)
+    {
+        this.timeline.DisplayFrame(this,frameIndex,true);
     }
 }

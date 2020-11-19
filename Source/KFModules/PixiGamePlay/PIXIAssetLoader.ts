@@ -1,8 +1,9 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
-import {KFEvent, KFEventTable} from "../../Core/Misc/KFEventTable";
+import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {IKFConfigs_Type} from "../../ACTS/Context/IKFConfigs";
+import {KFEventDispatcher} from "../../ACTS/Event/KFEventDispatcher";
 
 
 ///KFD(C,CLASS=PIXIAssetLoader,EXTEND=KFBlockTarget)
@@ -22,7 +23,7 @@ export class PIXIAssetLoader extends KFBlockTarget {
 
     public  Construct(metadata: any, runtime: IKFRuntime) {
         super.Construct(metadata, runtime);
-        this.etable = new KFEventTable();
+        this.etable = new KFEventDispatcher(runtime.domain);
     }
 
     public ActivateBLK(KFBlockTargetData: any): void {

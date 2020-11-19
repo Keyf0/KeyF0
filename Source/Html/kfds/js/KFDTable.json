@@ -1751,6 +1751,30 @@
         {
             "class": "SDInt32Array",
             "id": 1429
+        },
+        {
+            "class": "KFClassData",
+            "id": 1373
+        },
+        {
+            "class": "PIXIShapesData",
+            "id": 1430
+        },
+        {
+            "class": "EmbedFileData",
+            "id": 1431
+        },
+        {
+            "class": "EditPIXIObject",
+            "id": 1432
+        },
+        {
+            "class": "EditPIXIShapes",
+            "id": 1433
+        },
+        {
+            "class": "EditPIXIMovieClip",
+            "id": 1434
         }
     ]
 }

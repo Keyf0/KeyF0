@@ -31,6 +31,8 @@ export class PIXIApplication extends HElementActor implements PIXIObject{
     ///KFD(P=8,NAME=eventMove,CNAME=移动事件,TYPE=bool,DEFAULT=false)
     public eventMove:boolean;
 
+    public autoDensity:boolean = true;
+
     ///KFD(*)
 
     public _target:PIXI.Application = null;
@@ -45,12 +47,18 @@ export class PIXIApplication extends HElementActor implements PIXIObject{
         this.target = canvas;
         let parent = <HElementActor>this.parent;
 
+        //canvas.style.width = this.width + "px";
+        //canvas.style.height = this.height+ "px";
+
+        //canvas.setAttribute("class","main");
+
         if(parent) {
             this.document = parent.document;
             parent.target.appendChild(canvas);
         } else {
             document.body.appendChild(canvas);
         }
+
     }
 
     protected TargetDelete(): void {

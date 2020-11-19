@@ -1,7 +1,7 @@
-import {IKFConfigs, IKFConfigs_Type, LoadConfigEnd} from "../ACTS/Context/IKFConfigs";
-import {IKFMeta} from "../Core/Meta/KFMetaManager";
+import {IKFConfigs, LoadConfigEnd} from "../ACTS/Context/IKFConfigs";
+import {AMeta, IKFMeta, KFMetaManager} from "../Core/Meta/KFMetaManager";
 import {IKFFileIO_Type} from "../Core/FileIO/IKFFileIO";
-import {LOG} from "../Core/Log/KFLog";
+import {LOG, LOG_ERROR} from "../Core/Log/KFLog";
 import {KFDTable} from "../KFData/Format/KFDTable";
 import {KFByteArray} from "../KFData/Utils/FKByteArray";
 import {KFDJson} from "../KFData/Format/KFDJson";
@@ -115,17 +115,26 @@ export class DefaultAppConfig implements IKFConfigs
             },"");
     }
 
+    private onRegKFD(kfd:any, clsname:string)
+    {
+        let meta:AMeta =  KFMetaManager.GetMetaName(KFDName._Param.setString(clsname));
+       if(meta){
+           kfd.__new__ = meta.instantiate;
+       }
+    }
+
     private load_kfds(end:LoadConfigEnd)
     {
         let self = this;
         let kfdpaths = this._kfdpaths;
+        let regKFDnew = this.onRegKFD.bind(this);
 
         IKFFileIO_Type.instance.asyncLoadFileList(kfdpaths,
             function (ret:any,data:any,path:string)
             {
                 if(ret)
                 {
-                    KFDTable.kfdTB.add_kfd(JSON.parse(data));
+                    KFDTable.kfdTB.add_kfd(JSON.parse(data), regKFDnew);
                     LOG("KFD({0} 加载成功)",path);
                 }
 
@@ -176,6 +185,7 @@ export class DefaultAppConfig implements IKFConfigs
     private load_start(end:LoadConfigEnd)
     {
         let self = this;
+        let basedir:string = this.basedir();
 
         let filelist = [];
         let blkmap = {};
@@ -215,6 +225,11 @@ export class DefaultAppConfig implements IKFConfigs
                         {
                             let metadata = KFDJson.read_value(kfbytes);
                             metadata.asseturl = path;
+
+                            let classData = metadata.classData;
+                            if(classData){
+                                classData.Ready(path, basedir);
+                            }
                             self._metadata[path] = metadata;
                         }
                 }
@@ -225,7 +240,7 @@ export class DefaultAppConfig implements IKFConfigs
                 if(end)
                     end(ret);
             }
-        ,{basedir:this._appdatapath + "/"});
+        ,{basedir:basedir + "/"});
     }
 
     public load_config(appdatapath:string

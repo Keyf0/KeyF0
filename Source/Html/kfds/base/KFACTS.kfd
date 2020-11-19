@@ -1628,8 +1628,18 @@
     },
     {
         "includes": [
+            "Data/Meta/KFMetaData.h"
+        ],
+        "class": "KFClassData",
+        "extend": "KFGCObject",
+        "propertys": [],
+        "clsid": 1373
+    },
+    {
+        "includes": [
             "Data/Meta/KFMetaData.h",
-            "KFPrefsF.h"
+            "KFPrefsF.h",
+            "KFClassDataF.h"
         ],
         "class": "KFMetaData",
         "extend": "",
@@ -1655,9 +1665,16 @@
             },
             {
                 "id": 4,
-                "cname": "自定义字节",
+                "cname": "对象数据",
                 "name": "data",
                 "type": "kfBytes"
+            },
+            {
+                "id": 5,
+                "name": "classData",
+                "cname": "类数据",
+                "type": "mixobject",
+                "otype": "KFClassData"
             }
         ],
         "clsid": 1057

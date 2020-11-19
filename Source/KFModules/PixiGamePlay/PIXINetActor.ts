@@ -12,7 +12,7 @@ import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 import {PhyDef, Phy_Name, PhyObject, PhyScene} from "../Physics/PhysicsTypes";
 
 
-///KFD(C,CLASS=PIXINetActor,EXTEND=KFActor)
+///KFD(C,CLASS=PIXINetActor,EXTEND=KFActor,EDITCLASS=EditPIXIMovieClip)
 ///KFD(P=1,NAME=position,CNAME=位置,TYPE=object,OTYPE=kfVector3,NET=life)
 ///KFD(P=2,NAME=rotation,CNAME=朝向,TYPE=object,OTYPE=kfVector3,NET=life)
 
@@ -85,6 +85,8 @@ export class PIXINetActor extends KFActor implements PIXIObject
             this.scale = new kfVector3(1,1,1);
         if(!this.velocity)
             this.velocity = new kfVector3();
+
+
     }
 
 
@@ -95,11 +97,15 @@ export class PIXINetActor extends KFActor implements PIXIObject
              if(this._container == null) {
                 this._container = this.newContainer();
 
-                //let test = new PIXI.Graphics();
-                //test.beginFill(0x00ff00);
-                //test.drawCircle(0,0,5);
-                //test.endFill();
-                //this._container.addChild(test);
+
+
+                     //let test = new PIXI.Graphics();
+                     //test.beginFill(0x00ff00);
+                     //test.drawCircle(0,0,50);
+                     //test.endFill();
+                     //this._container.addChild(test);
+
+
 
                 let pixiParent = <any>this.parent;
                 let pixiobj = <PIXIObject>pixiParent;
@@ -280,21 +286,36 @@ export class PIXINetActor extends KFActor implements PIXIObject
         ///不显示就不需要TICK了吧
         this.tickable = v;
     }
-    public get display():number {return this._display;}
-    public set display(v:number){
-        if(this._display != v) {
 
-            if(this._display == -1){
+    public get display():number {return this._display;}
+
+    public set display(v:number){
+        throw new Error('use method set_display');
+    }
+
+    public set_display(v:number, bJumpFrame:boolean = false){
+
+        if(this._display != v)
+        {
+
+            if(this._display == -1)
+            {
                 this.visible = true;
-            }else if(v == -1){
+            }
+            else if(v == -1)
+            {
                 this.visible = false;
             }
+
             this._display = v;
-            if(this.bGraphic && v != -1) {
-                this.timeline.DisplayFrame(this, v);
+
+            if(this.bGraphic && v != -1)
+            {
+                this.timeline.DisplayFrame(this, v, bJumpFrame);
             }
         }
     }
+
     public set_datas(datas: number[]) {
 
         if(!datas || this.phyobj) return;

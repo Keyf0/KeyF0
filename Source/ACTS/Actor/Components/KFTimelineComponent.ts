@@ -281,6 +281,7 @@ export class KFTimelineComponent implements IKFTimelineContext
                         let m_pool = KFTimelineComponent.TB_pool;
                         let layers: any[] = currstate.layers;
                         let layeri = layers.length - 1;
+                        let blockid = 0;
 
                         while (layeri >= 0) {
                             let layer = layers[layeri];
@@ -303,7 +304,8 @@ export class KFTimelineComponent implements IKFTimelineContext
                                 }
 
                                 let block = m_pool.Fetch();
-                                block.Create(this, data);
+                                blockid += 1;
+                                block.Create(this, data, blockid);
                                 stateblock.blocks.push(block);
                             }
                         }

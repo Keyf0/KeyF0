@@ -12,8 +12,12 @@ import {PIXIAnimatedSprite} from "./PIXIAnimatedSprite";
 import {PIXIAssetLoader} from "./PIXIAssetLoader";
 import {PIXICamera} from "./PIXICamera";
 import {PIXISceneGrid} from "./PIXISceneGrid";
-import {PIXIShapes} from "./PIXIShapes";
+import {PIXIShapes, PIXIShapesData} from "./PIXIShapes";
 import {PlanckDebugGraphics} from "./PlanckDebugGraphics";
+import {EditPIXIObject} from "./Edit/EditPIXIObject";
+import {EditPIXIShapes} from "./Edit/EditPIXIShapes";
+import * as BABYLON from "babylonjs";
+import {EditPIXIMovieClip} from "./Edit/EditPIXIMovieClip";
 
 ///初始化
 export function init() {
@@ -28,6 +32,11 @@ export function init() {
     PIXICamera;
     PIXISceneGrid;
     PlanckDebugGraphics;
+
+
+    EditPIXIObject;
+    EditPIXIShapes;
+    EditPIXIMovieClip;
 }
 
 export function initKFDTable(kfdtb:KFDTable) {

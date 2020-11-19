@@ -1,6 +1,33 @@
 [
     {
         "includes": [
+            "Edit/EditPIXIMovieClip.ts"
+        ],
+        "class": "EditPIXIMovieClip",
+        "extend": "EditPIXIObject",
+        "propertys": [],
+        "clsid": 1434
+    },
+    {
+        "includes": [
+            "Edit/EditPIXIObject.ts"
+        ],
+        "class": "EditPIXIObject",
+        "extend": "PIXIApplication",
+        "propertys": [],
+        "clsid": 1432
+    },
+    {
+        "includes": [
+            "Edit/EditPIXIShapes.ts"
+        ],
+        "class": "EditPIXIShapes",
+        "extend": "EditPIXIObject",
+        "propertys": [],
+        "clsid": 1433
+    },
+    {
+        "includes": [
             "PIXIAnimatedSprite.ts"
         ],
         "class": "PIXIAnimatedSprite",
@@ -145,6 +172,12 @@
         ],
         "class": "PIXIGraphics",
         "extend": "KFBlockTarget",
+        "unknowtags": [
+            {
+                "tag": "EDITCLASS",
+                "val": "EditPIXIObject"
+            }
+        ],
         "propertys": [],
         "clsid": 1389
     },
@@ -155,6 +188,12 @@
         ],
         "class": "PIXIMovieClip",
         "extend": "KFActor",
+        "unknowtags": [
+            {
+                "tag": "EDITCLASS",
+                "val": "EditPIXIMovieClip"
+            }
+        ],
         "propertys": [
             {
                 "id": 1,
@@ -216,6 +255,12 @@
         ],
         "class": "PIXINetActor",
         "extend": "KFActor",
+        "unknowtags": [
+            {
+                "tag": "EDITCLASS",
+                "val": "EditPIXIMovieClip"
+            }
+        ],
         "propertys": [
             {
                 "id": 1,
@@ -343,6 +388,12 @@
         ],
         "class": "PIXISceneGrid",
         "extend": "KFBlockTarget",
+        "unknowtags": [
+            {
+                "tag": "EDITCLASS",
+                "val": "EditPIXIObject"
+            }
+        ],
         "propertys": [
             {
                 "id": 1,
@@ -355,18 +406,48 @@
     },
     {
         "includes": [
-            "PIXIShapes.ts"
+            "PIXIShapes.ts",
+            "EmbedFileDataF.h"
         ],
-        "class": "PIXIShapes",
-        "extend": "KFBlockTarget",
+        "class": "PIXIShapesData",
+        "extend": "KFClassData",
         "propertys": [
             {
                 "id": 1,
                 "name": "ssurl",
                 "cname": "资源路径",
                 "type": "kfstr"
+            },
+            {
+                "id": 2,
+                "name": "spriteJson",
+                "cname": "配置文件",
+                "type": "object",
+                "otype": "EmbedFileData"
+            },
+            {
+                "id": 3,
+                "name": "spriteImg",
+                "cname": "图片文件",
+                "type": "object",
+                "otype": "EmbedFileData"
             }
         ],
+        "clsid": 1430
+    },
+    {
+        "includes": [
+            "PIXIShapes.ts"
+        ],
+        "class": "PIXIShapes",
+        "extend": "KFBlockTarget",
+        "unknowtags": [
+            {
+                "tag": "EDITCLASS",
+                "val": "EditPIXIShapes"
+            }
+        ],
+        "propertys": [],
         "clsid": 1404
     },
     {

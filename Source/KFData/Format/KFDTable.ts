@@ -1,6 +1,12 @@
 import {KFDataType} from "./KFD";
 import {KFDName} from "./KFDName";
 
+
+export interface OnKFDAdd
+{
+    (kfd:any, clsname:string);
+}
+
 export class KFDTable
 {
     public static kfdTB:KFDTable = new KFDTable();
@@ -211,21 +217,25 @@ export class KFDTable
         return this.kfddata_maps[clsname] != null;
     }
 
-    public add_kfd(kfd):void
+    public add_kfd(kfd,AddFunc?:OnKFDAdd):void
     {
         if(kfd instanceof Array)
         {
             for(let kfddata of kfd)
             {
-                let clsname = kfddata["class"]
+                let clsname = kfddata["class"];
                 this.kfddata_maps[clsname] = kfddata;
-            }
 
-        }else
+                if(AddFunc) AddFunc(kfddata, clsname);
+            }
+        }
+        else
         {
-            let clsname = kfd["class"]
-            if(clsname)
+            let clsname = kfd["class"];
+            if(clsname) {
                 this.kfddata_maps[clsname] = kfd;
+                if(AddFunc) AddFunc(kfd, clsname);
+            }
         }
     }
 

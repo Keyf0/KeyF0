@@ -31,6 +31,16 @@
         table, th, td {
             border: 1px solid #888888;
         }
+
+        .main
+        {
+            margin: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
     </style>
 
     <script src="js/require.js"></script>
@@ -57,10 +67,14 @@
 
                console.log("preview=>", varobjs.editclass, varobjs.asset);
 
+
+
                editapp.run("appnettest","kfds",":" + varobjs.editclass,true,[varobjs.asset]);
 
         });
     </script>
 </head>
-<body style="overflow:auto"></body>
+<body style="overflow:auto">
+
+</body>
 </html>

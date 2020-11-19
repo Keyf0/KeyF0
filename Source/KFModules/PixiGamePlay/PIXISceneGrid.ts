@@ -6,7 +6,7 @@ import {KFDName} from "../../KFData/Format/KFDName";
 import {PIXICamera} from "./PIXICamera";
 
 
-///KFD(C,CLASS=PIXISceneGrid,EXTEND=KFBlockTarget)
+///KFD(C,CLASS=PIXISceneGrid,EXTEND=KFBlockTarget,EDITCLASS=EditPIXIObject)
 ///KFD(P=1,NAME=txurl,CNAME=贴图路径,TYPE=kfstr)
 ///KFD(*)
 

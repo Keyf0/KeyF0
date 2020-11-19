@@ -301,7 +301,9 @@ export class KFByteArray
     {
         let bytesize = this.readvaruint();
         if(kfbuff == null) kfbuff = new KFByteArray();
-        this.readBytes(kfbuff, 0, bytesize);
+        if(bytesize > 0) {
+            this.readBytes(kfbuff, 0, bytesize);
+        }
         return kfbuff;
     }
 
@@ -399,8 +401,11 @@ export class KFByteArray
 
     public writekfBytes(bytes: KFByteArray)
     {
-        this.writevaruint(bytes.length);
-        this.writeBytes(bytes);
+        let len:number = bytes.length;
+        this.writevaruint(len);
+        if(len > 0) {
+            this.writeBytes(bytes);
+        }
     }
 
     public writeBytes(bytes: KFByteArray, offset: number = 0, length: number = 0): void {

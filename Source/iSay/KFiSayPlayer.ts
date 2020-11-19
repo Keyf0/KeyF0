@@ -19,6 +19,7 @@ import {KFDName} from "../KFData/Format/KFDName";
 import {BlkExecSide} from "../ACTS/Context/KFBlockTarget";
 import {KFDataTable} from "../ACTS/Context/KFDataTable";
 import {KFEventDispatcher} from "../ACTS/Event/KFEventDispatcher";
+import {LOG} from "../Core/Log/KFLog";
 
 export class KFiSayPlayer implements IKFRuntime
 {
@@ -83,6 +84,8 @@ export class KFiSayPlayer implements IKFRuntime
     {
         //LOG_WARNING("%s", path.c_str());
         this.m_path = path;
+
+        LOG("Play {0}", path);
 
         //let metaData = this.configs.GetMetaData(path,false);
         let KFBlockTargetData =

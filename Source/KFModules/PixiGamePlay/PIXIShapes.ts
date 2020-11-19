@@ -1,11 +1,104 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {LOG, LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
-import {PIXIObject} from "./PIXIInterface";
+import {PIXIObject, PIXITICK_Event} from "./PIXIInterface";
 import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
+import {EmbedFileData} from "../../ACTS/Data/KFInternalDataTypes";
 
-///KFD(C,CLASS=PIXIShapes,EXTEND=KFBlockTarget)
+
+///KFD(C,CLASS=PIXIShapesData,EXTEND=KFClassData)
 ///KFD(P=1,NAME=ssurl,CNAME=资源路径,TYPE=kfstr)
+///KFD(P=2,NAME=spriteJson,CNAME=配置文件,TYPE=object,OTYPE=EmbedFileData)
+///KFD(P=3,NAME=spriteImg,CNAME=图片文件,TYPE=object,OTYPE=EmbedFileData)
+///KFD(*)
+
+export class PIXIShapesData
+{
+    public static Meta:IKFMeta = new IKFMeta("PIXIShapesData"
+        ,():PIXIShapesData=>{
+            return new PIXIShapesData();
+        }
+        , BlkExecSide.CLIENT
+    );
+
+    public ssurl:string;
+    public spriteJson:EmbedFileData;
+    public spriteImg:EmbedFileData;
+
+    public _baseTexture:PIXI.Texture;
+    public _textures:any[];
+
+    private _waiting_list:((clsdata:PIXIShapesData)=>void)[] = [];
+
+    public constructor() {}
+
+    private OnResLoaded(loader, resources)
+    {
+        let res = resources[this.ssurl];
+        let resdata = res.data;
+        this._textures = resdata.textures;
+
+        if(!this._textures)
+        {
+            this._textures = [];
+            let spritesheet = res.spritesheet;
+
+            let indexs: string[] = resdata.indexs;
+
+            let shtextures = spritesheet.textures;
+            let baseTexture = spritesheet.baseTexture;
+
+           // baseTexture.cacheId = this.ssurl;
+            let cacheId = this.ssurl +".base";
+            let texture = new PIXI.Texture(baseTexture);
+
+            texture.baseTexture.cacheId = cacheId;
+
+            PIXI.BaseTexture.addToCache(texture.baseTexture, cacheId);
+            PIXI.Texture.addToCache(texture, cacheId);
+
+            this._baseTexture = texture;
+
+            for (let txname of indexs)
+            {
+                this._textures.push(shtextures[txname]);
+            }
+
+            resdata.textures = this._textures;
+        }
+
+        for(let callback of this._waiting_list)
+        {
+            callback(this);
+        }
+        this._waiting_list.length = 0;
+    }
+
+    public Ready(metapath:string, basedir:string)
+    {
+        if(this.ssurl != "")
+        {
+            let loader = PIXI.Loader.shared;
+
+            loader.baseUrl = basedir;
+            loader.add(this.ssurl);
+            /// ADD CACHE
+            loader.load(this.OnResLoaded.bind(this));
+        }
+    }
+
+    public Load(func:(clsdata:PIXIShapesData)=>void)
+    {
+        if(this._textures){
+            func(this);
+        }else
+        {
+            this._waiting_list.push(func);
+        }
+    }
+}
+
+///KFD(C,CLASS=PIXIShapes,EXTEND=KFBlockTarget,EDITCLASS=EditPIXIShapes)
 ///KFD(*)
 
 export class PIXIShapes extends KFBlockTarget
@@ -17,38 +110,46 @@ export class PIXIShapes extends KFBlockTarget
         , BlkExecSide.CLIENT
     );
 
-    public ssurl:string;
     public target:PIXI.Sprite;
 
     protected _display:number;
     protected _textures:any[];
+
     private _manul_dir:any;
 
-    public ActivateBLK(KFBlockTargetData: any): void {
+    private onResUpdate(classData:PIXIShapesData)
+    {
+        this._textures = classData._textures;
+        /// update
+        if(this._display != undefined)
+        {
+            let currdisplay: number = this._display;
+            this._display = -1;
+            this.set_display(currdisplay);
+        }
+    }
+
+    public ActivateBLK(KFBlockTargetData: any): void
+    {
         super.ActivateBLK(KFBlockTargetData);
 
-        if(this.target != null) {
+        if(this.target != null)
+        {
             LOG_ERROR("重复ActivateBLK");
             return;
         }
 
-        let res = PIXI.Loader.shared.resources[this.ssurl];
-        if(res == null){
-            LOG_ERROR("找不到SpriteSheet资源:{0}", this.ssurl);
+        let shapedata:PIXIShapesData = this.metadata.classData;
+        if(shapedata == null)
+        {
+            LOG_ERROR("找不到资源文件");
             return;
         }
 
-        let resdata = res.data;
-        this._textures = resdata.textures;
-
-        if(!this._textures) {
-            this._textures = [];
-            let indexs: string[] = resdata.indexs;
-            let shtextures = res.spritesheet.textures;
-            for (let txname of indexs) {
-                this._textures.push(shtextures[txname]);
-            }
-            resdata.textures = this._textures;
+        this._textures = shapedata._textures;
+        if(this._textures == null)
+        {
+            shapedata.Load(this.onResUpdate.bind(this));
         }
 
         this.target = new PIXI.Sprite();
@@ -64,10 +165,8 @@ export class PIXIShapes extends KFBlockTarget
         }
     }
 
-    public DeactiveBLK(): void {
-
-        super.DeactiveBLK();
-
+    public DeactiveBLK(): void
+    {
         let pixiobject = <PIXIObject><any>this.parent;
         let container = pixiobject.getPIXITarget();
         if (container) {
@@ -75,6 +174,8 @@ export class PIXIShapes extends KFBlockTarget
             this.target.destroy();
             this.target = null;
         }
+
+        super.DeactiveBLK();
     }
 
 
@@ -102,10 +203,12 @@ export class PIXIShapes extends KFBlockTarget
     public set visible(v:boolean) {this.target.visible = v;}
 
     public get display():number {return this._display;}
-    public set display(v:number) {
+    public set_display(v:number,bJumpFrame:boolean = false) {
         if(this._display != v){
             this._display = v;
-            this.target.texture = this._textures[v];
+            if(this._textures) {
+                this.target.texture = this._textures[v];
+            }
         }
     }
 

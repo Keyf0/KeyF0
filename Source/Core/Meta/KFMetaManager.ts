@@ -1,4 +1,4 @@
-import {LOG, LOG_WARNING} from "../Log/KFLog";
+import {LOG, LOG_ERROR, LOG_WARNING} from "../Log/KFLog";
 import {KFDName} from "../../KFData/Format/KFDName";
 
 export interface InstantiateFunc

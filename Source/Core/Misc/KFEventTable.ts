@@ -11,6 +11,8 @@ export class KFEvent
     public arg:any;
     ///入栈的参数[1-n]，默认为空
     public stacks:any[];
+    ///当前的事件对象
+    public eventTarget:any;
 
     ///evtname:KFDName|number|string
     public constructor(evtname:any = null)

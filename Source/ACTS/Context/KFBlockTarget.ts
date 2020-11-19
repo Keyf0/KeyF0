@@ -54,12 +54,6 @@ export class KFBlockTarget
 
     ///是否需要TICK
     public tickable:boolean;
-    public visible:boolean;
-    public display:number;
-
-    public position:kfVector3;
-    public rotation:kfVector3;
-    public scale:kfVector3;
 
     ///变量
     public vars:{[key:number]:any};
@@ -103,6 +97,17 @@ export class KFBlockTarget
     }
 
     public DeactiveBLK():void { }
+
+
+    ///这些属性都可以定义成函数访问
+
+    public visible:boolean;
+    public display:number;
+    public position:kfVector3;
+    public rotation:kfVector3;
+    public scale:kfVector3;
+
+    public set_display(v:number, bJumpFrame:boolean = false){}
 
     ///更新显示对象
     public set_position(v3?: { x: number; y: number; z?: number }){}

@@ -2,6 +2,7 @@ import {IKFTimelineContext} from "./IKFTimelineProc";
 import {KFBlockTargetOption} from "../Data/KFBlockTargetOption";
 import {KFActor} from "../Actor/KFActor";
 import {KFBlockTarget} from "../Context/KFBlockTarget";
+import {KFDName} from "../../KFData/Format/KFDName";
 
 export class KFTimeBlock
 {
@@ -13,9 +14,14 @@ export class KFTimeBlock
     public option:number;
     public opoption:number;
 
-    public Create(ctx:IKFTimelineContext, data:any)
+    public newName:KFDName;
+    public id:number;
+
+    public Create(ctx:IKFTimelineContext, data:any, blockid:number)
     {
         this.m_ctx = ctx;
+        this.id = blockid;
+
         this.SetData(data);
     }
 
@@ -78,9 +84,9 @@ export class KFTimeBlock
         else if(this.option == KFBlockTargetOption.Create)
         {
             let m_target:KFBlockTarget = this.Activate(self,true);
-            if(m_target && m_target.visible)
+            if(m_target && m_target.display != -1)
             {
-                m_target.visible = false;
+                m_target.set_display(-1, bJumpFrame);
             }
         }
     }
@@ -96,15 +102,12 @@ export class KFTimeBlock
         {
             frameIndex -= bgi;
             let m_target = this.Activate(self);
-            if(m_target) {
-                if (!m_target.visible) {
-                    m_target.visible = true;
-                }
-
+            if(m_target)
+            {
                 let keyframe = this.m_keyframes[frameIndex];
                 if (keyframe) {
                     if (this.opoption != 0) {
-                        m_target.display = keyframe.display;
+                        m_target.set_display(keyframe.display,bJumpFrame);
                         m_target.set_datas(keyframe.values);
                     }
                 } else if (bJumpFrame) {
@@ -114,7 +117,7 @@ export class KFTimeBlock
                         keyframe = this.m_keyframes[prevFrameIndex];
                         if (keyframe) {
                             if (this.opoption != 0) {
-                                m_target.display = keyframe.display;
+                                m_target.set_display(keyframe.display, bJumpFrame);
                                 m_target.set_datas(keyframe.values);
                             }
                             break;
@@ -122,6 +125,12 @@ export class KFTimeBlock
                         --prevFrameIndex;
                     }
                 }
+            }
+        }else{
+            let m_target:KFBlockTarget = this.Activate(self,true);
+            if(m_target && m_target.display != -1)
+            {
+                m_target.set_display(-1, bJumpFrame);
             }
         }
     }
@@ -151,7 +160,7 @@ export class KFTimeBlock
         if (keyframe) {
             this.PushKeyFrame(self, target, keyframe);
             if(this.opoption != 0) {
-                target.display = keyframe.display;
+                target.set_display(keyframe.display, bJumpFrame);
                 target.set_datas(keyframe.values);
             }
         }
@@ -162,7 +171,7 @@ export class KFTimeBlock
                 keyframe = this.m_keyframes[prevFrameIndex];
                 if (keyframe) {
                     if(this.opoption != 0) {
-                        target.display = keyframe.display;
+                        target.set_display(keyframe.display, bJumpFrame);
                         target.set_datas(keyframe.values);
                     }
                     break;
@@ -172,17 +181,45 @@ export class KFTimeBlock
         }
     }
 
+    private InitRename(parent:KFActor, target:KFBlockTarget)
+    {
+        let name:KFDName = target.name;
+
+        if(this.newName) {
+            if(name.value != this.newName.value) {
+                target.name = this.newName;
+            }
+        }else {
+
+            if (parent.FindChild(name.value) != null) {
+                if (this.newName == null) {
+                    let namestr = name.toString() + "_" + this.id;
+                    this.newName = new KFDName(namestr);
+                }
+
+                target.name = this.newName;
+            } else {
+                    this.newName = name;
+            }
+        }
+    }
+
     private Activate(self:KFActor, search:boolean = false):KFBlockTarget
     {
         let targetdata = this.data.target;
         let target:KFBlockTarget = null;
 
-        if (this.option == KFBlockTargetOption.Create) {
-            if(search){
-                ///search 就不创建目标了
-                target = self.FindChild(targetdata.instname);
-            }else
-                target = self.CreateChild(targetdata,null,null,true);
+        if (this.option == KFBlockTargetOption.Create)
+        {
+            ///search 就不创建目标了
+            target = this.newName ? self.FindChild(this.newName.value) : null;
+
+            if(target == null && false == search)
+            {
+                ///创建一个对象但是有可能名字用一个重新命的名字，不允许重复
+                target = self.CreateChild(targetdata, null
+                    , this.InitRename.bind(this,self));
+            }
         }
         else if (this.option == KFBlockTargetOption.Attach) {
             target = self.FindChild(targetdata.instname);

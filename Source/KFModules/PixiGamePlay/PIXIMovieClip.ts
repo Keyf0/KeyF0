@@ -12,7 +12,7 @@ import {LOG_ERROR} from "../../Core/Log/KFLog";
 
 ///PIXIMovieClip是一个客户端表现的 与NETACTOR不同的 更加轻量化一些
 
-///KFD(C,CLASS=PIXIMovieClip,EXTEND=KFActor)
+///KFD(C,CLASS=PIXIMovieClip,EXTEND=KFActor,EDITCLASS=EditPIXIMovieClip)
 ///KFD(P=1,NAME=position,CNAME=位置,TYPE=object,OTYPE=kfVector3)
 ///KFD(P=2,NAME=rotation,CNAME=朝向,TYPE=object,OTYPE=kfVector3)
 
@@ -198,21 +198,34 @@ export class PIXIMovieClip extends KFActor implements PIXIObject
         ///不显示就不需要TICK了吧
         this.tickable = v;
     }
-    public get display():number {return this._display;}
-    public set display(v:number){
-        if(this._display != v) {
 
-            if(this._display == -1){
+    public set display(v:number)
+    {
+        throw new Error('use method set_display');
+    }
+
+    public set_display(v:number, bJumpFrame:boolean = false){
+
+        if(this._display != v)
+        {
+            if(this._display == -1)
+            {
                 this.visible = true;
-            }else if(v == -1){
+            }
+            else if(v == -1)
+            {
                 this.visible = false;
             }
+
             this._display = v;
-            if(this.bGraphic && v != -1) {
-                this.timeline.DisplayFrame(this,v);
+
+            if(this.bGraphic && v != -1)
+            {
+                this.timeline.DisplayFrame(this, v, bJumpFrame);
             }
         }
     }
+
     public set_datas(datas: number[]) {
 
         if(!datas) return;

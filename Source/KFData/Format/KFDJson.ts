@@ -3,8 +3,8 @@ import {KFDataType} from "./KFD";
 import {KFDTable} from "./KFDTable";
 import {KFDName} from "./KFDName";
 import {KFBytes} from "./KFBytes";
-import {LOG} from "../../Core/Log/KFLog";
 import {KFAttribflags} from "./KFAttribflags";
+import {LOG_ERROR} from "../../Core/Log/KFLog";
 
 export class KFDJson
 {
@@ -130,8 +130,13 @@ export class KFDJson
         {
             ///构造函数
             if(data == null) {
-                if( kfddata.__new__)
+                if( kfddata.__new__) {
                     data = kfddata.__new__();
+                    if(data == null){
+                        data = {};
+                        LOG_ERROR("{0} NEW INSTANCE IS NULL", kfddata.class);
+                    }
+                }
                 else
                     data = {};
             }
@@ -575,7 +580,7 @@ export class KFDJson
                 bytearr.writestring(valObject);
                 break;
             case KFDataType.OT_BYTES:
-                if(valObject instanceof KFBytes)
+                if(valObject instanceof KFBytes || valObject.bytes)
                 {
                     let bytesobj = valObject.object;
                     let bytes = valObject.bytes;

@@ -36,6 +36,51 @@
         "includes": [
             "KFInternalDataTypes.ts"
         ],
+        "class": "EmbedFileData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "path",
+                "cname": "路径",
+                "type": "kfstr",
+                "unknowtags": [
+                    {
+                        "tag": "EDIT",
+                        "val": "NO"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "format",
+                "cname": "格式",
+                "type": "kfstr",
+                "unknowtags": [
+                    {
+                        "tag": "EDIT",
+                        "val": "NO"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "name": "data",
+                "cname": "字节数据",
+                "type": "kfBytes",
+                "unknowtags": [
+                    {
+                        "tag": "EDIT",
+                        "val": "NO"
+                    }
+                ]
+            }
+        ],
+        "clsid": 1431
+    },
+    {
+        "includes": [
+            "KFInternalDataTypes.ts"
+        ],
         "class": "kfVector3",
         "propertys": [
             {

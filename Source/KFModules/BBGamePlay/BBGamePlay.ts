@@ -64,10 +64,5 @@ export function init()
 
 export function initKFDTable(kfdtb:KFDTable)
 {
-    let kfddata = kfdtb.get_kfddata("BABYLON.Vector3");
-    if(kfddata)
-    {
-        ///注册构建函数
-        kfddata.__new__ = function () {return new BABYLON.Vector3();};
-    }
+
 }

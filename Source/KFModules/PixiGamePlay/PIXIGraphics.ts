@@ -2,8 +2,9 @@ import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {PIXIObject} from "./PIXIInterface";
 import {LOG_ERROR} from "../../Core/Log/KFLog";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
+import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 
-///KFD(C,CLASS=PIXIGraphics,EXTEND=KFBlockTarget)
+///KFD(C,CLASS=PIXIGraphics,EXTEND=KFBlockTarget,EDITCLASS=EditPIXIObject)
 ///KFD(*)
 
 export class PIXIGraphics extends KFBlockTarget
@@ -49,6 +50,14 @@ export class PIXIGraphics extends KFBlockTarget
             this.target.destroy();
             this.target = null;
         }
+    }
+
+    public get position(): kfVector3 {
+        return new kfVector3(this.target.x, this.target.y);
+    }
+
+    public get rotation(): kfVector3 {
+        return new kfVector3(0,0,this.target.rotation);
     }
 
     public set_position(v3?: { x: number; y: number; z?: number }): void {

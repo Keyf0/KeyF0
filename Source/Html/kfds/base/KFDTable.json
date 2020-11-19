@@ -1463,6 +1463,38 @@
         {
             "class": "KFNewBlkData",
             "id": 1365
+        },
+        {
+            "class": "BlkExecSide",
+            "id": 1366
+        },
+        {
+            "class": "SDVector3",
+            "id": 1367
+        },
+        {
+            "class": "SDFloat",
+            "id": 1368
+        },
+        {
+            "class": "SDInt32",
+            "id": 1369
+        },
+        {
+            "class": "SDString",
+            "id": 1370
+        },
+        {
+            "class": "V3DataType",
+            "id": 1371
+        },
+        {
+            "class": "V3Data",
+            "id": 1372
+        },
+        {
+            "class": "KFClassData",
+            "id": 1373
         }
     ]
 }
