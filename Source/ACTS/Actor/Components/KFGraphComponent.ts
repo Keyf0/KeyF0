@@ -3,12 +3,13 @@ import {BlkExecSide, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 import {KFGraphBlockBase} from "../../Graph/Blocks/KFGraphBlockBase";
 import {KFDName} from "../../../KFData/Format/KFDName";
-import {KF_GRAPHARG_NULL, KFGraphBlockType} from "../../Data/KFGraphBlockType";
+import {GRAPH_ARG_NULL, GRAPH_NAME_ACTIVATE, KFGraphBlockType} from "../../Data/KFGraphBlockType";
 import {KFGraphBlockNormal} from "../../Graph/Blocks/KFGraphBlockNormal";
 import {KFGraphBlockExportPoint} from "../../Graph/Blocks/KFGraphBlockExportPoint";
 import {KFGraphBlockEventPoint} from "../../Graph/Blocks/KFGraphBlockEventPoint";
 import {IKFRuntime} from "../../Context/IKFRuntime";
 import {KFScriptContext} from "../../Script/KFScriptDef";
+import {KFPullNode} from "../../Graph/Blocks/KFPullNode";
 
 export class KFGraphComponent implements IKFGraphContext
 {
@@ -40,7 +41,7 @@ export class KFGraphComponent implements IKFGraphContext
         }
     }
 
-    public ActivateComponent(self:KFBlockTarget, inarg:any)
+    public ActivateComponent(self:KFBlockTarget)
     {
         if(this.m_cfg == null)
         {
@@ -48,7 +49,9 @@ export class KFGraphComponent implements IKFGraphContext
             this.SetConfig(self, this.m_cfg);
         }
 
-        this.Play(self, inarg);
+        //播入所有INPUT节点
+        this.ActivateInput(self, GRAPH_ARG_NULL);
+        //this.Input(self, GRAPH_NAME_ACTIVATE, GRAPH_ARG_NULL);
     }
 
     public DeactiveComponent(self:KFBlockTarget)
@@ -104,7 +107,9 @@ export class KFGraphComponent implements IKFGraphContext
                 case KFGraphBlockType.EventPointDomain:
                     block = new KFGraphBlockEventPoint();
                     break;
-
+                case KFGraphBlockType.PullNode:
+                    block = new KFPullNode();
+                    break;
                 default:;
             }
 
@@ -125,9 +130,10 @@ export class KFGraphComponent implements IKFGraphContext
         }
     }
 
-    public Play(self:KFBlockTarget, inarg:any)
+    ///初始化激活所有INPUT节点
+    public ActivateInput(self:KFBlockTarget, inarg:any)
     {
-        inarg = inarg==undefined ? KF_GRAPHARG_NULL:inarg;
+        inarg = inarg==undefined ? GRAPH_ARG_NULL:inarg;
 
         for (let it in this.m_inputnames)
         {
@@ -165,12 +171,17 @@ export class KFGraphComponent implements IKFGraphContext
 
     public GetBlock(id:KFDName):KFGraphBlockBase
     {
-        return this.m_blocks[id.value];
+        return id ? this.m_blocks[id.value] : null;
     }
 
     public GetBlockID(id:number):KFGraphBlockBase
     {
         return this.m_blocks[id];
+    }
+
+    public GetBlockStr(name:string):KFGraphBlockBase
+    {
+        return this.m_blocks[KFDName._Strs._Strings2ID[name]];
     }
 
     public Input(self:KFBlockTarget, blockname:KFDName, arg:any)
@@ -180,10 +191,7 @@ export class KFGraphComponent implements IKFGraphContext
             let block = this.m_blocks[blockname.value];
             if (block != null)
             {
-                if (arg != undefined)
-                    block.Input(self, arg);
-                else
-                    block.Input(self,KF_GRAPHARG_NULL);
+                block.Input(self, arg);
             }
             else
             {

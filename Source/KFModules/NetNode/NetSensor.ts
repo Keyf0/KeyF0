@@ -62,8 +62,8 @@ export class NetSensor extends KFBlockTarget implements RPCObject {
     ///运行时间
     protected  m_timeincr:number = 0;
 
-    public Construct(metadata: any, runtime: IKFRuntime) {
-        super.Construct(metadata, runtime);
+    public Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray) {
+        super.Construct(metadata, runtime, initBytes);
         this.execSide = runtime.execSide;
     }
 

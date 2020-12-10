@@ -4,6 +4,7 @@ import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {IKFConfigs_Type} from "../../ACTS/Context/IKFConfigs";
 import {KFEventDispatcher} from "../../ACTS/Event/KFEventDispatcher";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 
 
 ///KFD(C,CLASS=PIXIAssetLoader,EXTEND=KFBlockTarget)
@@ -21,8 +22,8 @@ export class PIXIAssetLoader extends KFBlockTarget {
 
     public AssetURLs:string[];
 
-    public  Construct(metadata: any, runtime: IKFRuntime) {
-        super.Construct(metadata, runtime);
+    public  Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray) {
+        super.Construct(metadata, runtime, initBytes);
         this.etable = new KFEventDispatcher(runtime.domain);
     }
 

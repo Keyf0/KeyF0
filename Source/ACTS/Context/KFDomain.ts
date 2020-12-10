@@ -7,6 +7,7 @@ import {KFDName} from "../../KFData/Format/KFDName";
 import {IKFConfigs} from "./IKFConfigs";
 import {KFGraphComponent} from "../Actor/Components/KFGraphComponent";
 import {KFTimelineComponent} from "../Actor/Components/KFTimelineComponent";
+import {KFBytes} from "../../KFData/Format/KFBytes";
 
 
 export class KFGraphSystem
@@ -106,6 +107,7 @@ export class KFDomain implements IKFDomain
             return null;
         }
 
+
         //let path = asseturl + ".meta";
         let metadata = meta ? meta : this.m_configs.GetMetaData(asseturl, false);
         if(metadata)
@@ -127,7 +129,8 @@ export class KFDomain implements IKFDomain
                     this.m_incrsid += 1;
                     currsid = this.m_incrsid;
                 }
-                else if(currsid > this.m_incrsid){
+                else if(currsid > this.m_incrsid)
+                {
                     ///需要更大的数据增量
                     this.m_incrsid = currsid;
                 }
@@ -143,9 +146,12 @@ export class KFDomain implements IKFDomain
 
                 this.m_instances[currsid] = target;
 
-                LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
-                target.Construct(metadata, this.m_runtime);
+                let initdata:KFBytes = KFBlockTargetData.initBytes;
+                let initBytes = initdata ? initdata.bytes : null;
 
+                LOG("创建 BlockTarget: {0}, {1}", asseturl, metadata.type.toString());
+
+                target.Construct(metadata, this.m_runtime, initBytes);
 
                 return target;
             }

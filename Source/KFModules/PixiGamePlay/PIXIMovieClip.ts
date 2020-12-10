@@ -9,6 +9,7 @@ import {
 import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {LOG_ERROR} from "../../Core/Log/KFLog";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 
 ///PIXIMovieClip是一个客户端表现的 与NETACTOR不同的 更加轻量化一些
 
@@ -58,8 +59,8 @@ export class PIXIMovieClip extends KFActor implements PIXIObject
         return new PIXI.Container();
     }
 
-    public Construct(metadata: any, runtime: IKFRuntime) {
-        super.Construct(metadata, runtime);
+    public Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray) {
+        super.Construct(metadata, runtime, initBytes);
 
         if(!this.position)
             this.position = new kfVector3();

@@ -9,6 +9,8 @@ import {IKFDomain} from "../Context/IKFDomain";
 import {KFScript, KFScriptContext} from "../Script/KFScriptDef";
 import {KFEventDispatcher} from "../Event/KFEventDispatcher";
 import {KFTargetScript} from "../Script/KFScriptSystem";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
+import {LOG_ERROR} from "../../Core/Log/KFLog";
 
 
 export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
@@ -59,9 +61,9 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.tickable = true;
     }
 
-    public Construct(metadata:any, runtime:IKFRuntime)
+    public Construct(metadata:any, runtime:IKFRuntime, initBytes?:KFByteArray)
     {
-        super.Construct(metadata,runtime);
+        super.Construct(metadata, runtime, initBytes);
 
         this.m_CDomain = this.runtime.domain;
         this.etable = new KFEventDispatcher(this.m_CDomain);
@@ -88,10 +90,10 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         }
     }
 
-    public ActivateAllComponent(inarg:any):void
+    public ActivateAllComponent():void
     {
         this.timeline.ActivateComponent(this);
-        this.graph.ActivateComponent(this, inarg);
+        this.graph.ActivateComponent(this);
     }
 
     public DeactiveAllComponent():void
@@ -110,7 +112,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         this.m_childrenmap[KFActor.PARENT.value] = <any>this.parent;
         this.m_childrenmap[KFActor.SELF.value] = <any>this;
         this.TargetNew(KFBlockTargetData);
-        this.ActivateAllComponent(KFBlockTargetData.inputArg);
+        this.ActivateAllComponent();
     }
 
     public DeactiveBLK():void
@@ -150,18 +152,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
                 child.EditTick(frameindex);
         }
 
-        ///tick保持住的脚本对象
-        //let scripti = this.m_keepsts ? this.m_keepsts.length -1 : -1;
-        //while (scripti >= 0){
-        //    let sc = this.m_keepsts[scripti];
-        //    sc.Update(frameindex);
-        //    if(!sc.isrunning) {
-        //        this.m_keepsts.splice(scripti,1);
-        //        sc.Stop(this.m_keepstmap);
-        //    }
-        //    scripti -= 1;
-        //}
-
         ///删除元素
         let removelen = this.m_removelist.length;
         if(removelen > 0) {
@@ -185,16 +175,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             this.etable.FireEvent(KFActor.BEGIN_PLAY);
         }
 
-        ///暂时都不需要
-        ///this.graph.EnterFrame(frameindex);
-        this.timeline.EnterFrame(this,frameindex);
-
-        for(let i = 0; i < this.m_children.length; i ++) {
-            let child = this.m_children[i];
-            if(child.tickable)
-                child.Tick(frameindex);
-        }
-
         ///tick保持住的脚本对象
         let scriptcontext:KFScriptContext = this.runtime.scripts;
         let scripti = this.m_keepsts ? this.m_keepsts.length -1 : -1;
@@ -211,10 +191,21 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
                 sc.Stop();
 
                 delete this.m_keepstmap[stype.value];
-                scriptcontext.ReturnScript(sc, stype);
+                if(!sc.manual)
+                    scriptcontext.ReturnScript(sc, stype);
             }
 
             scripti -= 1;
+        }
+
+        ///暂时都不需要
+        ///this.graph.EnterFrame(frameindex);
+        this.timeline.EnterFrame(this,frameindex);
+
+        for(let i = 0; i < this.m_children.length; i ++) {
+            let child = this.m_children[i];
+            if(child.tickable)
+                child.Tick(frameindex);
         }
 
         ///删除元素
@@ -314,38 +305,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         {
             let MetaData = NewBlkData.metaData;
             MetaData = (MetaData && MetaData.data) ? MetaData : null;
-
-            let self:KFActor = this;
-            let newtarget = this.CreateChild(NewBlkData.targetData, MetaData
-                ,function (newtarget:KFBlockTarget) {
-                    ///
-                    if(newtarget)
-                    {
-                        let MetaData = NewBlkData.metaData;
-                        if(MetaData && MetaData.fields)
-                        {
-                            ///用数据对填充
-                            let items = MetaData.fields.items;
-                            if(items){
-                                for(let i = 0;i < items.length; i++){
-                                    let data = items[i];
-                                    let valueobj:any = self.vars[data.key];
-                                    if(valueobj) {
-                                        valueobj.setValue(data.value);
-                                    }
-                                    else
-                                        this.vars[data.key] = data.value;
-                                }
-                            }
-                        }
-                    }
-                    ///
-                    if(Init){
-                        Init(newtarget);
-                    }
-            });
-
-            return newtarget;
+            return this.CreateChild(NewBlkData.targetData, MetaData, Init);
         }
 
         return null;
@@ -413,6 +373,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
 
     public ExecuteScript(sd: any, scriptContext:KFScriptContext):any
     {
+        ///TODO 在编辑状态下有状态的脚本不能执行??
         let type:KFDName = sd.type;
         let targetscript:KFTargetScript = this.m_keepstmap ? this.m_keepstmap[type.value] : null;
 
@@ -433,10 +394,35 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         return targetscript.Execute(sd, scriptContext);
     }
 
-    public FindScript(type:KFDName):KFScript
+    public AddScript(name:KFDName, targetscript:KFTargetScript)
     {
-        if(this.m_keepstmap)
-        {
+        let sc:KFTargetScript = this.m_keepstmap[name.value];
+        if(sc == null) {
+            this.m_keepstmap[name.value] = targetscript;
+            this.m_keepsts.push(targetscript);
+        }else{
+            LOG_ERROR("脚本添加失败:重复添加{0}",name.toString());
+        }
+    }
+
+    public RemoveScript(name:KFDName) {
+        let sc:KFTargetScript = this.m_keepstmap[name.value];
+        if(sc) {
+            let scripti: number = this.m_keepsts.indexOf(sc);
+            this.m_keepsts.splice(scripti, 1);
+
+            sc.Stop();
+
+            delete this.m_keepstmap[name.value];
+            if(!sc.manual)
+            {
+                this.runtime.scripts.ReturnScript(sc, name);
+            }
+        }
+    }
+
+    public FindScript(type:KFDName):KFScript {
+        if(this.m_keepstmap) {
             return this.m_keepstmap[type.value];
         }
         return null;
@@ -456,6 +442,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
                 script.Stop();
 
                 delete this.m_keepstmap[stype.value];
+                if(!script.manual)
                 scriptcontext.ReturnScript(script, stype);
 
                 scripti -= 1;
@@ -463,7 +450,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             this.m_keepsts.length = 0;
         }
     }
-
 
     ///FOR SCRIPT
     public StrBlock(name:string, op:number = 0)
@@ -502,4 +488,12 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     {
         this.timeline.DisplayFrame(this,frameIndex,true);
     }
+
+    /// 试验性的尝试
+    /// override methods begin
+
+    public NewNodeData(dataType?:number):any{ return null;}
+    public Render(data?:any) {}
+
+    /// override methods end
 }

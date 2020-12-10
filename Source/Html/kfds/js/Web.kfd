@@ -67,7 +67,7 @@
                 "type": "kfstr",
                 "unknowtags": [
                     {
-                        "tag": "texttype",
+                        "tag": "TEXTTYPE",
                         "val": "html"
                     }
                 ]
@@ -107,7 +107,7 @@
                 "type": "kfstr",
                 "unknowtags": [
                     {
-                        "tag": "texttype",
+                        "tag": "TEXTTYPE",
                         "val": "html"
                     }
                 ]

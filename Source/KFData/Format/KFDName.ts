@@ -69,6 +69,9 @@ export class KFDName
     public static _Strs:KFDNameStrings = new KFDNameStrings();
     public static _Param:KFDName = new KFDName();
     public static NONE:KFDName = new KFDName();
+    public static _Name(str:string){
+        return KFDName._Param.setString(str);
+    }
 
     public static Val(str:string):number{return KFDName._Strs.GetNameID(str);}
 }

@@ -4,6 +4,7 @@ import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {HElementActor} from "./HElementActor";
 import {SDInt32, SDString} from "../../ACTS/Script/Global/GlobalScripts";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 
 ///KFD(C,CLASS=HDocument,EXTEND=HElementActor)
 ///KFD(*)
@@ -19,9 +20,9 @@ export class HDocument extends HElementActor implements IDocument
 
     public nativedom:Document;
 
-    public Construct(metadata:any, runtime:IKFRuntime)
+    public Construct(metadata:any, runtime:IKFRuntime, initBytes?:KFByteArray)
     {
-        super.Construct(metadata,runtime);
+        super.Construct(metadata, runtime, initBytes);
 
         let nativdoc = window.document;
 

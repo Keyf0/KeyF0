@@ -4,6 +4,7 @@ import {WSMDClient} from "../../KFNetwork/WS/WSMDClient";
 import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFEventDispatcher} from "../../ACTS/Event/KFEventDispatcher";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 
 ///KFD(C,CLASS=WSConnection,EXTEND=KFBlockTarget)
 ///KFD(P=1,NAME=tickable,CNAME=开启更新,DEFAULT=true,OR=1,TYPE=bool)
@@ -52,9 +53,9 @@ export class WSConnection extends KFBlockTarget
     protected _wsClient:WSMDClient;
     protected _randomname:string;
 
-    public Construct(metadata: any, runtime: IKFRuntime) {
+    public Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray) {
 
-        super.Construct(metadata, runtime);
+        super.Construct(metadata, runtime, initBytes);
 
         this.tickable = true;
         this.etable = new KFEventDispatcher(runtime.domain);

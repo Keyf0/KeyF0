@@ -13,15 +13,15 @@ export class EditPIXIMovieClip  extends EditPIXIObject
         }
     );
 
-    public ActivateBLK(KFBlockTargetData: any): void
+
+    public OnEidtorInit()
     {
-        super.ActivateBLK(KFBlockTargetData);
+        super.OnEidtorInit();
 
         if(this.editTarget)
         {
             let mc:any = this.editTarget;
             mc.StopFrame(0);
-            this.OnPreviewReady();
         }
     }
 

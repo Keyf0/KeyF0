@@ -40,6 +40,8 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
                 ///强制读取一个参数
                 if(fd.paramsize < 1){fd.paramsize = 1;}
                 script.ExecuteFrameScript(0, fd, m_target);
+                ///读取第一个还回参数进行传递
+                arg = OBJS[0];
 
                 OBJS[0] = Arg0;
                 bcache.current = bcurr;
@@ -68,7 +70,8 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
 
             if(m_target == null)
             {
-                m_target = selfActor.CreateChild(targetdata,null, this.InitCreateName.bind(this));
+                m_target = selfActor.CreateChild(targetdata,null, instval > 0 ? null : this.InitCreateName.bind(this));
+                m_target.ownerNode = this.data.name;
             }
         }
         else {

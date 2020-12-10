@@ -1,6 +1,7 @@
 import {KFDTable} from "../../KFData/Format/KFDTable";
 import {
     GSExpressionScript,
+    GSScriptRun,
     GSLoadBLKDataScript,
     GSLogScript,
     GSPlayStateScript,
@@ -61,6 +62,7 @@ export class KFDataHelper
             GSPlayStateScript.Meta
             , GSLogScript.Meta
             , GSExpressionScript.Meta
+            , GSScriptRun.Meta
             , GSRemoteScript.Meta
             , GSSaveBLKDataScript.Meta
             , GSLoadBLKDataScript.Meta

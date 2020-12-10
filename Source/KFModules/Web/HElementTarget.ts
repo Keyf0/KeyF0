@@ -7,7 +7,7 @@ import {KFEventDispatcher} from "../../ACTS/Event/KFEventDispatcher";
 
 ///KFD(C,CLASS=HElementTarget,EXTEND=KFBlockTarget,EDITCLASS=EditHTMLBlk)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
-///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,texttype=html)
+///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,TEXTTYPE=html)
 ///KFD(*)
 
 export interface IDocument

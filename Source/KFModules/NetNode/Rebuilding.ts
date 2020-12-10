@@ -28,9 +28,9 @@ export class Rebuilding extends KFBlockTarget{
 
     ///KFD(*)
 
-    public Construct(metadata: any, runtime: IKFRuntime)
+    public Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray)
     {
-        super.Construct(metadata, runtime);
+        super.Construct(metadata, runtime, initBytes);
     }
 
     public ActivateBLK(KFBlockTargetData: any): void

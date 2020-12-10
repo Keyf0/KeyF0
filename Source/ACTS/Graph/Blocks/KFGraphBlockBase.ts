@@ -5,10 +5,28 @@ import {KFDName} from "../../../KFData/Format/KFDName";
 import {KFActor} from "../../Actor/KFActor";
 import {KFEvent} from "../../../Core/Misc/KFEventTable";
 
+
+export class PullRequest
+{
+    ///拉取第几个输出
+    public requsetIndex:number = 0;
+    ///还回的第几个输入
+    public inIndex:number = 0;
+    ///数据变更后version需要变更
+    public returnCall:(data:any, version:number, inIndex:number, reqIndex:number)=>void;
+
+    ///输出的数据 inline??
+    public Push(data?:any, version:number = 0) {
+        if(this.returnCall) {
+            this.returnCall(data, version, this.inIndex, this.requsetIndex);
+        }
+    }
+}
+
 ///c++里继承SCRIPTDATA可以在参数中传递
 export class KFGraphBlockBase
 {
-    protected m_ctx:IKFGraphContext;
+    public m_ctx:IKFGraphContext;
 
     public data:any;
     public nextname:KFDName;
@@ -16,7 +34,7 @@ export class KFGraphBlockBase
 
     public OnEvent(evt:KFEvent, self:KFBlockTarget):void
     {
-
+        
     }
 
     public Create(ctx:IKFGraphContext, data:any)
@@ -46,6 +64,11 @@ export class KFGraphBlockBase
     public Input(self:KFBlockTarget,arg:any)
     {
         //由子类处理
+    }
+
+    public Pull(currentTarget:KFBlockTarget, request:PullRequest)
+    {
+        if(request) {request.Push(null);}
     }
 
     public Activate(self:KFBlockTarget):any{}
@@ -104,7 +127,7 @@ export class KFGraphBlockBase
     protected GetAttachTarget(self:KFActor):KFBlockTarget
     {
         let target:KFBlockTarget = null;
-        if (this.data && this.m_ctx)
+        if (this.data)
         {
             let tdata = this.data.target;
 

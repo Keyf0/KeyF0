@@ -10,6 +10,7 @@ import {IKFRuntime} from "../../ACTS/Context/IKFRuntime";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 import {PhyDef, Phy_Name, PhyObject, PhyScene} from "../Physics/PhysicsTypes";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 
 
 ///KFD(C,CLASS=PIXINetActor,EXTEND=KFActor,EDITCLASS=EditPIXIMovieClip)
@@ -74,8 +75,8 @@ export class PIXINetActor extends KFActor implements PIXIObject
         return new PIXI.Container();
     }
 
-    public Construct(metadata: any, runtime: IKFRuntime) {
-        super.Construct(metadata, runtime);
+    public Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray) {
+        super.Construct(metadata, runtime, initBytes);
 
         if(!this.position)
             this.position = new kfVector3();

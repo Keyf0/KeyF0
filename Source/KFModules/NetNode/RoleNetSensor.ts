@@ -5,6 +5,7 @@ import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {NetData, RPCObject} from "./NetData";
 import {LOG} from "../../Core/Log/KFLog";
+import {KFByteArray} from "../../KFData/Utils/FKByteArray";
 
 
 
@@ -27,8 +28,8 @@ export class RoleNetSensor extends NetSensor {
     protected _backITs:{[key:number]:NetSensor;};
     protected _checktimes:number;
 
-    public Construct(metadata: any, runtime: IKFRuntime) {
-        super.Construct(metadata, runtime);
+    public Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray) {
+        super.Construct(metadata, runtime, initBytes);
         this.sensorType = NetSensor.TYPE_ROLE;
     }
 

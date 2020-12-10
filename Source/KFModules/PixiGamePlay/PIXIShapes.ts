@@ -1,7 +1,7 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {LOG, LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
-import {PIXIObject, PIXITICK_Event} from "./PIXIInterface";
+import {PIXIObject} from "./PIXIInterface";
 import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 import {EmbedFileData} from "../../ACTS/Data/KFInternalDataTypes";
 
@@ -10,6 +10,7 @@ import {EmbedFileData} from "../../ACTS/Data/KFInternalDataTypes";
 ///KFD(P=1,NAME=ssurl,CNAME=资源路径,TYPE=kfstr)
 ///KFD(P=2,NAME=spriteJson,CNAME=配置文件,TYPE=object,OTYPE=EmbedFileData)
 ///KFD(P=3,NAME=spriteImg,CNAME=图片文件,TYPE=object,OTYPE=EmbedFileData)
+///KFD(P=4,NAME=ssize,CNAME=分割尺寸,TYPE=object,OTYPE=kfVector3)
 ///KFD(*)
 
 export class PIXIShapesData
@@ -22,6 +23,7 @@ export class PIXIShapesData
     );
 
     public ssurl:string;
+    public ssize:any;
     public spriteJson:EmbedFileData;
     public spriteImg:EmbedFileData;
 
@@ -34,37 +36,81 @@ export class PIXIShapesData
 
     private OnResLoaded(loader, resources)
     {
+
         let res = resources[this.ssurl];
+        let issheet:boolean = res.extension == "json";
+
         let resdata = res.data;
         this._textures = resdata.textures;
 
         if(!this._textures)
         {
             this._textures = [];
-            let spritesheet = res.spritesheet;
+            let cacheId = this.ssurl + ".base";
 
-            let indexs: string[] = resdata.indexs;
-
-            let shtextures = spritesheet.textures;
-            let baseTexture = spritesheet.baseTexture;
-
-           // baseTexture.cacheId = this.ssurl;
-            let cacheId = this.ssurl +".base";
-            let texture = new PIXI.Texture(baseTexture);
-
-            texture.baseTexture.cacheId = cacheId;
-
-            PIXI.BaseTexture.addToCache(texture.baseTexture, cacheId);
-            PIXI.Texture.addToCache(texture, cacheId);
-
-            this._baseTexture = texture;
-
-            for (let txname of indexs)
+            if(issheet)
             {
-                this._textures.push(shtextures[txname]);
+                let spritesheet = res.spritesheet;
+                let indexs: string[] = resdata.indexs;
+
+                let shtextures = spritesheet.textures;
+                let baseTexture = spritesheet.baseTexture;
+
+                // baseTexture.cacheId = this.ssurl;
+
+                let texture = new PIXI.Texture(baseTexture);
+
+                texture.baseTexture.cacheId = cacheId;
+
+                PIXI.BaseTexture.addToCache(texture.baseTexture, cacheId);
+                PIXI.Texture.addToCache(texture, cacheId);
+
+                this._baseTexture = texture;
+
+                for (let txname of indexs) {
+                    this._textures.push(shtextures[txname]);
+                }
+            }else{
+
+
+                let texture = res.texture;
+                let baseTexture = texture.baseTexture;
+
+
+                texture.baseTexture.cacheId = cacheId;
+
+                PIXI.BaseTexture.addToCache(texture.baseTexture, cacheId);
+                PIXI.Texture.addToCache(texture, cacheId);
+
+                if(!this.ssize || this.ssize.x == 0 || this.ssize.y == 0) {
+                    this._textures.push(texture);
+                }
+                else{
+
+                    let framew = this.ssize.x;
+                    let frameh = this.ssize.y;
+
+                    let inum = texture.width / framew;
+                    let jnum = texture.height / frameh;
+
+                    for(let i = 0; i < inum; i ++)
+                    {
+                        for(let j = 0; j < jnum; j ++)
+                        {
+                            let rect = new PIXI.Rectangle (i * framew , j * frameh, framew, frameh);
+                            let txtFrame = new PIXI.Texture(baseTexture, rect);
+
+                            PIXI.Texture.addToCache(txtFrame, cacheId + "_" + i + "_" + j);
+                            this._textures.push(txtFrame);
+                        }
+                    }
+
+                    //let texture = new PIXI.Texture(baseTexture);
+                }
             }
 
             resdata.textures = this._textures;
+            //console.log(resources, this._textures, this._waiting_list);
         }
 
         for(let callback of this._waiting_list)
@@ -76,7 +122,7 @@ export class PIXIShapesData
 
     public Ready(metapath:string, basedir:string)
     {
-        if(this.ssurl != "")
+        if(this.ssurl && this.ssurl != "")
         {
             let loader = PIXI.Loader.shared;
 
@@ -89,7 +135,8 @@ export class PIXIShapesData
 
     public Load(func:(clsdata:PIXIShapesData)=>void)
     {
-        if(this._textures){
+        if(this._textures)
+        {
             func(this);
         }else
         {
@@ -146,11 +193,8 @@ export class PIXIShapes extends KFBlockTarget
             return;
         }
 
-        this._textures = shapedata._textures;
-        if(this._textures == null)
-        {
-            shapedata.Load(this.onResUpdate.bind(this));
-        }
+        shapedata.Load(this.onResUpdate.bind(this));
+
 
         this.target = new PIXI.Sprite();
         let pixiParent = <any>this.parent;

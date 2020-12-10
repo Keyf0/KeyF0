@@ -143,12 +143,57 @@
     },
     {
         "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "RunOverType",
+        "cname": "运行类型",
+        "nof": 1,
+        "propertys": [
+            {
+                "id": 1,
+                "name": "SELF",
+                "cname": "当前对象",
+                "type": "int8",
+                "default": "0"
+            },
+            {
+                "id": 1,
+                "name": "DEF1",
+                "cname": "自定义1",
+                "type": "int8",
+                "default": "1"
+            },
+            {
+                "id": 1,
+                "name": "DEF2",
+                "cname": "自定义2",
+                "type": "int8",
+                "default": "2"
+            },
+            {
+                "id": 1,
+                "name": "DEF3",
+                "cname": "自定义3",
+                "type": "int8",
+                "default": "3"
+            }
+        ],
+        "clsid": 1437
+    },
+    {
+        "includes": [
             "Global/GlobalScripts.ts",
             "KFExpressionF.h"
         ],
         "class": "GSExpressionScriptData",
         "cname": "执行",
         "extend": "KFScriptData",
+        "unknowtags": [
+            {
+                "tag": "DEPRECATED",
+                "val": "参见GSScriptRunData"
+            }
+        ],
         "propertys": [
             {
                 "id": 2,
@@ -184,6 +229,54 @@
             }
         ],
         "clsid": 1379
+    },
+    {
+        "includes": [
+            "Global/GlobalScripts.ts"
+        ],
+        "class": "GSScriptRunData",
+        "cname": "运行脚本",
+        "extend": "KFScriptData",
+        "propertys": [
+            {
+                "id": 2,
+                "name": "des",
+                "cname": "说明",
+                "type": "kfstr"
+            },
+            {
+                "id": 1,
+                "name": "code",
+                "cname": "代码",
+                "type": "kfstr",
+                "unknowtags": [
+                    {
+                        "tag": "TEXTTYPE",
+                        "val": "javascript"
+                    }
+                ]
+            }
+        ],
+        "orprops": [
+            {
+                "id": 1,
+                "name": "type",
+                "cname": "脚本类型",
+                "default": "GSScriptRunData",
+                "OR": 1,
+                "type": "kfname"
+            },
+            {
+                "id": 3,
+                "name": "group",
+                "cname": "脚本分组",
+                "default": "4",
+                "OR": 1,
+                "enum": "KFScriptGroupType",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1438
     },
     {
         "includes": [
@@ -717,7 +810,7 @@
                 "type": "kfstr",
                 "unknowtags": [
                     {
-                        "tag": "texttype",
+                        "tag": "TEXTTYPE",
                         "val": "javascript"
                     }
                 ]

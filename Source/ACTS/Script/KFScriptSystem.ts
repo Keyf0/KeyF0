@@ -10,10 +10,17 @@ export class KFTargetScript extends KFScript
 {
     protected m_t:KFBlockTarget;
     protected m_fixtpf:number;
-
+    ///手动创建
+    public manual:boolean;
     ///是否在运行中
     public isrunning:boolean;
     public type:KFDName;
+
+    public constructor(manual:boolean = false)
+    {
+        super();
+        this.manual = manual;
+    }
 
     public Update(frameindex:number) {}
 

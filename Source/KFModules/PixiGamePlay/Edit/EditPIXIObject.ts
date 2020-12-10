@@ -2,7 +2,9 @@ import {PIXIApplication} from "../PIXIApplication";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../../ACTS/Context/KFBlockTarget";
 import {IKFRuntime} from "../../../ACTS/Context/IKFRuntime";
-import {HElementActor} from "../../Web/HElementActor";
+import {KFDName} from "../../../KFData/Format/KFDName";
+import {KFActor} from "../../../ACTS/Actor/KFActor";
+import {KFByteArray} from "../../../KFData/Utils/FKByteArray";
 
 
 ///KFD(C,CLASS=EditPIXIObject,EXTEND=PIXIApplication)
@@ -21,14 +23,27 @@ export class EditPIXIObject extends PIXIApplication
     public _scale:number = 1.0;
     public _bgcolor:number = 0x000000;
 
-    public Construct(metadata: any, runtime: IKFRuntime)
+    public Construct(metadata: any, runtime: IKFRuntime, initBytes?:KFByteArray)
     {
-        super.Construct(metadata, runtime);
+        super.Construct(metadata, runtime, initBytes);
 
         //this.transparent = true;
         this.width = 1024;
         this.height = 768;
         this.resolution = window.devicePixelRatio;
+    }
+
+    public setEditViewSize(width:number, height:number)
+    {
+        this.width = width;
+        this.height = height;
+
+        this._target.renderer.resize(this.width, this.height);
+
+        let view:any = this.target;
+
+        view.style.width = this.width * this._scale + "px";
+        view.style.height = this.height * this._scale + "px";
     }
 
     public OnScaleChange(scale:number):void
@@ -74,6 +89,8 @@ export class EditPIXIObject extends PIXIApplication
         }
     }
 
+    public OnEidtorInit() {}
+
     public OnPreviewReady()
     {
         window.parent.postMessage({type:"OnPreviewReady"},"*");
@@ -83,6 +100,16 @@ export class EditPIXIObject extends PIXIApplication
     public ActivateBLK(KFBlockTargetData: any): void
     {
         super.ActivateBLK(KFBlockTargetData);
+
+        //create camera
+
+        //let metaData = this.configs.GetMetaData(path,false);
+        //let cameraData =
+        //    {
+        //        asseturl:":PIXICamera"
+         //       ,   instname:new KFDName("camera")
+        //    };
+        //this.CreateChild(cameraData);
 
         // create preview child
         let startFiles:string[] = this.runtime.configs.startFiles();
@@ -101,6 +128,18 @@ export class EditPIXIObject extends PIXIApplication
         this.messagehandler = this.OnWindowMessage.bind(this);
 
         window.addEventListener("message", this.messagehandler, false);
+
+        window.document.body.addEventListener("wheel", function(event:WheelEvent)
+        {
+            if(!event.ctrlKey)
+                return;
+            let zoom = (event.deltaY  > 0 ? -1 : 1);
+            window.parent.postMessage({type:"OnZoomEvent",data:zoom},"*");
+        });
+
+
+        this.OnEidtorInit();
+        this.OnPreviewReady();
     }
 
     public DeactiveBLK(): void

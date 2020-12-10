@@ -48,6 +48,8 @@ export class KFBlockTarget
     ///是否属于主客户端
     public owner:boolean;
     public parent:IKFBlockTargetContainer;
+    ///创建对象的节点名,没有为空
+    public ownerNode:KFDName;
 
     public etable:KFEventDispatcher;
     public runtime:IKFRuntime;
@@ -58,20 +60,26 @@ export class KFBlockTarget
     ///变量
     public vars:{[key:number]:any};
 
-    public Construct(metadata:any, runtime:IKFRuntime)
+    public Construct(metadata:any, runtime:IKFRuntime, initBytes?:KFByteArray)
     {
         this.metadata = metadata;
         this.runtime = runtime;
         this.vars = {};
+
         ///如果有MEATDATA数据则给对象赋值
         ///不考虑延时创建的对象了[不纯粹]，METADATA就是类初始化时赋值的
         ///需要考虑下如果是频繁创建的对象的性能问题？
-        let kfbytes:KFBytes = this.metadata.data;
-        let buff = kfbytes ? kfbytes.bytes : null;
-        if(buff)
+
+        if(!initBytes)
         {
-            buff.SetPosition(0);
-            KFDJson.read_value(buff,false, this);
+            let kfbytes: KFBytes = this.metadata.data;
+            initBytes = kfbytes ? kfbytes.bytes : null;
+        }
+
+        if(initBytes)
+        {
+            initBytes.SetPosition(0);
+            KFDJson.read_value(initBytes,false, this);
         }
     }
 

@@ -44,9 +44,23 @@
     </style>
 
     <script src="js/require.js"></script>
-    <script type="text/javascript" src="js/pixi.min.js"></script>
+    <script type="text/javascript" src="js/pixi5.4.min.js"></script>
 
     <script>
+
+        window.addEventListener("keydown"
+            ,function (event) {
+
+                var handled;
+                if (event.key !== undefined) {
+                    handled = event.key;
+                    // 使用KeyboardEvent.key处理事件，并将handled设置为true。
+                }
+                var newevent = {key:handled,ctrlKey:event.ctrlKey};
+
+                window.top.postMessage({type:"keydown",data:newevent},"*");
+            });
+
         require(["libs/App/AppLauncher"
                 ,"libs/KFModules/Web/Web"
                 ,"libs/KFModules/NetNode/NetNode"
@@ -75,6 +89,5 @@
     </script>
 </head>
 <body style="overflow:auto">
-
 </body>
 </html>

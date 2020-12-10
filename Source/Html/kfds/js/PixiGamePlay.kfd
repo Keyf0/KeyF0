@@ -386,8 +386,58 @@
         "includes": [
             "PIXISceneGrid.ts"
         ],
+        "class": "GridData",
+        "propertys": [
+            {
+                "id": 1,
+                "name": "x",
+                "cname": "格子X坐标",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "y",
+                "cname": "格子Y坐标",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "name": "color",
+                "cname": "颜色",
+                "type": "uint32"
+            },
+            {
+                "id": 4,
+                "name": "textureID",
+                "cname": "贴图ID",
+                "type": "uint32"
+            },
+            {
+                "id": 5,
+                "name": "values",
+                "cname": "数据集",
+                "type": "arr",
+                "otype": "num1"
+            }
+        ],
+        "clsid": 1436
+    },
+    {
+        "includes": [
+            "PIXISceneGrid.ts"
+        ],
+        "class": "PIXISceneGridData",
+        "extend": "PIXIShapesData",
+        "propertys": [],
+        "clsid": 1435
+    },
+    {
+        "includes": [
+            "PIXISceneGrid.ts",
+            "GridDataF.h"
+        ],
         "class": "PIXISceneGrid",
-        "extend": "KFBlockTarget",
+        "extend": "KFActor",
         "unknowtags": [
             {
                 "tag": "EDITCLASS",
@@ -397,9 +447,48 @@
         "propertys": [
             {
                 "id": 1,
-                "name": "txurl",
-                "cname": "贴图路径",
-                "type": "kfstr"
+                "name": "sceneWidth",
+                "cname": "场景宽",
+                "type": "int32"
+            },
+            {
+                "id": 2,
+                "name": "sceneHeight",
+                "cname": "场景高",
+                "type": "int32"
+            },
+            {
+                "id": 3,
+                "name": "gridWidth",
+                "cname": "格子宽",
+                "type": "num1"
+            },
+            {
+                "id": 4,
+                "name": "gridHeight",
+                "cname": "格子高",
+                "type": "num1"
+            },
+            {
+                "id": 5,
+                "name": "layerdata0",
+                "cname": "层数据0",
+                "type": "arr",
+                "otype": "GridData"
+            },
+            {
+                "id": 6,
+                "name": "layerdata1",
+                "cname": "层数据1",
+                "type": "arr",
+                "otype": "GridData"
+            },
+            {
+                "id": 7,
+                "name": "layerdata2",
+                "cname": "层数据2",
+                "type": "arr",
+                "otype": "GridData"
             }
         ],
         "clsid": 1400
@@ -407,7 +496,8 @@
     {
         "includes": [
             "PIXIShapes.ts",
-            "EmbedFileDataF.h"
+            "EmbedFileDataF.h",
+            "kfVector3F.h"
         ],
         "class": "PIXIShapesData",
         "extend": "KFClassData",
@@ -431,6 +521,13 @@
                 "cname": "图片文件",
                 "type": "object",
                 "otype": "EmbedFileData"
+            },
+            {
+                "id": 4,
+                "name": "ssize",
+                "cname": "分割尺寸",
+                "type": "object",
+                "otype": "kfVector3"
             }
         ],
         "clsid": 1430

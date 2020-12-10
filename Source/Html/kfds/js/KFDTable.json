@@ -1775,6 +1775,22 @@
         {
             "class": "EditPIXIMovieClip",
             "id": 1434
+        },
+        {
+            "class": "PIXISceneGridData",
+            "id": 1435
+        },
+        {
+            "class": "GridData",
+            "id": 1436
+        },
+        {
+            "class": "RunOverType",
+            "id": 1437
+        },
+        {
+            "class": "GSScriptRunData",
+            "id": 1438
         }
     ]
 }

@@ -21,24 +21,12 @@ export class EditPIXIShapes extends EditPIXIObject
 
         shapes.target.texture = texture;
 
-        this.width = texture.width;
-        this.height = texture.height;
-
-        this._target.renderer.resize(this.width, this.height);
-
-        let self = this;
-        let view:any = self.target;
-
-        view.style.width = self.width * self._scale + "px";
-        view.style.height = self.height * self._scale + "px";
-
-        //this._target.resize();
+        this.setEditViewSize(texture.width, texture.height);
     }
 
-
-    public ActivateBLK(KFBlockTargetData: any): void
+    public OnEidtorInit()
     {
-        super.ActivateBLK(KFBlockTargetData);
+        super.OnEidtorInit();
 
         if(this.editTarget) {
             let shapes:PIXIShapes = this.editTarget as PIXIShapes;
@@ -50,7 +38,5 @@ export class EditPIXIShapes extends EditPIXIObject
                 classData.Load(this.UpdateShapesTexture.bind(this, shapes));
             }
         }
-
-        this.OnPreviewReady();
     }
 }

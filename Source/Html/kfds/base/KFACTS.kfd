@@ -289,6 +289,12 @@
             {
                 "id": 2,
                 "cname": "资产路径",
+                "unknowtags": [
+                    {
+                        "tag": "TEXTTYPE",
+                        "val": "filepath"
+                    }
+                ],
                 "name": "asseturl",
                 "type": "kfstr"
             },
@@ -312,6 +318,12 @@
                 "default": "0",
                 "name": "instsid",
                 "type": "int32"
+            },
+            {
+                "id": 6,
+                "cname": "初始化数据",
+                "name": "initBytes",
+                "type": "kfBytes"
             }
         ],
         "clsid": 1020
@@ -668,7 +680,6 @@
             "Vector3F.h",
             "KFBlockTargetDataF.h",
             "KFFrameDataF.h",
-            "KFGraphBlockIPinDataF.h",
             "KFGraphBlockOPinDataF.h"
         ],
         "class": "KFGraphBlockData",
@@ -717,9 +728,9 @@
             },
             {
                 "id": 8,
-                "name": "input",
-                "otype": "KFGraphBlockIPinData",
-                "type": "object"
+                "name": "inputs",
+                "otype": "KFGraphBlockOPinData",
+                "type": "arr"
             },
             {
                 "id": 9,

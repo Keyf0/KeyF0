@@ -64,14 +64,22 @@ export class GSLogScript extends KFScript{
     public Execute(sd: any, context: KFScriptContext = null): any {LOG(sd.text);}
 }
 
+///KFD(C,CLASS=RunOverType,CNAME=运行类型,NOF=1)
+///KFD(P=1,NAME=SELF,CNAME=当前对象,TYPE=int8,DEFAULT=0)
+///KFD(P=1,NAME=POINT,CNAME=点,TYPE=int8,DEFAULT=1)
+///KFD(P=1,NAME=VERTEX,CNAME=顶点,TYPE=int8,DEFAULT=2)
+///KFD(P=1,NAME=PRIMITIVE,CNAME=图元,TYPE=int8,DEFAULT=3)
+///KFD(*)
 
-///KFD(C,CLASS=GSExpressionScriptData,CNAME=执行,EXTEND=KFScriptData)
+
+///KFD(C,CLASS=GSExpressionScriptData,CNAME=执行,EXTEND=KFScriptData,DEPRECATED=参见GSScriptRunData)
 ///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=GSExpressionScriptData,OR=1,TYPE=kfname)
 ///KFD(P=3,NAME=group,CNAME=脚本分组,DEFAULT=4,OR=1,ENUM=KFScriptGroupType,TYPE=int8)
 ///KFD(P=2,NAME=des,CNAME=说明,TYPE=kfstr)
 ///KFD(P=1,NAME=expression,CNAME=表达式,TYPE=object,OTYPE=KFExpression)
 ///KFD(*)
 
+//已经过期的脚本请使用GSScriptRun来代替此脚本
 export class GSExpressionScript extends KFScript
 {
     public static Meta:ScriptMeta = new ScriptMeta("GSExpressionScriptData"
@@ -81,20 +89,60 @@ export class GSExpressionScript extends KFScript
             sd.expression = objs[0];
         });
 
-    public Execute(scriptdata: any, context: KFScriptContext = null): any {
+    public Execute(scriptdata: any, context: KFScriptContext = null): any
+    {
         /// 目标对象
         let expr:KFExpression = scriptdata.expression;
         ///后面所有还回值要存到一个堆栈中
-        if(expr._exec)
-        {
-            if(expr.once)
-                return expr._result;
-            return expr._func(context.targetObject,context);
-        }
-        else
+        if (expr._func) {
+            return expr._func(context.targetObject, context);
+        } else
             return expr.value(context.targetObject, context);
     }
 }
+
+
+///KFD(C,CLASS=GSScriptRunData,CNAME=运行脚本,EXTEND=KFScriptData)
+///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=GSScriptRunData,OR=1,TYPE=kfname)
+///KFD(P=3,NAME=group,CNAME=脚本分组,DEFAULT=4,OR=1,ENUM=KFScriptGroupType,TYPE=int8)
+///KFD(P=2,NAME=des,CNAME=说明,TYPE=kfstr)
+///KFD(P=1,NAME=code,CNAME=代码,TYPE=kfstr,TEXTTYPE=javascript)
+///KFD(*)
+
+export class GSScriptRun extends KFScript
+{
+    public static Meta:ScriptMeta = new ScriptMeta("GSScriptRunData"
+        ,():KFScript=>{return new GSScriptRun();}
+        ,KFScriptGroupType.Global,null
+        ,(sd:any,objs:any[],pints:number[])=>{
+            sd._func = null;
+            sd.code = objs[0];
+        });
+
+    public Execute(scriptdata: any, context: KFScriptContext = null): any
+    {
+        ///后面所有还回值要存到一个堆栈中
+        let func = scriptdata._func;
+        if (func == null) {
+            /// 目标对象
+            let code:string = scriptdata.code;
+            ///有分号就是多行了
+            let multi = (code.indexOf(";") != -1);
+            if (multi) {
+                func = eval("var __func__ = function(self,context,_data){" + code + "};__func__");
+            } else {
+                func = eval("var __func__ = function(self,context,_data){return " + code + ";};__func__");
+            }
+            scriptdata._func = func;
+        }
+
+        let targetObject = context.targetObject;
+        return func(targetObject, context);
+    }
+}
+
+
+
 
 ///KFD(C,CLASS=GSRemoteScriptData,CNAME=远程脚本,EXTEND=KFScriptData)
 ///KFD(P=1,NAME=type,CNAME=脚本类型,DEFAULT=GSRemoteScriptData,OR=1,TYPE=kfname)

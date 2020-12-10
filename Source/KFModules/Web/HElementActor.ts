@@ -8,7 +8,7 @@ import {KFDName} from "../../KFData/Format/KFDName";
 
 ///KFD(C,CLASS=HElementActor,EXTEND=KFActor,EDITCLASS=EditHTMLBlk)
 ///KFD(P=1,NAME=attachId,CNAME=绑定ID,TYPE=kfstr)
-///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,texttype=html)
+///KFD(P=2,NAME=html,CNAME=HTML内容,TYPE=kfstr,TEXTTYPE=html)
 ///KFD(P=3,NAME=containerID,CNAME=子集容器ID,TYPE=kfstr)
 ///KFD(*)
 
