@@ -670,9 +670,55 @@
                 "default": "7",
                 "name": "EventPointGlobal",
                 "type": "int32"
+            },
+            {
+                "id": 1,
+                "cname": "拉取节点",
+                "default": "8",
+                "name": "PullNode",
+                "type": "int32"
             }
         ],
         "clsid": 1030
+    },
+    {
+        "includes": [
+            "Data/Graph/KFGraphData.h"
+        ],
+        "nof": 1,
+        "class": "KFGraphExecType",
+        "extend": "",
+        "propertys": [
+            {
+                "id": 1,
+                "cname": "正常",
+                "default": "0",
+                "name": "Normal",
+                "type": "int8"
+            },
+            {
+                "id": 1,
+                "cname": "主运行",
+                "default": "1",
+                "name": "Run",
+                "type": "int8"
+            },
+            {
+                "id": 1,
+                "cname": "辅运行",
+                "default": "2",
+                "name": "BackRun",
+                "type": "int8"
+            },
+            {
+                "id": 1,
+                "cname": "全运行",
+                "default": "3",
+                "name": "AllRun",
+                "type": "int8"
+            }
+        ],
+        "clsid": 1374
     },
     {
         "includes": [
@@ -704,9 +750,10 @@
             },
             {
                 "id": 4,
-                "default": "true",
-                "name": "keep",
-                "type": "bool"
+                "enum": "KFGraphExecType",
+                "default": "0",
+                "name": "execType",
+                "type": "int8"
             },
             {
                 "id": 5,
