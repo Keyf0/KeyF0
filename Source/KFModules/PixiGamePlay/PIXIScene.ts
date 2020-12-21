@@ -1,7 +1,6 @@
 import {PIXINetActor} from "./PIXINetActor";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
-import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 
 
 ///KFD(C,CLASS=PIXIScene,EXTEND=PIXINetActor)

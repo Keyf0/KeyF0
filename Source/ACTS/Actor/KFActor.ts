@@ -1,4 +1,4 @@
-import {IKFBlockTargetContainer, KFBlockTarget} from "../Context/KFBlockTarget";
+import {IKFBlockTargetContainer, IKFNodeData, KFBlockTarget} from "../Context/KFBlockTarget";
 import {IKFRuntime} from "../Context/IKFRuntime";
 import {KFEvent} from "../../Core/Misc/KFEventTable";
 import {KFTimelineComponent} from "./Components/KFTimelineComponent";
@@ -492,7 +492,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     /// 试验性的尝试
     /// override methods begin
 
-    public NewNodeData(dataType?:number):any{ return null;}
+    public NewNodeData(dataType?:number):IKFNodeData{ return null;}
     public Render(data?:any) {}
 
     /// override methods end

@@ -158,22 +158,22 @@
             },
             {
                 "id": 1,
-                "name": "DEF1",
-                "cname": "自定义1",
+                "name": "POINT",
+                "cname": "点",
                 "type": "int8",
                 "default": "1"
             },
             {
                 "id": 1,
-                "name": "DEF2",
-                "cname": "自定义2",
+                "name": "VERTEX",
+                "cname": "顶点",
                 "type": "int8",
                 "default": "2"
             },
             {
                 "id": 1,
-                "name": "DEF3",
-                "cname": "自定义3",
+                "name": "PRIMITIVE",
+                "cname": "图元",
                 "type": "int8",
                 "default": "3"
             }
@@ -814,12 +814,6 @@
                         "val": "javascript"
                     }
                 ]
-            },
-            {
-                "id": 2,
-                "name": "once",
-                "cname": "缓存结果",
-                "type": "bool"
             }
         ],
         "clsid": 1380

@@ -318,3 +318,10 @@ export class KFBlockTarget
     }
 
 }
+
+
+///节点数据
+export interface IKFNodeData
+{
+    CopyTo(dest:IKFNodeData);
+}

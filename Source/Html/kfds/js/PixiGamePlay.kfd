@@ -424,26 +424,10 @@
     },
     {
         "includes": [
-            "PIXISceneGrid.ts"
-        ],
-        "class": "PIXISceneGridData",
-        "extend": "PIXIShapesData",
-        "propertys": [],
-        "clsid": 1435
-    },
-    {
-        "includes": [
             "PIXISceneGrid.ts",
             "GridDataF.h"
         ],
-        "class": "PIXISceneGrid",
-        "extend": "KFActor",
-        "unknowtags": [
-            {
-                "tag": "EDITCLASS",
-                "val": "EditPIXIObject"
-            }
-        ],
+        "class": "GridDataMap",
         "propertys": [
             {
                 "id": 1,
@@ -489,6 +473,39 @@
                 "cname": "层数据2",
                 "type": "arr",
                 "otype": "GridData"
+            }
+        ],
+        "clsid": 1439
+    },
+    {
+        "includes": [
+            "PIXISceneGrid.ts"
+        ],
+        "class": "PIXISceneGridData",
+        "extend": "PIXIShapesData",
+        "propertys": [],
+        "clsid": 1435
+    },
+    {
+        "includes": [
+            "PIXISceneGrid.ts",
+            "GridDataMapF.h"
+        ],
+        "class": "PIXISceneGrid",
+        "extend": "KFActor",
+        "unknowtags": [
+            {
+                "tag": "EDITCLASS",
+                "val": "EditPIXIObject"
+            }
+        ],
+        "propertys": [
+            {
+                "id": 1,
+                "name": "mapdata",
+                "cname": "场景数据",
+                "type": "object",
+                "otype": "GridDataMap"
             }
         ],
         "clsid": 1400

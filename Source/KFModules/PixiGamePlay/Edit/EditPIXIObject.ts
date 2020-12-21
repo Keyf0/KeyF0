@@ -2,8 +2,6 @@ import {PIXIApplication} from "../PIXIApplication";
 import {IKFMeta} from "../../../Core/Meta/KFMetaManager";
 import {KFBlockTarget} from "../../../ACTS/Context/KFBlockTarget";
 import {IKFRuntime} from "../../../ACTS/Context/IKFRuntime";
-import {KFDName} from "../../../KFData/Format/KFDName";
-import {KFActor} from "../../../ACTS/Actor/KFActor";
 import {KFByteArray} from "../../../KFData/Utils/FKByteArray";
 
 

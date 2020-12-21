@@ -1,6 +1,6 @@
 import {BlkExecSide, KFBlockTarget} from "../../ACTS/Context/KFBlockTarget";
 import {IKFMeta} from "../../Core/Meta/KFMetaManager";
-import {LOG, LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
+import {LOG_ERROR, LOG_WARNING} from "../../Core/Log/KFLog";
 import {PIXIObject} from "./PIXIInterface";
 import {kfVector3} from "../../ACTS/Script/Global/GlobalScripts";
 import {EmbedFileData} from "../../ACTS/Data/KFInternalDataTypes";

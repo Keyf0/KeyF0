@@ -1,5 +1,5 @@
 import {KFGraphBlockBase, PullRequest} from "../Blocks/KFGraphBlockBase";
-import {KFBlockTarget} from "../../Context/KFBlockTarget";
+import {IKFNodeData, KFBlockTarget} from "../../Context/KFBlockTarget";
 import {KFDName} from "../../../KFData/Format/KFDName";
 import {KFActor} from "../../Actor/KFActor";
 import {KFBlockTargetOption} from "../../Data/KFBlockTargetOption";
@@ -22,7 +22,7 @@ export class PullNodeExecutor extends KFTargetScript
     protected m_requestCount:number;
 
     protected m_outVersion:number;
-    protected m_outData:any;
+    protected m_outData:IKFNodeData;
 
     ///等待响应
     protected m_waitResponse:PullRequest[] = [];
@@ -43,6 +43,12 @@ export class PullNodeExecutor extends KFTargetScript
         this.m_outData = this.m_usingExecute ? target.NewNodeData() : null;
 
         this.type = node.data.name;
+    }
+
+    public Stop(): void
+    {
+        ///todo
+        super.Stop();
     }
 
     public Execute0(inputDatas: any[])
@@ -113,8 +119,8 @@ export class PullNodeExecutor extends KFTargetScript
             }
             else
             {
-                let inputdata0 = this.m_inputDatas[0];
-                if(inputdata0 && inputdata0.CopyTo)
+                let inputdata0:IKFNodeData = this.m_inputDatas[0];
+                if(inputdata0)
                 {
                     inputdata0.CopyTo(this.m_outData);
                 }
