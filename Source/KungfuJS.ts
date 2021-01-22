@@ -4,5 +4,5 @@
 */
 export class KungfuJS
 {
-    static Version:string = "0.1";
+    static Version:string = "0.2";
 };
