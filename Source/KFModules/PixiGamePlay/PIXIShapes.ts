@@ -222,8 +222,8 @@ export class PIXIShapes extends KFBlockTarget
         super.DeactiveBLK();
     }
 
-
-    public get position(){
+    // @ts-ignore
+    public get position():kfVector3{
         return new kfVector3(this.target.x,this.target.y);
     }
 
@@ -243,9 +243,10 @@ export class PIXIShapes extends KFBlockTarget
         scale.y = v3.y;
     }
 
-    public get visible() {return this.target.visible;}
-    public set visible(v:boolean) {this.target.visible = v;}
-
+    // @ts-ignore
+    public get visible() {return this.target ? false : this.target.visible;}
+    public set visible(v:boolean) { if(this.target)this.target.visible = v;}
+    // @ts-ignore
     public get display():number {return this._display;}
     public set_display(v:number,bJumpFrame:boolean = false) {
         if(this._display != v){
