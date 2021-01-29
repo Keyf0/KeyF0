@@ -258,6 +258,9 @@ export class PIXIShapes extends KFBlockTarget
     }
 
     public manual_dir(len:number){
+
+        if(this.target == null)return;
+
         let pos = this.target.position;
         if(!this._manul_dir) {
             this._manul_dir = {};
@@ -282,7 +285,7 @@ export class PIXIShapes extends KFBlockTarget
 
     public set_dir(dir:any) {
         let manuldir = this._manul_dir;
-        if(dir) {
+        if(dir && this.target != null) {
             if(manuldir) {
                 if(dir.y == 0 && dir.x == 0)return;
                 let ret = Math.atan2(dir.y, dir.x);
@@ -301,7 +304,7 @@ export class PIXIShapes extends KFBlockTarget
 
     public set_datas(datas:number[]){
 
-        if(!datas || this._manul_dir)return;
+        if(!datas || this._manul_dir || this.target == null)return;
         //P3_R1_S3_SK2
         this.target.setTransform(
                 datas[0]
