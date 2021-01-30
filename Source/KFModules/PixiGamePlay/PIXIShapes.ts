@@ -222,8 +222,8 @@ export class PIXIShapes extends KFBlockTarget
         super.DeactiveBLK();
     }
 
-
-    public get position(){
+    // @ts-ignore
+    public get position():kfVector3{
         return new kfVector3(this.target.x,this.target.y);
     }
 
@@ -243,9 +243,10 @@ export class PIXIShapes extends KFBlockTarget
         scale.y = v3.y;
     }
 
-    public get visible() {return this.target.visible;}
-    public set visible(v:boolean) {this.target.visible = v;}
-
+    // @ts-ignore
+    public get visible() {return this.target ? false : this.target.visible;}
+    public set visible(v:boolean) { if(this.target)this.target.visible = v;}
+    // @ts-ignore
     public get display():number {return this._display;}
     public set_display(v:number,bJumpFrame:boolean = false) {
         if(this._display != v){
@@ -257,6 +258,9 @@ export class PIXIShapes extends KFBlockTarget
     }
 
     public manual_dir(len:number){
+
+        if(this.target == null)return;
+
         let pos = this.target.position;
         if(!this._manul_dir) {
             this._manul_dir = {};
@@ -281,7 +285,7 @@ export class PIXIShapes extends KFBlockTarget
 
     public set_dir(dir:any) {
         let manuldir = this._manul_dir;
-        if(dir) {
+        if(dir && this.target != null) {
             if(manuldir) {
                 if(dir.y == 0 && dir.x == 0)return;
                 let ret = Math.atan2(dir.y, dir.x);
@@ -300,7 +304,7 @@ export class PIXIShapes extends KFBlockTarget
 
     public set_datas(datas:number[]){
 
-        if(!datas || this._manul_dir)return;
+        if(!datas || this._manul_dir || this.target == null)return;
         //P3_R1_S3_SK2
         this.target.setTransform(
                 datas[0]

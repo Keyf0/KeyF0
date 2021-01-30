@@ -79,11 +79,13 @@
                 var urlpath = document.location.toString();
                 var varobjs = new urlvar.URLVariables(urlpath.split("?")[1]).variables;
 
-               console.log("preview=>", varobjs.editclass, varobjs.asset);
+                var assetURL = decodeURIComponent(varobjs.asset);
+
+               console.log("preview=>", varobjs.editclass, assetURL);
 
 
 
-               editapp.run("appnettest","kfds",":" + varobjs.editclass,true,[varobjs.asset]);
+               editapp.run("appnettest","kfds",":" + varobjs.editclass,true,[assetURL]);
 
         });
     </script>
