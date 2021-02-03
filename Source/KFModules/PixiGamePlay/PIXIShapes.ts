@@ -244,7 +244,7 @@ export class PIXIShapes extends KFBlockTarget
     }
 
     // @ts-ignore
-    public get visible() {return this.target ? false : this.target.visible;}
+    public get visible() {return this.target ? this.target.visible : false;}
     public set visible(v:boolean) { if(this.target)this.target.visible = v;}
     // @ts-ignore
     public get display():number {return this._display;}
