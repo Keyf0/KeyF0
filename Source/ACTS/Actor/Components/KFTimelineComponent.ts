@@ -31,14 +31,14 @@ export class KFTimelineComponent implements IKFTimelineContext
     private static TB_pool:KFPool<KFTimeBlock> = new KFPool<KFTimeBlock>
     (function ():KFTimeBlock {return new KFTimeBlock();});
 
-    private m_tpf:number = 0;
+    //private m_tpf:number = 0;
     public asseturl:string;
 
     public constructor(runtime:IKFRuntime, asseturl:string)
     {
         this.runtime = runtime;
         this.asseturl = asseturl;
-        this.m_tpf = KFGlobalDefines.TPF / 1000.0;
+        //this.m_tpf = KFGlobalDefines.TPF / 1000.0;
     }
 
     public Destroy():void

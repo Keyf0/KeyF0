@@ -118,16 +118,22 @@ export class KFGraphBlockEventPoint extends KFGraphBlockBase
     {
         super.Deactive(self, force);
         let outputs = this.data.outputs;
-        if (this.data && outputs.length > 1) {
+        if (this.data && outputs.length > 1)
+        {
             let etable: KFEventDispatcher = this.GetEventDispatcher(self);
-            if (etable) {
-                for (let i: number = 1; i < outputs.length; i++) {
+            if (etable)
+            {
+                for (let i: number = 1; i < outputs.length; i++)
+                {
                     let output = outputs[i];
-                    if (output.func || i == 1) {
+                    if (output.func || i == 1)
+                    {
                         let ename: KFDName = null;
-                        if (output.func == null) {
+                        if (output.func == null)
+                        {
                             ename = this.data.name;
-                        } else
+                        }
+                        else
                             ename = output.func.name;
                         etable.RemoveBlockListener(ename, self, this);
                     }

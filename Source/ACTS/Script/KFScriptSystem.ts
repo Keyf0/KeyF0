@@ -10,23 +10,20 @@ export class KFTargetScript extends KFScript
 {
     protected m_t:KFBlockTarget;
     protected m_fixtpf:number;
-    ///手动创建
-    public manual:boolean;
     ///是否在运行中
     public isrunning:boolean;
-    public type:KFDName;
+    ///命名
+    public name:KFDName;
 
-    public constructor(manual:boolean = false)
+    public constructor()
     {
         super();
-        this.manual = manual;
     }
 
     public Update(frameindex:number) {}
 
     public Execute(scriptdata: any, context: KFScriptContext = null): void
     {
-        this.type = scriptdata.type;
         this.m_t = context.targetObject;
         this.m_fixtpf = context.runtime.fixtpf;
         this.isrunning = true;
@@ -35,7 +32,6 @@ export class KFTargetScript extends KFScript
     public Stop(): void
     {
         this.isrunning = false;
-        this.type = null;
         this.m_t = null;
     }
 }
@@ -54,7 +50,11 @@ export class KFScriptSystem extends KFScriptManagerBase
     {
         let scriptmeta =  KFScriptFactory.GetMetaName(type);
         if(scriptmeta)
-            return scriptmeta.instantiate();
+        {
+            let script = scriptmeta.instantiate();
+            if(script) script._type_ = type;
+            return script;
+        }
         return null;
     }
 }

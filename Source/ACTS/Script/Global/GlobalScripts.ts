@@ -381,6 +381,8 @@ export class GSSaveBLKDataScript extends KFScript{
 }
 
 
+
+
 ///脚本变量
 export class VarScriptData {
 
@@ -392,6 +394,13 @@ export class VarScriptData {
 }
 
 ///注意定义__cls__ 而不是通过constructor.name来获取是因为如果代码被压缩名称可能会改变
+
+///KFD(C,CLASS=kfVector3)
+///KFD(P=1,NAME=x,TYPE=num1)
+///KFD(P=2,NAME=y,TYPE=num1)
+///KFD(P=3,NAME=z,TYPE=num1)
+///KFD(*)
+
 
 //extends scriptdata
 export class kfVector3 extends VarScriptData

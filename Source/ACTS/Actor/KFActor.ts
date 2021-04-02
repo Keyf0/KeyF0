@@ -184,17 +184,12 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             sc.Update(frameindex);
             if(!sc.isrunning)
             {
-                let stype:KFDName = sc.type;
-
+                let name:KFDName = sc.name;
                 this.m_keepsts.splice(scripti,1);
-
                 sc.Stop();
-
-                delete this.m_keepstmap[stype.value];
-                if(!sc.manual)
-                    scriptcontext.ReturnScript(sc, stype);
+                delete this.m_keepstmap[name.value];
+                scriptcontext.ReturnScript(sc);
             }
-
             scripti -= 1;
         }
 
@@ -253,6 +248,7 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
         return this.m_childrenmap[name];
     }
 
+
     public StrChild(name:string):KFBlockTarget {
         if(name.indexOf(".") != -1){
             let names:string[] = name.split(".");
@@ -260,7 +256,6 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             let namelen = names.length;
             let c:any = this;
             let str2id = KFDName._Strs._Strings2ID;
-
 
             while (i < namelen){
                 if(c == null)
@@ -386,8 +381,11 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
                 this.m_keepsts = [];
                 this.m_keepstmap = {};
             }
+            //脚本的名称就以类型命名
+            let scriptname = type;
+            targetscript.name = scriptname;
 
-            this.m_keepstmap[type.value] = targetscript;
+            this.m_keepstmap[scriptname.value] = targetscript;
             this.m_keepsts.push(targetscript);
         }
 
@@ -397,33 +395,40 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
     public AddScript(name:KFDName, targetscript:KFTargetScript)
     {
         let sc:KFTargetScript = this.m_keepstmap[name.value];
-        if(sc == null) {
+        if(sc == null)
+        {
+            targetscript.name = name;
             this.m_keepstmap[name.value] = targetscript;
             this.m_keepsts.push(targetscript);
-        }else{
+        }
+        else
+        {
             LOG_ERROR("脚本添加失败:重复添加{0}",name.toString());
         }
     }
 
-    public RemoveScript(name:KFDName) {
+    public RemoveScript(name:KFDName)
+    {
         let sc:KFTargetScript = this.m_keepstmap[name.value];
-        if(sc) {
+        if(sc)
+        {
+            ///在C++更改的时候切换成了延时删除，看看会有什么问题
+            sc.isrunning = false;
+            /*
             let scripti: number = this.m_keepsts.indexOf(sc);
             this.m_keepsts.splice(scripti, 1);
 
             sc.Stop();
 
             delete this.m_keepstmap[name.value];
-            if(!sc.manual)
-            {
-                this.runtime.scripts.ReturnScript(sc, name);
-            }
+            this.runtime.scripts.ReturnScript(sc);
+            */
         }
     }
 
-    public FindScript(type:KFDName):KFScript {
+    public FindScript(name:KFDName):KFScript {
         if(this.m_keepstmap) {
-            return this.m_keepstmap[type.value];
+            return this.m_keepstmap[name.value];
         }
         return null;
     }
@@ -437,13 +442,12 @@ export class KFActor extends KFBlockTarget implements IKFBlockTargetContainer
             while (scripti >= 0)
             {
                 let script:KFTargetScript = this.m_keepsts[scripti];
-                let stype:KFDName = script.type;
+                //let stype:KFDName = script.type;
 
                 script.Stop();
 
-                delete this.m_keepstmap[stype.value];
-                if(!script.manual)
-                scriptcontext.ReturnScript(script, stype);
+                //delete this.m_keepstmap[stype.value];
+                scriptcontext.ReturnScript(script);
 
                 scripti -= 1;
             }

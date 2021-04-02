@@ -139,7 +139,10 @@ export class KFBlockTarget
 
     public AddVar(varname:string, type:number = 0, netvar:boolean = true)
     {
-        if(this.vars == null) this.vars = {};
+        if(this.vars == null) {
+            this.vars = {};
+        }
+
         let nameval:number = KFDName._Strs.GetNameID(varname);
         let varitem:any = this.vars[nameval];
 

@@ -39,8 +39,8 @@ export class KFGraphComponent implements IKFGraphContext
             if(block != null)
                 block.Release(self);
         }
+        this.m_blocks = {};
     }
-
     public ActivateComponent(self:KFBlockTarget)
     {
         if(this.m_cfg == null)

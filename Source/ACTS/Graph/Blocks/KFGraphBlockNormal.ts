@@ -61,7 +61,7 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
             ///没有命名的实例可以随意创建
-            let instname: KFDName = this.data.instname;
+            let instname: KFDName = targetdata.instname;
             let instval = instname ? instname.value : 0;
             if (instval > 0)
             {
@@ -88,7 +88,7 @@ export class KFGraphBlockNormal extends KFGraphBlockBase
         if (targetdata && targetdata.option == KFBlockTargetOption.Create)
         {
             let container:KFActor = self as KFActor;
-            let instname: KFDName = this.data.instname;
+            let instname: KFDName = targetdata.instname;
 
             if (instname == null || instname.value == 0)
             {

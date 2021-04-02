@@ -27,10 +27,13 @@ export class PullNodeExecutor extends KFTargetScript
     ///等待响应
     protected m_waitResponse:PullRequest[] = [];
 
-    public constructor(node:KFPullNode,target:KFActor)
+    public constructor()
     {
-        super(true);
+        super();
+    }
 
+    public Start(node:KFPullNode,target:KFActor)
+    {
         this.isrunning = true;
 
         let fd = node.data.frame;
@@ -41,9 +44,8 @@ export class PullNodeExecutor extends KFTargetScript
         this.m_node = node;
         this.m_outVersion = 0;
         this.m_outData = this.m_usingExecute ? target.NewNodeData() : null;
-
-        this.type = node.data.name;
     }
+
 
     public Stop(): void
     {
@@ -244,11 +246,6 @@ export class KFPullNode extends KFGraphBlockBase
         target.name = new KFDName(this.data.name.toString() + "@" + target.sid);
     }
 
-    public Create(ctx: IKFGraphContext, data: any)
-    {
-        super.Create(ctx, data);
-    }
-
     public Activate(self:KFBlockTarget):any
     {
         let m_target:KFBlockTarget = null;
@@ -312,7 +309,8 @@ export class KFPullNode extends KFGraphBlockBase
                 let executor:PullNodeExecutor = <any>currentActor.FindScript(nodename);
                 if(executor == null)
                 {
-                    executor = new PullNodeExecutor(this, currentActor);
+                    executor = new PullNodeExecutor();
+                    executor.Start(this, currentActor);
                     currentActor.AddScript(nodename, executor);
                 }
                 executor.AddRequest(request);

@@ -6,7 +6,6 @@ import {KFDName} from "../../KFData/Format/KFDName";
 
 export class KFTimeBlock
 {
-    private m_ctx:IKFTimelineContext;
     private m_keyframes:{[key:number]:any};
 
     public data:any;
@@ -19,9 +18,7 @@ export class KFTimeBlock
 
     public Create(ctx:IKFTimelineContext, data:any, blockid:number)
     {
-        this.m_ctx = ctx;
         this.id = blockid;
-
         this.SetData(data);
     }
 

@@ -41,7 +41,7 @@ export interface KFScriptContext
     ExecCodeLine(codeline:any, target:any):void;
 
     BorrowScript(type:KFDName):KFScript;
-    ReturnScript(script:KFScript,type:KFDName);
+    ReturnScript(script:KFScript);
 
     Get(i:number):any;
     Set(i:number,v:any);
@@ -68,4 +68,7 @@ export class KFScript
          return true;
      }
      public scriptTypes:KFDName[];
+
+     ///类型
+     public _type_:KFDName;
 }

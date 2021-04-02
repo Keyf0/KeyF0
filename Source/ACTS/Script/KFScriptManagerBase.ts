@@ -27,7 +27,6 @@ export class KFScriptManagerBase implements KFScriptContext
     public NewScriptInstance(type:KFDName):KFScript {return null;}
     public DelScriptInstance(script:KFScript) {}
 
-
     public Finalize():void
     {
         if (this._reg != null)
@@ -55,24 +54,29 @@ export class KFScriptManagerBase implements KFScriptContext
     public Execute(sd: any , target: any): void {
         ///设置脚本参数
         let type = sd.type;
-        let pints:number[] = sd.paramInts;
-        let sflag = (pints ? pints[0] : KFScriptData.NONE_S);
         let retval = null;
 
+        /* 这种设置方式太过于难理解先去掉吧
+        let sflag = (pints ? pints[0] : KFScriptData.NONE_S);
+        let pints:number[] = sd.paramInts;
         if(sflag == KFScriptData.READ_S) {
             ///c++每个脚本自己
             ///readfromstack
             let rfs = KFScriptData.RFS[type.value];
             if(rfs) {rfs(sd,this._reg._OBJECTS,pints);}
         }
+        */
 
+        let cacheObject = this.targetObject;
         this.targetObject = target;
 
-        if (sd.group == KFScriptGroupType.Target) {
+        if (sd.group == KFScriptGroupType.Target)
+        {
             ///判定是不是TARGET脚本
             if(target.ExecuteScript)
             {
-               let retval = target.ExecuteScript(sd, this);
+                let retval = target.ExecuteScript(sd, this);
+                /*
                 ///如果是写有两个参数需要填写
                 if(sflag == KFScriptData.WRITE_S) {
                     let wi = pints[1];
@@ -82,7 +86,7 @@ export class KFScriptManagerBase implements KFScriptContext
                     } else {
                         this._reg._OBJECTS[wi] = retval;
                     }
-                }
+                }*/
             }
             return;
         }
@@ -105,9 +109,12 @@ export class KFScriptManagerBase implements KFScriptContext
                 retval = script.Execute(sd, this);
             }
         }
-        else {
+        else
+        {
             retval = script.Execute(sd, this);
         }
+
+        /*
         ///如果是写有两个参数需要填写
         if(sflag == KFScriptData.WRITE_S) {
             let wi = pints[1];
@@ -118,6 +125,8 @@ export class KFScriptManagerBase implements KFScriptContext
                 this._reg._OBJECTS[wi] = retval;
             }
         }
+        */
+        this.targetObject = cacheObject;
     }
 
     public ExecuteFrameScript(id: number, fd: any, target: any): void
@@ -127,12 +136,14 @@ export class KFScriptManagerBase implements KFScriptContext
 
         if (reg == null)
         {
-            for (let i = 0; i < sds.length; i++) {
+            for (let i = 0; i < sds.length; i++)
+            {
                 // Debug.Log("    Trigger-Script 开始执行 -> " + scriptData.scriptType);
                 this.Execute(sds[i], target);
             }
         }
-        else {
+        else
+        {
             //建立新的寄存器集合
             reg = reg.Push(fd.paramsize, fd.varsize);
             this._reg = reg;
@@ -175,7 +186,14 @@ export class KFScriptManagerBase implements KFScriptContext
         return this.NewScriptInstance(type);
     }
 
-    public ReturnScript(script: KFScript,type:KFDName) {
+    public ReturnScript(script: KFScript) {
+
+        if(script == null)
+        {
+            return;
+        }
+
+        let type:KFDName = script._type_;
         let typeval = type.value;
         let arr = this._T_SCRIPT_POOL[typeval];
         if(!arr){
