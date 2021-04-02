@@ -136,7 +136,6 @@ export class KFiSayPlayer implements IKFRuntime
                 }
                 etb.FireEvent(onEndFrame);
             }
-
         }
         ///渲染的帧只要可更新的频率运行
         this.etable.FireEvent(onRenderFrame);
