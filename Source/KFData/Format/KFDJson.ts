@@ -118,6 +118,8 @@ export class KFDJson
                 if(skip)
                     bytearr.Skip(8);
                 break;
+            case KFDataType.OT_UNKNOW:
+                break;
             default:
                     retval = bytearr.readUInt64();
         }
